@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMAC-1 — Personal Mac Management Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary:              #0066cc;
+      --color-text:                 #333333;
+      --color-text-secondary:       #666666;
+      --color-text-tertiary:        #999999;
+      --color-border:               #cccccc;
+      --color-border-light:         #e5e5e5;
+      --color-background:           #ffffff;
+      --color-background-secondary: #f8f9fa;
+      --color-background-tertiary:  #f1f3f4;
+      --color-danger:               #dc3545;
+      --color-warning-dark:         #7a5500;
+      --font-family-base: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      --font-family-mono: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+      --sidebar-width: 300px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-family-base);
+      font-size: 16px;
+      background: #e8ecf0;
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Fixed Header Layout */
+    .main-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 100px;
+    }
+
+    /* ─── Sidebar ─────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      left: 0;
+      top: 100px;
+      height: calc(100vh - 100px);
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
+      background: var(--color-background-secondary);
+      border-right: 2px solid var(--color-border);
+      overflow-y: auto;
+      flex-shrink: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .nav-header {
+      padding: 1.5rem 1rem 1rem;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-background);
+    }
+    .nav-to-num {
+      font-family: var(--font-family-mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--color-text-tertiary);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .nav-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--color-text);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    nav a.section-head {
+      display: block;
+      padding: 0.75rem 1rem 0.2rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-tertiary);
+      text-decoration: none;
+      pointer-events: none;
+    }
+    nav a:not(.section-head) {
+      display: block;
+      padding: 0.25rem 1rem;
+      font-size: 0.875rem;
+      color: var(--color-text);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.15s ease;
+    }
+    nav a:not(.section-head):hover {
+      background: var(--color-background-tertiary);
+      border-left-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    /* ─── Page wrapper ────────────────────────────────────────── */
+    main {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      height: calc(100vh - 100px);
+      overflow-y: auto;
+      background: #e8ecf0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Document masthead ───────────────────────────────────── */
+    .doc-masthead {
+      background-color: #1a365d;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.025em;
+      border-bottom: 1px solid #2d3748;
+    }
+    .masthead-org {
+      flex: 1;
+      text-align: left;
+    }
+    .masthead-center {
+      flex: 2;
+      text-align: center;
+      font-weight: 400;
+    }
+    .masthead-center strong {
+      font-weight: 600;
+    }
+    .masthead-meta {
+      flex: 1;
+      text-align: right;
+    }
+    .doc-infobar {
+      display: flex;
+      background-color: #e2e8f0;
+      color: #2d3748;
+      padding: 0.5rem 1.5rem;
+      border-top: 1px solid #cbd5e0;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .infobar-cell {
+      flex: 1;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .infobar-cell .lbl {
+      font-weight: 600;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .infobar-cell .val {
+      color: #2d3748;
+    }
+    .infobar-cell .val a {
+      color: #3182ce;
+      text-decoration: none;
+    }
+    .infobar-cell .val a:hover {
+      text-decoration: underline;
+    }
+
+    /* ─── Content ─────────────────────────────────────────────── */
+    .content {
+      padding: 2rem 3rem 5rem;
+      flex: 1;
+    }
+
+    section { margin-bottom: 3rem; }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      border-bottom: 2px solid var(--color-border);
+      padding-bottom: 0.625rem;
+      margin-bottom: 1.25rem;
+    }
+    .section-num {
+      font-family: var(--font-family-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      min-width: 36px;
+    }
+    h2 {
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--color-text);
+    }
+    .section-sub {
+      font-size: 0.8rem;
+      color: var(--color-text-tertiary);
+      font-family: var(--font-family-mono);
+      margin-left: auto;
+    }
+
+    p { margin-bottom: 0.75rem; }
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    ul, ol { padding-left: 1.5rem; margin-bottom: 0.75rem; }
+    li { margin-bottom: 0.3rem; line-height: 1.55; }
+
+    code {
+      font-family: var(--font-family-mono);
+      font-size: 0.85em;
+      background: var(--color-background-tertiary);
+      border: 1px solid var(--color-border-light);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+    pre {
+      font-family: var(--font-family-mono);
+      font-size: 0.875rem;
+      background: #1e293b;
+      color: #e2e8f0;
+      border: none;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+      border-radius: 4px;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; }
+
+    /* ─── Procedure blocks ────────────────────────────────────── */
+    .proc {
+      border: 1px solid #aaa;
+      border-top: 3px solid var(--color-primary);
+      margin-bottom: 2rem;
+      border-radius: 0 0 3px 3px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+    .proc-header {
+      background: var(--color-background-secondary);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.625rem;
+    }
+    .proc-num {
+      font-family: var(--font-family-mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      min-width: 38px;
+    }
+    .proc-header h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .proc-body { padding: 1rem; background: var(--color-background); }
+    .proc-body .desc {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      font-style: italic;
+      margin-bottom: 0.75rem;
+      padding-left: 0.75rem;
+      border-left: 3px solid var(--color-border);
+    }
+    .proc-body ul  { font-size: 0.9rem; }
+    .proc-body ol  { font-size: 0.9rem; }
+    .proc-body pre { margin-bottom: 0.625rem; }
+
+    /* ─── Callout boxes ───────────────────────────────────────── */
+    .callout {
+      border: 1px solid var(--color-border);
+      border-left: 4px solid var(--color-primary);
+      margin: 0.875rem 0;
+      border-radius: 0 3px 3px 0;
+      overflow: hidden;
+    }
+    .callout-label {
+      display: block;
+      background: var(--color-background-secondary);
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .callout-body {
+      padding: 0.625rem 0.875rem;
+      font-size: 0.9rem;
+    }
+    .callout-warn {
+      border-left-color: var(--color-danger);
+    }
+    .callout-warn .callout-label {
+      background: #fdf2f2;
+      color: var(--color-danger);
+    }
+    .callout-caution {
+      border-left-color: #e6a800;
+    }
+    .callout-caution .callout-label {
+      background: #fffdf0;
+      color: var(--color-warning-dark);
+    }
+
+    /* ─── Tables ──────────────────────────────────────────────── */
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--color-border);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .ref-table caption {
+      caption-side: top;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-tertiary);
+      padding-bottom: 4px;
+    }
+    .ref-table th {
+      text-align: left;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 7px 14px;
+      border-bottom: 2px solid var(--color-border);
+      border-right: 1px solid var(--color-border-light);
+      background: var(--color-background-tertiary);
+      color: var(--color-text-secondary);
+    }
+    .ref-table th:last-child { border-right: none; }
+    .ref-table td {
+      padding: 7px 14px;
+      border-bottom: 1px solid var(--color-border-light);
+      border-right: 1px solid var(--color-border-light);
+      vertical-align: top;
+    }
+    .ref-table td:last-child { border-right: none; }
+    .ref-table tr:last-child td { border-bottom: none; }
+    .ref-table td:first-child {
+      font-family: var(--font-family-mono);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    .ref-table .tbl-cat td {
+      font-family: var(--font-family-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-secondary);
+      background: var(--color-background-tertiary);
+      padding: 5px 14px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    /* ─── Footer ──────────────────────────────────────────────── */
+    .doc-footer {
+      border-top: 2px solid var(--color-border);
+      padding: 0.625rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-family: var(--font-family-mono);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-tertiary);
+      background: var(--color-background-secondary);
+    }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .layout {
+        flex-direction: column;
+        height: auto;
+        padding-top: 120px;
+      }
+
+      .doc-masthead {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+        padding: 1rem 1rem 0.75rem;
+      }
+      .masthead-org,
+      .masthead-center,
+      .masthead-meta {
+        flex: none;
+        text-align: center;
+      }
+      .doc-infobar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+      }
+      .infobar-cell {
+        flex: 1 1 50%;
+        min-width: 0;
+      }
+
+      nav {
+        position: relative;
+        height: auto;
+        width: 100%;
+        min-width: 0;
+        top: auto;
+        border-right: none;
+        border-bottom: 2px solid var(--color-border);
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 4px 0;
+        overflow-x: auto;
+      }
+      .nav-header { display: none; }
+      nav a.section-head { display: none; }
+      nav a:not(.section-head) { white-space: nowrap; padding: 4px 10px; }
+
+      main {
+        margin-left: 0;
+        height: auto;
+      }
+
+      .content { padding: 1.75rem 1.25rem 3.75rem; }
+      .doc-footer { padding: 0.625rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Blue Header Banner -->
+<header class="main-header">
+  <div class="doc-masthead">
+    <div class="masthead-org">Personal Systems / Mac Management</div>
+    <div class="masthead-center">PERSONAL GUIDE / <strong>sevmac — Mac Setup &amp; Management</strong></div>
+    <div class="masthead-meta">SMAC-1 / PAGES: N/A</div>
+  </div>
+  <div class="doc-infobar">
+    <div class="infobar-cell">
+      <span class="lbl">SYSTEM:</span>
+      <span class="val">macOS 15</span>
+    </div>
+    <div class="infobar-cell">
+      <span class="lbl">TOOLS:</span>
+      <span class="val">mrk · Barkeep · Magic Backup Machine</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+<nav>
+  <div class="nav-header">
+    <span class="nav-to-num">SMAC-1</span>
+    <span class="nav-title">sevmac<br>Mac Setup Guide</span>
+  </div>
+  <a class="section-head">Sect. 1 — Overview</a>
+  <a href="#overview">1. Overview</a>
+  <a class="section-head">Sect. 2 — mrk</a>
+  <a href="#mrk-overview">2.1 What mrk Does</a>
+  <a href="#mrk-new-machine">2.2 New Machine Setup</a>
+  <a href="#mrk-brewfile">2.3 Brewfile Management</a>
+  <a href="#mrk-prefs">2.4 App Preferences</a>
+  <a href="#mrk-login-items">2.5 Login Items</a>
+  <a href="#mrk-migration">2.6 Migration Checklist</a>
+  <a href="#mrk-commands">2.7 Command Reference</a>
+  <a href="#mrk-status">2.8 Status &amp; Diagnostics</a>
+  <a href="#mrk-troubleshooting">2.9 Troubleshooting</a>
+  <a class="section-head">Sect. 3 — Barkeep</a>
+  <a href="#barkeep-overview">3.1 Overview</a>
+  <a href="#barkeep-install">3.2 Installation</a>
+  <a href="#barkeep-usage">3.3 Interface &amp; Usage</a>
+  <a class="section-head">Sect. 4 — Magic Backup Machine</a>
+  <a href="#mbm-overview">4.1 Overview</a>
+  <a href="#mbm-install">4.2 Installation</a>
+  <a href="#mbm-first-launch">4.3 First Launch</a>
+  <a href="#mbm-backup">4.4 Backup Mode</a>
+  <a href="#mbm-restore">4.5 Restore Mode</a>
+  <a href="#mbm-sources">4.6 Default Sources</a>
+  <a href="#mbm-settings">4.7 Settings</a>
+</nav>
+
+<main>
+
+  <div class="content">
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="overview">
+      <div class="section-heading">
+        <span class="section-num">1.</span>
+        <h2>Overview</h2>
+      </div>
+      <p>This guide covers the three tools used to set up, maintain, and protect a personal Mac.</p>
+
+      <table class="ref-table">
+        <caption>Table 1-1. Tools at a Glance</caption>
+        <thead><tr><th>Tool</th><th>What It Does</th><th>Repo</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>mrk</td>
+            <td>Bootstrap system — shell environment, dotfiles, macOS defaults, Homebrew packages, app configuration, login items, and personal preference management</td>
+            <td><a href="https://github.com/sevmorris/mrk">sevmorris/mrk</a></td>
+          </tr>
+          <tr>
+            <td>Barkeep</td>
+            <td>Native macOS GUI for browsing and managing the Brewfile, viewing package details, and running Homebrew operations</td>
+            <td><a href="https://github.com/sevmorris/Barkeep">sevmorris/Barkeep</a></td>
+          </tr>
+          <tr>
+            <td>Magic Backup Machine</td>
+            <td>Native macOS GUI for backing up and restoring app settings, presets, and configuration files using rsync</td>
+            <td>sevmorris/magic-backup-machine (private)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>How they fit together:</strong> mrk bootstraps a new machine from scratch — packages, dotfiles, shell, app configs — and keeps things current day-to-day. Barkeep is the GUI companion to mrk's Brewfile management. Magic Backup Machine protects app settings and presets that aren't covered by mrk's preference system — Logic Pro projects, Audio Unit presets, browser profiles, and more.</p>
+
+      <table class="ref-table" style="margin-top: 1rem;">
+        <caption>Table 1-2. Key Repositories</caption>
+        <thead><tr><th>Repo</th><th>Local Path</th><th>Visibility</th></tr></thead>
+        <tbody>
+          <tr><td>sevmorris/mrk</td><td><code>~/mrk</code></td><td>Public</td></tr>
+          <tr><td>sevmorris/mrk-prefs</td><td><code>~/.mrk/preferences/</code></td><td>Private</td></tr>
+          <tr><td>sevmorris/Barkeep</td><td><code>~/Projects/Barkeep/</code></td><td>Public</td></tr>
+          <tr><td>sevmorris/magic-backup-machine</td><td><code>~/Projects/Magic Backup Machine/</code></td><td>Private</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-overview">
+      <div class="section-heading">
+        <span class="section-num">2.1</span>
+        <h2>mrk — What It Does</h2>
+        <span class="section-sub">three-phase bootstrap</span>
+      </div>
+
+      <p><strong>mrk</strong> is a personal macOS bootstrap system that automates everything from a clean install: shell environment, dotfiles, system preferences, Homebrew packages, app settings, login items, and personal app preferences. It runs in three independent phases, each of which is safe to re-run.</p>
+
+      <table class="ref-table">
+        <caption>Table 2.1-1. The Three Phases</caption>
+        <thead><tr><th>Phase</th><th>Command</th><th>What It Covers</th></tr></thead>
+        <tbody>
+          <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell</td></tr>
+          <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs</td></tr>
+          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser policies, Barkeep install, preference plist imports, login items</td></tr>
+        </tbody>
+      </table>
+
+      <p>Run all three phases at once:</p>
+      <pre><code>make all && exec zsh</code></pre>
+
+      <div class="callout">
+        <span class="callout-label">Two-Repo Design</span>
+        <div class="callout-body">mrk splits into two repos: <strong>sevmorris/mrk</strong> (public — scripts, Brewfile, dotfiles) and <strong>sevmorris/mrk-prefs</strong> (private — app plists, App Support files). This keeps personal preference data out of the public repo while keeping everything portable. As long as both repos are current, the full setup can be restored from scratch on any machine.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-new-machine">
+      <div class="section-heading">
+        <span class="section-num">2.2</span>
+        <h2>New Machine Setup</h2>
+        <span class="section-sub">full install walkthrough</span>
+      </div>
+
+      <div class="proc" id="mrk-step1">
+        <div class="proc-header">
+          <span class="proc-num">Step 1</span>
+          <h3>Clone mrk</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">If SSH is already configured, clone with SSH. On a fresh machine, clone over HTTPS first.</p>
+          <p>With SSH (preferred):</p>
+          <pre><code>git clone git@github.com:sevmorris/mrk.git ~/mrk</code></pre>
+          <p>On a fresh machine without SSH:</p>
+          <pre><code>git clone https://github.com/sevmorris/mrk.git ~/mrk</code></pre>
+        </div>
+      </div>
+
+      <div class="proc" id="mrk-step2">
+        <div class="proc-header">
+          <span class="proc-num">Step 2</span>
+          <h3>Phase 1 — Shell &amp; Dotfiles</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Sets up the shell environment, links dotfiles and scripts, applies macOS defaults.</p>
+          <pre><code>cd ~/mrk
+make setup
+exec zsh        # Reload shell to pick up dotfiles and ~/bin</code></pre>
+          <p><strong>What gets linked:</strong></p>
+          <table class="ref-table" style="margin-top: 8px;">
+            <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>.aliases</td><td>Shell aliases</td></tr>
+              <tr><td>.gitconfig</td><td>Git configuration</td></tr>
+              <tr><td>.hushlogin</td><td>Suppresses "Last login" terminal message</td></tr>
+              <tr><td>.zprofile</td><td>Zsh login shell profile</td></tr>
+              <tr><td>.zshenv</td><td>Zsh environment variables</td></tr>
+              <tr><td>.zshrc</td><td>Zsh interactive shell config</td></tr>
+              <tr><td>Makefile</td><td>mrk commands available from <code>~/</code></td></tr>
+            </tbody>
+          </table>
+          <p>Backups of any replaced files go to <code>~/.mrk/backups/</code>. A rollback script for macOS defaults is generated at <code>~/.mrk/defaults-rollback.sh</code>.</p>
+        </div>
+      </div>
+
+      <div class="proc" id="mrk-step3">
+        <div class="proc-header">
+          <span class="proc-num">Step 3</span>
+          <h3>Add SSH Key to GitHub (if needed)</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Required before Phase 3 if you cloned over HTTPS. The new machine needs SSH auth to auto-pull mrk-prefs.</p>
+          <pre><code>ssh-keygen -t ed25519 -C "your-email@example.com"
+cat ~/.ssh/id_ed25519.pub | pbcopy
+# Add to: github.com → Settings → SSH and GPG keys → New SSH key
+ssh -T git@github.com
+# Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
+        </div>
+      </div>
+
+      <div class="proc" id="mrk-step4">
+        <div class="proc-header">
+          <span class="proc-num">Step 4</span>
+          <h3>Phase 2 — Homebrew</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Installs Homebrew (if needed) and all packages from the Brewfile.</p>
+          <pre><code>make brew</code></pre>
+          <p>For packages not previously installed, an interactive selection prompt appears — formulae are shown with inline descriptions. Uses the mrk-picker TUI if available, falls back to <code>gum choose</code>.</p>
+          <div class="callout">
+            <span class="callout-label">Note — MAS Entries</span>
+            <div class="callout-body">Mac App Store (<code>mas</code>) entries in the Brewfile are silently skipped. App Store apps must be reinstalled manually from Purchases.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proc" id="mrk-step5">
+        <div class="proc-header">
+          <span class="proc-num">Step 5</span>
+          <h3>Phase 3 — App Configuration</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Configures installed apps, imports personal preferences, and sets up login items. Must be run after Phase 2.</p>
+          <pre><code>make post-install</code></pre>
+          <p><strong>What it does:</strong></p>
+          <ul>
+            <li><strong>Topgrade:</strong> Links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code></li>
+            <li><strong>Browsers:</strong> Applies Safari defaults, Chrome/Brave managed policies, Helium defaults; opens browser extension install URLs</li>
+            <li><strong>App defaults:</strong> Applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba apps</li>
+            <li><strong>Barkeep:</strong> Downloads and installs Barkeep from the latest GitHub release</li>
+            <li><strong>Preferences auto-pull:</strong> Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated</li>
+            <li><strong>Plist imports:</strong> Imports preferences for 15 apps (non-destructive — skips any app with existing prefs)</li>
+            <li><strong>App Support restore:</strong> Restores Loopback and SoundSource config files (non-destructive)</li>
+            <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Bitwarden, Chrono Plus, Dropbox, Hammerspoon, Ice, NordPass, Raycast, SoundSource, Stats</li>
+          </ul>
+          <p>If preferences weren't auto-pulled:</p>
+          <pre><code>pull-prefs
+make post-install   # Re-run to import plists</code></pre>
+          <div class="callout">
+            <span class="callout-label">Note — Preferences Not Restored</span>
+            <div class="callout-body">After <code>make all</code>, if <code>~/.mrk/preferences/</code> is absent, you'll be reminded to add your SSH key to GitHub and run <code>make pull-prefs</code>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proc" id="mrk-step6">
+        <div class="proc-header">
+          <span class="proc-num">Step 6</span>
+          <h3>Verify the Installation</h3>
+        </div>
+        <div class="proc-body">
+          <pre><code>make status     # Open the mrk-status TUI health dashboard
+make doctor     # Check ~/bin is on PATH; --fix adds it to .zshrc</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-brewfile">
+      <div class="section-heading">
+        <span class="section-num">2.3</span>
+        <h2>Brewfile Management</h2>
+        <span class="section-sub">keeping packages current</span>
+      </div>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">2.3.1</span>
+          <h3>bf — Brewfile Manager TUI</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Interactive TUI for browsing, adding, deleting, moving, and pruning Brewfile entries.</p>
+          <pre><code>bf                    # Open the Brewfile manager TUI
+bf --help             # Show keys and options</code></pre>
+          <p><strong>Key operations:</strong> <code>a</code> add · <code>d</code> delete · <code>m</code> move · <code>g</code> toggle greedy · <code>p</code> prune uninstalled · <code>/</code> search · <code>w</code> write · <code>c</code> commit</p>
+          <p><strong>Prune mode</strong> (<code>p</code>) — fetches <code>brew list</code>, shows all Brewfile entries not currently installed. Space to mark, <code>a</code> to toggle all, Enter to delete marked entries.</p>
+        </div>
+      </div>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">2.3.2</span>
+          <h3>sync — Scan and Update</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Scans installed packages, diffs against the Brewfile, and adds anything missing.</p>
+          <pre><code>sync                  # Interactive — opens mrk-picker TUI to select packages
+sync -n               # Dry run — show what would be added, make no changes
+sync -c               # Auto-commit the Brewfile after updating
+sync -p               # Prune — remove Brewfile entries for packages no longer installed</code></pre>
+          <p><strong>How sync works:</strong></p>
+          <ol>
+            <li>Reads the Brewfile to build a list of already-tracked packages</li>
+            <li>Runs <code>brew leaves</code> (top-level formulae) and <code>brew list --cask</code> to see what's installed</li>
+            <li>Computes the diff — packages installed but not yet in the Brewfile</li>
+            <li>Opens <strong>mrk-picker</strong> TUI: Space to select, Enter to confirm, q to quit</li>
+            <li>Prompts via <code>gum</code> to choose which Brewfile section each formula goes into</li>
+            <li>Casks are auto-assigned to the existing cask section</li>
+            <li>Inserts each entry alphabetically within its section</li>
+          </ol>
+          <div class="callout">
+            <span class="callout-label">Note — mrk-picker Binary</span>
+            <div class="callout-body">The mrk-picker binary lives at <code>bin/mrk-picker</code> (gitignored, platform-specific). If it's missing, rebuild with <code>make picker</code>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-prefs">
+      <div class="section-heading">
+        <span class="section-num">2.4</span>
+        <h2>App Preferences</h2>
+        <span class="section-sub">snapshot-prefs / pull-prefs</span>
+      </div>
+
+      <p>App preferences are stored in the private <code>sevmorris/mrk-prefs</code> repo and cloned to <code>~/.mrk/preferences/</code>. After configuring an app, capture and push the changes.</p>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">2.4.1</span>
+          <h3>snapshot-prefs — Capture and Push</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Export all managed app preferences and push to the private repo.</p>
+          <pre><code>snapshot-prefs</code></pre>
+          <p><strong>How it works:</strong></p>
+          <ol>
+            <li>Exports the preference plist for each managed app using <code>defaults export</code></li>
+            <li>Commits all changes to <code>~/.mrk/preferences/</code> with a timestamped message</li>
+            <li>Pushes to <code>sevmorris/mrk-prefs</code> on GitHub</li>
+          </ol>
+          <p>Idempotent — reports "No changes to push" if nothing changed.</p>
+        </div>
+      </div>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">2.4.2</span>
+          <h3>pull-prefs — Clone or Update</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Clone or update preferences from the private repo.</p>
+          <pre><code>pull-prefs</code></pre>
+          <p>Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if it doesn't exist, or fast-forward pulls if it does. <code>make post-install</code> calls this automatically when SSH is authenticated.</p>
+        </div>
+      </div>
+
+      <table class="ref-table">
+        <caption>Table 2.4-1. Managed App Preferences</caption>
+        <thead><tr><th>App</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>BetterSnapTool</td><td>Plist imported</td></tr>
+          <tr><td>Ice</td><td>Plist imported</td></tr>
+          <tr><td>iTerm2</td><td>Plist imported</td></tr>
+          <tr><td>Raycast</td><td>Plist imported</td></tr>
+          <tr><td>Stats</td><td>Plist imported</td></tr>
+          <tr><td>Loopback</td><td>Plist + App Support files</td></tr>
+          <tr><td>SoundSource</td><td>Plist + App Support files</td></tr>
+          <tr><td>Audio Hijack</td><td>Plist imported</td></tr>
+          <tr><td>Farrago</td><td>Plist imported</td></tr>
+          <tr><td>Piezo</td><td>Plist imported</td></tr>
+          <tr><td>Typora</td><td>Plist imported</td></tr>
+          <tr><td>Hot</td><td>Plist imported</td></tr>
+          <tr><td>Keka</td><td>Plist imported</td></tr>
+          <tr><td>TimeMachineEditor</td><td>Plist imported</td></tr>
+          <tr><td>MacWhisper</td><td>Plist imported</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-login-items">
+      <div class="section-heading">
+        <span class="section-num">2.5</span>
+        <h2>Login Items</h2>
+        <span class="section-sub">sync-login-items</span>
+      </div>
+
+      <p><code>sync-login-items</code> diffs the system's current login items against the list tracked in <code>scripts/post-install</code> and syncs them.</p>
+
+      <pre><code>sync-login-items          # Interactive — select items to add or remove
+sync-login-items -n       # Dry run — show what would change, make no changes
+sync-login-items -c       # Auto-commit changes after updating</code></pre>
+
+      <p><strong>How it works:</strong></p>
+      <ol>
+        <li>Reads the system's current login items via AppleScript</li>
+        <li>Parses tracked <code>add_login_item</code> calls from <code>scripts/post-install</code></li>
+        <li>Computes the diff: items on the system but not tracked, and tracked items no longer on the system</li>
+        <li>Opens an interactive selector (<code>gum</code>) to choose which items to add or remove</li>
+        <li>Updates <code>scripts/post-install</code> to reflect the new set</li>
+        <li>Also updates <code>docs/manual.md</code> and <code>docs/index.html</code> with the new login items list</li>
+      </ol>
+
+      <table class="ref-table">
+        <caption>Table 2.5-1. Registered Login Items</caption>
+        <thead><tr><th>App</th></tr></thead>
+        <tbody>
+          <tr><td>AlDente</td></tr>
+          <tr><td>BetterSnapTool</td></tr>
+          <tr><td>Bitwarden</td></tr>
+          <tr><td>Chrono Plus</td></tr>
+          <tr><td>Dropbox</td></tr>
+          <tr><td>Hammerspoon</td></tr>
+          <tr><td>Ice</td></tr>
+          <tr><td>NordPass</td></tr>
+          <tr><td>Raycast</td></tr>
+          <tr><td>SoundSource</td></tr>
+          <tr><td>Stats</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-migration">
+      <div class="section-heading">
+        <span class="section-num">2.6</span>
+        <h2>Migration Checklist</h2>
+        <span class="section-sub">before moving to a new machine</span>
+      </div>
+
+      <p>Run these steps on the <strong>old machine</strong> before transferring.</p>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">Pre-Migration</span>
+          <h3>Checklist — Old Machine</h3>
+        </div>
+        <div class="proc-body">
+          <p><strong>1. Sync the Brewfile</strong></p>
+          <pre><code>sync -c</code></pre>
+          <p>Captures any packages installed since the last sync and commits the updated Brewfile.</p>
+
+          <p><strong>2. Snapshot app preferences</strong></p>
+          <pre><code>snapshot-prefs</code></pre>
+          <p>Exports and pushes all app preference plists and Application Support files. Verify "Pushed to git@github.com:sevmorris/mrk-prefs.git" appears in the output.</p>
+
+          <p><strong>3. Push any pending mrk changes</strong></p>
+          <pre><code>cd ~/mrk
+git status
+git push</code></pre>
+
+          <p><strong>4. Run a Magic Backup Machine backup</strong></p>
+          <p>Open Magic Backup Machine and run a full backup to both local and external destinations. This captures Logic Pro projects, audio presets, browser profiles, and other data not covered by mrk.</p>
+
+          <p><strong>5. Verify SSH authentication</strong></p>
+          <pre><code>ssh -T git@github.com
+# Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
+
+          <p><strong>6. Note anything not covered</strong></p>
+          <ul>
+            <li>App Store apps — reinstall manually from Purchases</li>
+            <li>Software licenses — export from your license manager</li>
+            <li>VPN configurations, certificates, system settings not captured by <code>defaults write</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">On the New Machine</span>
+        <div class="callout-body">
+          Follow the full <a href="#mrk-new-machine">New Machine Setup</a> walkthrough (Section 2.2), then restore from Magic Backup Machine after apps are reinstalled.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-commands">
+      <div class="section-heading">
+        <span class="section-num">2.7</span>
+        <h2>Command Reference</h2>
+        <span class="section-sub">all make targets</span>
+      </div>
+
+      <p><code>~/Makefile</code> is deployed automatically by <code>make setup</code>. Run <code>make help</code> from <code>~/</code> to see all commands.</p>
+
+      <table class="ref-table">
+        <caption>Table 2.7-1. Commands from ~/</caption>
+        <thead><tr><th>Command</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr class="tbl-cat"><td colspan="2">Brewfile</td></tr>
+          <tr><td>make sync</td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
+          <tr><td>make sync-login-items</td><td>Diff and sync system login items against post-install</td></tr>
+          <tr class="tbl-cat"><td colspan="2">Preferences</td></tr>
+          <tr><td>make snapshot-prefs</td><td>Export app preferences and push to mrk-prefs</td></tr>
+          <tr><td>make pull-prefs</td><td>Clone or pull app preferences from mrk-prefs</td></tr>
+          <tr class="tbl-cat"><td colspan="2">Build Tools</td></tr>
+          <tr><td>make picker</td><td>Build the mrk-picker TUI binary</td></tr>
+          <tr><td>make bf</td><td>Build the bf Brewfile manager TUI binary</td></tr>
+          <tr><td>make mrk-status</td><td>Build the mrk-status TUI health dashboard binary</td></tr>
+          <tr><td>make build-tools</td><td>Build all Go TUI binaries (picker + bf + mrk-status)</td></tr>
+          <tr class="tbl-cat"><td colspan="2">General</td></tr>
+          <tr><td>make help</td><td>Show all available commands</td></tr>
+        </tbody>
+      </table>
+
+      <table class="ref-table">
+        <caption>Table 2.7-2. Commands from ~/mrk/</caption>
+        <thead><tr><th>Command</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr class="tbl-cat"><td colspan="2">Bootstrap</td></tr>
+          <tr><td>make all</td><td>Full install: setup + brew + post-install + TUI binaries</td></tr>
+          <tr><td>make setup / make install</td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
+          <tr><td>make brew</td><td>Phase 2: Homebrew packages and casks</td></tr>
+          <tr><td>make post-install</td><td>Phase 3: app configs and login items</td></tr>
+          <tr class="tbl-cat"><td colspan="2">Partial Phases</td></tr>
+          <tr><td>make dotfiles</td><td>Link dotfiles only</td></tr>
+          <tr><td>make tools</td><td>Link scripts and bin into ~/bin only</td></tr>
+          <tr><td>make defaults</td><td>Apply macOS defaults only</td></tr>
+          <tr><td>make trackpad</td><td>Apply macOS defaults including trackpad settings</td></tr>
+          <tr><td>make harden</td><td>Apply macOS security hardening</td></tr>
+          <tr class="tbl-cat"><td colspan="2">Maintenance</td></tr>
+          <tr><td>make update</td><td>Upgrade all packages (topgrade or brew upgrade)</td></tr>
+          <tr><td>make updates</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
+          <tr><td>make uninstall</td><td>Remove symlinks and undo setup</td></tr>
+          <tr class="tbl-cat"><td colspan="2">Diagnostics</td></tr>
+          <tr><td>make status</td><td>Open the mrk-status TUI health dashboard</td></tr>
+          <tr><td>make doctor</td><td>Check ~/bin is on PATH; --fix adds it to .zshrc</td></tr>
+          <tr><td>make fix-exec</td><td>Make all scripts and bin files executable</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-status">
+      <div class="section-heading">
+        <span class="section-num">2.8</span>
+        <h2>Status &amp; Diagnostics</h2>
+        <span class="section-sub">mrk-status / state files</span>
+      </div>
+
+      <p>Running <code>make status</code> opens the interactive TUI health dashboard. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to run the suggested fix for any failing check, <strong>r</strong> to refresh.</p>
+
+      <ul>
+        <li><strong>Dotfiles</strong> — Which files are symlinked into <code>~/</code> and which are missing</li>
+        <li><strong>Tools</strong> — Which scripts/bin symlinks are live in <code>~/bin</code> and which are broken</li>
+        <li><strong>macOS Defaults</strong> — Whether defaults have been applied (rollback script present)</li>
+        <li><strong>Security Hardening</strong> — Whether hardening has been applied</li>
+        <li><strong>Backups</strong> — Number of dotfile backups in <code>~/.mrk/backups/</code></li>
+        <li><strong>Shell</strong> — Current login shell (should be Zsh)</li>
+        <li><strong>PATH</strong> — Whether <code>~/bin</code> is on the PATH</li>
+        <li><strong>Homebrew</strong> — Version installed</li>
+        <li><strong>Brewfile packages</strong> — Each formula and cask: ✓ installed or ✗ missing</li>
+      </ul>
+
+      <table class="ref-table" style="margin-top: 1.25rem;">
+        <caption>Table 2.8-1. State Files (~/.mrk/ — gitignored)</caption>
+        <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>~/.mrk/preferences/</td><td>Cloned from <code>sevmorris/mrk-prefs</code>; app plists + App Support files</td></tr>
+          <tr><td>~/.mrk/backups/</td><td>Timestamped backups of dotfiles replaced during setup</td></tr>
+          <tr><td>~/.mrk/defaults-rollback.sh</td><td>Shell script to undo all <code>defaults write</code> changes</td></tr>
+          <tr><td>~/.mrk/hardening-rollback.sh</td><td>Shell script to undo security hardening</td></tr>
+        </tbody>
+      </table>
+
+      <p>To undo macOS defaults applied by mrk:</p>
+      <pre><code>bash ~/.mrk/defaults-rollback.sh</code></pre>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mrk-troubleshooting">
+      <div class="section-heading">
+        <span class="section-num">2.9</span>
+        <h2>mrk Troubleshooting</h2>
+        <span class="section-sub">common problems</span>
+      </div>
+
+      <table class="ref-table">
+        <caption>Table 2.9-1. mrk Troubleshooting Reference</caption>
+        <thead><tr><th>Problem</th><th>Solution</th></tr></thead>
+        <tbody>
+          <tr><td>make setup fails at Xcode CLT</td><td>Run <code>xcode-select --install</code>, wait for the GUI dialog to complete, then re-run</td></tr>
+          <tr><td>Dotfile conflict ("file exists")</td><td>Backup auto-created in <code>~/.mrk/backups/</code>; resolve manually then re-run</td></tr>
+          <tr><td>post-install skips plist imports</td><td>SSH key not authenticated; run <code>pull-prefs</code> after adding key to GitHub</td></tr>
+          <tr><td>mrk-picker not rendering</td><td>Rebuild the binary: <code>make picker</code></td></tr>
+          <tr><td>~/bin not on PATH</td><td>Run <code>make doctor --fix</code></td></tr>
+          <tr><td>Brewfile entry shows ✗ (missing)</td><td>Package name may differ from formula name; check with <code>brew info &lt;pkg&gt;</code></td></tr>
+          <tr><td>sync exits with "nothing to add"</td><td>All installed packages are already in the Brewfile</td></tr>
+          <tr><td>snapshot-prefs fails for an app</td><td>App is not installed or <code>defaults export</code> failed; check the app is running</td></tr>
+          <tr><td>post-install login item already exists</td><td>Safe to ignore — <code>add_login_item</code> checks before adding</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="barkeep-overview">
+      <div class="section-heading">
+        <span class="section-num">3.1</span>
+        <h2>Barkeep — Overview</h2>
+        <span class="section-sub">homebrew manager</span>
+      </div>
+
+      <p><strong>Barkeep</strong> is a native macOS app (SwiftUI, macOS 14+) for visually managing your Homebrew Brewfile. It's a companion to mrk, defaulting to <code>~/mrk/Brewfile</code>, but works with any Brewfile.</p>
+
+      <p>Three-pane interface for browsing entries, viewing package details (man pages, tldr examples, reverse dependencies), and running Homebrew operations — all without touching the terminal.</p>
+
+      <table class="ref-table">
+        <caption>Table 3.1-1. Barkeep Feature Overview</caption>
+        <thead><tr><th>Feature</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Brewfile view</td><td>Packages grouped by section with inline search; select any entry to see description, version, dependencies, examples, man page, and more</td></tr>
+          <tr><td>Console</td><td>Streaming brew command output with full history</td></tr>
+          <tr><td>Actions</td><td>Install, uninstall, upgrade, or remove from Brewfile for any selected package</td></tr>
+          <tr><td>Brewfile picker</td><td>Defaults to <code>~/mrk/Brewfile</code>; any path can be selected in Settings</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="barkeep-install">
+      <div class="section-heading">
+        <span class="section-num">3.2</span>
+        <h2>Barkeep — Installation</h2>
+        <span class="section-sub">download and first launch</span>
+      </div>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">3.2.1</span>
+          <h3>Automatic Install (via mrk)</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc"><code>make post-install</code> downloads and installs Barkeep from the latest GitHub release automatically. Skipped if <code>/Applications/Barkeep.app</code> already exists.</p>
+          <p>To force a reinstall, remove the app first:</p>
+          <pre><code>rm -rf /Applications/Barkeep.app
+make post-install</code></pre>
+        </div>
+      </div>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">3.2.2</span>
+          <h3>Manual Install</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Download the DMG from the GitHub releases page, drag to Applications.</p>
+          <p>Download: <a href="https://github.com/sevmorris/Barkeep/releases/latest">github.com/sevmorris/Barkeep/releases/latest</a></p>
+          <div class="callout callout-caution">
+            <span class="callout-label">Caution — First Launch</span>
+            <div class="callout-body">macOS will block the app because it is not notarized with Apple. After dragging Barkeep to Applications, run this in Terminal:
+              <pre style="margin-top: 8px; margin-bottom: 0;">xattr -cr /Applications/Barkeep.app</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="barkeep-usage">
+      <div class="section-heading">
+        <span class="section-num">3.3</span>
+        <h2>Barkeep — Interface &amp; Usage</h2>
+        <span class="section-sub">three-pane layout</span>
+      </div>
+
+      <p>The interface is a three-column layout. The left column lists Brewfile entries grouped by section. Selecting an entry loads its detail in the center column. The right column is the console — streaming output from any brew commands you run.</p>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">3.3.1</span>
+          <h3>Package Actions</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Select any package in the left column to see its full detail and available actions.</p>
+          <ul>
+            <li><strong>Install</strong> — runs <code>brew install &lt;package&gt;</code></li>
+            <li><strong>Uninstall</strong> — runs <code>brew uninstall &lt;package&gt;</code></li>
+            <li><strong>Upgrade</strong> — runs <code>brew upgrade &lt;package&gt;</code></li>
+            <li><strong>Remove from Brewfile</strong> — removes the entry from the Brewfile (does not uninstall)</li>
+          </ul>
+          <p>Console output streams in real time in the right column.</p>
+        </div>
+      </div>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">3.3.2</span>
+          <h3>Settings</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Open Settings (⌘,) to configure the Brewfile path and other preferences.</p>
+          <ul>
+            <li><strong>Brewfile path</strong> — defaults to <code>~/mrk/Brewfile</code>; use the picker to select any other location</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mbm-overview">
+      <div class="section-heading">
+        <span class="section-num">4.1</span>
+        <h2>Magic Backup Machine — Overview</h2>
+        <span class="section-sub">rsync-based backup &amp; restore</span>
+      </div>
+
+      <p><strong>Magic Backup Machine</strong> is a native macOS app (SwiftUI, macOS 15+) for backing up and restoring application settings, presets, and configuration files. It uses <code>rsync</code> to mirror source directories to one or two destinations: a local backup folder (<code>~/.backups</code> by default) and an optional external drive.</p>
+
+      <p>MBM covers what mrk doesn't — things like Logic Pro projects and presets, Audio Unit presets, iZotope RX presets, Audio Hijack sessions, browser profiles, and targeted app plists.</p>
+
+      <table class="ref-table">
+        <caption>Table 4.1-1. MBM vs mrk — What Each Covers</caption>
+        <thead><tr><th>What</th><th>Covered By</th></tr></thead>
+        <tbody>
+          <tr><td>Shell, dotfiles, macOS defaults</td><td>mrk</td></tr>
+          <tr><td>Homebrew packages</td><td>mrk (Brewfile)</td></tr>
+          <tr><td>App plists (BetterSnapTool, Raycast, Rogue Amoeba, etc.)</td><td>mrk (mrk-prefs) <em>and</em> MBM</td></tr>
+          <tr><td>Logic Pro templates, presets, channel strips, key commands</td><td>MBM</td></tr>
+          <tr><td>Audio Unit presets (Apple, accentize, Waves, etc.)</td><td>MBM</td></tr>
+          <tr><td>iZotope RX user presets</td><td>MBM</td></tr>
+          <tr><td>Audio Hijack sessions &amp; presets</td><td>MBM</td></tr>
+          <tr><td>Loopback / SoundSource app config</td><td>mrk (App Support restore) <em>and</em> MBM</td></tr>
+          <tr><td>Browser profiles (Chrome, Brave, Safari)</td><td>MBM</td></tr>
+          <tr><td>Farrago sound sets &amp; metadata</td><td>MBM</td></tr>
+          <tr><td>MusicBrainz Picard config &amp; plugins</td><td>MBM</td></tr>
+          <tr><td>Chrono Plus timekeeping data</td><td>MBM</td></tr>
+          <tr><td>Login items</td><td>mrk</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mbm-install">
+      <div class="section-heading">
+        <span class="section-num">4.2</span>
+        <h2>Magic Backup Machine — Installation</h2>
+        <span class="section-sub">download and first launch</span>
+      </div>
+
+      <div class="proc">
+        <div class="proc-header">
+          <span class="proc-num">4.2.1</span>
+          <h3>Download and Install</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Download the DMG from the latest release, drag to Applications, then clear the quarantine flag.</p>
+          <p>Download from: <strong>sevmorris/magic-backup-machine</strong> (private repo) → Releases</p>
+          <div class="callout callout-caution">
+            <span class="callout-label">Caution — Required Before First Launch</span>
+            <div class="callout-body">macOS will block the app because it is not notarized with Apple. After dragging Magic Backup Machine to Applications, run this in Terminal:
+              <pre style="margin-top: 8px; margin-bottom: 0;">xattr -cr "/Applications/Magic Backup Machine.app"</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mbm-first-launch">
+      <div class="section-heading">
+        <span class="section-num">4.3</span>
+        <h2>First Launch</h2>
+        <span class="section-sub">full disk access</span>
+      </div>
+
+      <p>On first launch, MBM checks whether it has Full Disk Access. If it doesn't, a yellow warning banner appears at the top with two buttons:</p>
+
+      <ul>
+        <li><strong>Open System Settings</strong> — opens Privacy &amp; Security → Full Disk Access directly</li>
+        <li><strong>Quit &amp; Relaunch</strong> — restarts the app so macOS picks up the new permission</li>
+      </ul>
+
+      <div class="callout callout-warn">
+        <span class="callout-label">Warning — Full Disk Access Required</span>
+        <div class="callout-body">Without Full Disk Access, <code>rsync</code> will fail on protected directories under <code>~/Library</code>. Add the app in System Settings → Privacy &amp; Security → Full Disk Access before running a backup.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mbm-backup">
+      <div class="section-heading">
+        <span class="section-num">4.4</span>
+        <h2>Backup Mode</h2>
+        <span class="section-sub">mirror source → destination</span>
+      </div>
+
+      <p>Backup mirrors each source directory to every available destination using:</p>
+      <pre><code>rsync -a --delete --ignore-errors --stats &lt;source&gt;/ &lt;destination&gt;/&lt;source_name&gt;/</code></pre>
+
+      <ul>
+        <li><code>--delete</code> — ensures the backup is an exact mirror; files deleted from the source are removed from the backup</li>
+        <li><code>--ignore-errors</code> — continues past individual file errors</li>
+        <li><code>--stats</code> — prints a transfer summary at the end (no per-file listing)</li>
+        <li>Source directories that don't exist on disk are skipped (marked "skipped" in orange)</li>
+        <li>On success, a <code>last_backup.log</code> file is written to each destination recording the timestamp</li>
+      </ul>
+
+      <p><strong>Destinations:</strong> Backup always writes to the local destination. If the external destination volume is mounted, it writes there as well. Both are created automatically if they don't exist.</p>
+
+      <p>Each source directory is stored as a named subdirectory within the destination. For example, <code>~/Library/Audio/Presets</code> backs up to <code>~/.backups/Presets/</code>.</p>
+
+      <p><strong>Progress:</strong> The left panel shows each item's status during a run — pending (empty circle), in progress (spinner), success (green checkmark), failed (red ✗), or skipped (orange dash). rsync output streams in real time in the right panel.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mbm-restore">
+      <div class="section-heading">
+        <span class="section-num">4.5</span>
+        <h2>Restore Mode</h2>
+        <span class="section-sub">copy backup → source</span>
+      </div>
+
+      <p>Restore copies files from the backup back to their original source locations using:</p>
+      <pre><code>rsync -au --stats &lt;destination&gt;/&lt;source_name&gt;/ &lt;source_parent&gt;/</code></pre>
+
+      <ul>
+        <li><code>-u</code> (update) — only files newer in the backup than on disk are copied</li>
+        <li>No <code>--delete</code> flag — restore will never remove files from the source that aren't in the backup</li>
+        <li>Items not found in the backup are skipped</li>
+      </ul>
+
+      <p>Restore reads from whichever destinations are available (local, external, or both).</p>
+
+      <div class="callout">
+        <span class="callout-label">Note — Switching Modes</span>
+        <div class="callout-body">Use the mode picker in the header to switch between Backup and Restore. The footer always shows a note about the current mode's rsync behavior.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mbm-sources">
+      <div class="section-heading">
+        <span class="section-num">4.6</span>
+        <h2>Default Sources</h2>
+        <span class="section-sub">what gets backed up</span>
+      </div>
+
+      <p>The app ships with these source directories. Each is backed up in its entirety unless filters are noted.</p>
+
+      <table class="ref-table">
+        <caption>Table 4.6-1. Logic Pro</caption>
+        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <tbody>
+          <tr><td>Logic Pro Project Templates</td><td><code>~/Music/Audio Music Apps/Project Templates</code></td></tr>
+          <tr><td>Logic Pro Plug-In Settings</td><td><code>~/Music/Audio Music Apps/Plug-In Settings</code></td></tr>
+          <tr><td>Logic Pro Channel Strips</td><td><code>~/Music/Audio Music Apps/Channel Strip Settings</code></td></tr>
+          <tr><td>Logic Pro Key Commands</td><td><code>~/Music/Audio Music Apps/Key Commands</code></td></tr>
+        </tbody>
+      </table>
+
+      <table class="ref-table">
+        <caption>Table 4.6-2. Audio &amp; Apps</caption>
+        <thead><tr><th>Label</th><th>Path</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Audio Unit Presets</td><td><code>~/Library/Audio/Presets</code></td><td>Presets for AU plugins (Apple, accentize, Waves, etc.)</td></tr>
+          <tr><td>iZotope RX Presets</td><td><code>~/Documents/iZotope/RX Audio Editor/User Presets</code></td><td></td></tr>
+          <tr><td>Audio Hijack Sessions &amp; Presets</td><td><code>~/Library/Application Support/Audio Hijack 4</code></td><td>Excludes <code>models/</code> (AI enhance models, ~2.9 GB) and <code>Recordings/</code></td></tr>
+          <tr><td>Farrago Sound Sets</td><td><code>~/Library/Application Support/Farrago 2/Sound Sets</code></td><td></td></tr>
+          <tr><td>Farrago Metadata</td><td><code>~/Library/Application Support/Farrago 2/Metadata</code></td><td></td></tr>
+          <tr><td>Loopback App Support</td><td><code>~/Library/Application Support/Loopback</code></td><td>Virtual audio device configs</td></tr>
+          <tr><td>SoundSource App Support</td><td><code>~/Library/Application Support/SoundSource</code></td><td>Presets, sources, custom configs</td></tr>
+        </tbody>
+      </table>
+
+      <table class="ref-table">
+        <caption>Table 4.6-3. MusicBrainz Picard</caption>
+        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <tbody>
+          <tr><td>Picard Config</td><td><code>~/.config/MusicBrainz</code></td></tr>
+          <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td></tr>
+        </tbody>
+      </table>
+
+      <table class="ref-table">
+        <caption>Table 4.6-4. Browsers</caption>
+        <thead><tr><th>Label</th><th>Path</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Safari Data</td><td><code>~/Library/Safari</code></td><td>Bookmarks, history, per-site settings; requires Full Disk Access</td></tr>
+          <tr><td>Chrome Data</td><td><code>~/Library/Application Support/Google/Chrome</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td></tr>
+          <tr><td>Brave Data</td><td><code>~/Library/Application Support/BraveSoftware/Brave-Browser</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td></tr>
+        </tbody>
+      </table>
+
+      <table class="ref-table">
+        <caption>Table 4.6-5. Other</caption>
+        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <tbody>
+          <tr><td>Chrono Plus Data</td><td><code>~/Library/Containers/com.xwavesoft.timetrackermac/Data/Documents</code></td></tr>
+        </tbody>
+      </table>
+
+      <table class="ref-table">
+        <caption>Table 4.6-6. App Preferences (Filtered — include patterns only)</caption>
+        <thead><tr><th>File / Pattern</th><th>Application</th></tr></thead>
+        <tbody>
+          <tr><td>com.apple.logic10.plist</td><td>Logic Pro main preferences</td></tr>
+          <tr><td>com.apple.logic.pro.cs/**</td><td>Logic Pro control surface settings</td></tr>
+          <tr><td>com.izotope.*</td><td>All iZotope app preferences</td></tr>
+          <tr><td>com.rogueamoeba.*</td><td>All Rogue Amoeba app preferences</td></tr>
+          <tr><td>com.hegenberg.BetterSnapTool.plist</td><td>BetterSnapTool</td></tr>
+          <tr><td>com.jordanbaird.Ice.plist</td><td>Ice menu bar manager</td></tr>
+          <tr><td>com.raycast.macos.plist</td><td>Raycast</td></tr>
+          <tr><td>com.WavesAudio.central.plist</td><td>Waves Central</td></tr>
+          <tr><td>org.musicbrainz.Picard.plist</td><td>MusicBrainz Picard</td></tr>
+          <tr><td>net.imput.helium.plist</td><td>Helium</td></tr>
+          <tr><td>com.apple.Safari.plist</td><td>Safari</td></tr>
+          <tr><td>com.google.Chrome.plist</td><td>Chrome</td></tr>
+          <tr><td>com.brave.Browser.plist</td><td>Brave</td></tr>
+          <tr><td>Waves Preferences/**</td><td>Waves Audio preferences</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <span class="callout-label">Note — App Preferences Filtering</span>
+        <div class="callout-body">The App Preferences entry does <strong>not</strong> back up the entire <code>~/Library/Preferences</code> directory. It uses rsync include filters to sync only the files listed above. Everything else is excluded by a trailing <code>--exclude *</code> rule.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="mbm-settings">
+      <div class="section-heading">
+        <span class="section-num">4.7</span>
+        <h2>Settings</h2>
+        <span class="section-sub">gear icon → Settings sheet</span>
+      </div>
+
+      <p>Open Settings with the gear icon in the header. The sheet contains:</p>
+
+      <ul>
+        <li><strong>Source Directories</strong> — Lists all configured sources with labels, abbreviated paths, and filter summaries. Each entry has a remove button. Use <strong>Add Directory</strong> to add a new source via a folder picker.</li>
+        <li><strong>Local Backup Destination</strong> — Default: <code>~/.backups</code>. Change with <strong>Choose...</strong></li>
+        <li><strong>External Backup Destination</strong> — Default: <code>/Volumes/Personal Backup/scripted_backup</code>. Only used when the volume is mounted. Change with <strong>Choose...</strong></li>
+        <li><strong>Reset to Defaults</strong> — Reverts all settings to the built-in defaults.</li>
+      </ul>
+
+      <p>Settings are persisted in UserDefaults under the app domain <code>io.github.sevmorris.BackupRestore</code>. To force a reload of built-in defaults after an app update:</p>
+
+      <pre><code>defaults delete io.github.sevmorris.BackupRestore BackupSettings</code></pre>
+
+      <div class="callout">
+        <span class="callout-label">Note — New Source Directories After an Update</span>
+        <div class="callout-body">When MBM is updated with new default source directories, existing saved settings are not automatically updated — UserDefaults takes precedence. Use <strong>Reset to Defaults</strong> in Settings, or run the <code>defaults delete</code> command above to pick up the new defaults.</div>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+
+  <footer class="doc-footer">
+    <span>SMAC-1</span>
+    <span>sevmac · Personal Mac Management</span>
+  </footer>
+
+</main>
+
+</div> <!-- /layout -->
+
+</body>
+</html>
