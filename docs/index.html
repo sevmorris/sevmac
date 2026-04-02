@@ -607,28 +607,15 @@
       <div class="proc" id="mrk-step1">
         <div class="proc-header">
           <span class="proc-num">Step 1</span>
-          <h3>Clone mrk</h3>
+          <h3>Clone and Install</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">If SSH is already configured, clone with SSH. On a fresh machine, clone over HTTPS first.</p>
-          <p>With SSH (preferred):</p>
-          <pre><code>git clone git@github.com:sevmorris/mrk.git ~/mrk</code></pre>
-          <p>On a fresh machine without SSH:</p>
-          <pre><code>git clone https://github.com/sevmorris/mrk.git ~/mrk</code></pre>
-        </div>
-      </div>
-
-      <div class="proc" id="mrk-step2">
-        <div class="proc-header">
-          <span class="proc-num">Step 2</span>
-          <h3>Phase 1 — Shell &amp; Dotfiles</h3>
-        </div>
-        <div class="proc-body">
-          <p class="desc">Sets up the shell environment, links dotfiles and scripts, applies macOS defaults.</p>
-          <pre><code>cd ~/mrk
-make setup
-exec zsh        # Reload shell to pick up dotfiles and ~/bin</code></pre>
-          <p><strong>What gets linked:</strong></p>
+          <p class="desc">Clone mrk over HTTPS (SSH isn't set up yet on a new machine) and run the full install.</p>
+          <pre><code>git clone https://github.com/sevmorris/mrk.git ~/mrk
+make -C ~/mrk all
+exec zsh</code></pre>
+          <p>This runs all three phases plus builds the TUI binaries. <code>exec zsh</code> reloads the shell to pick up dotfiles and <code>~/bin</code>.</p>
+          <p><strong>What gets linked (Phase 1):</strong></p>
           <table class="ref-table" style="margin-top: 8px;">
             <thead><tr><th>File</th><th>Purpose</th></tr></thead>
             <tbody>
@@ -642,49 +629,7 @@ exec zsh        # Reload shell to pick up dotfiles and ~/bin</code></pre>
             </tbody>
           </table>
           <p>Backups of any replaced files go to <code>~/.mrk/backups/</code>. A rollback script for macOS defaults is generated at <code>~/.mrk/defaults-rollback.sh</code>.</p>
-        </div>
-      </div>
-
-      <div class="proc" id="mrk-step3">
-        <div class="proc-header">
-          <span class="proc-num">Step 3</span>
-          <h3>Add SSH Key to GitHub (if needed)</h3>
-        </div>
-        <div class="proc-body">
-          <p class="desc">Required before Phase 3 if you cloned over HTTPS. The new machine needs SSH auth to auto-pull mrk-prefs.</p>
-          <pre><code>ssh-keygen -t ed25519 -C "your-email@example.com"
-cat ~/.ssh/id_ed25519.pub | pbcopy
-# Add to: github.com → Settings → SSH and GPG keys → New SSH key
-ssh -T git@github.com
-# Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
-        </div>
-      </div>
-
-      <div class="proc" id="mrk-step4">
-        <div class="proc-header">
-          <span class="proc-num">Step 4</span>
-          <h3>Phase 2 — Homebrew</h3>
-        </div>
-        <div class="proc-body">
-          <p class="desc">Installs Homebrew (if needed) and all packages from the Brewfile.</p>
-          <pre><code>make brew</code></pre>
-          <p>For packages not previously installed, an interactive selection prompt appears — formulae are shown with inline descriptions. Uses the mrk-picker TUI if available, falls back to <code>gum choose</code>.</p>
-          <div class="callout">
-            <span class="callout-label">Note — MAS Entries</span>
-            <div class="callout-body">Mac App Store (<code>mas</code>) entries in the Brewfile are silently skipped. App Store apps must be reinstalled manually from Purchases.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="proc" id="mrk-step5">
-        <div class="proc-header">
-          <span class="proc-num">Step 5</span>
-          <h3>Phase 3 — App Configuration</h3>
-        </div>
-        <div class="proc-body">
-          <p class="desc">Configures installed apps, imports personal preferences, and sets up login items. Must be run after Phase 2.</p>
-          <pre><code>make post-install</code></pre>
-          <p><strong>What it does:</strong></p>
+          <p><strong>What Phase 3 does:</strong></p>
           <ul>
             <li><strong>Topgrade:</strong> Links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code></li>
             <li><strong>Browsers:</strong> Applies Safari defaults, Chrome/Brave managed policies, Helium defaults; opens browser extension install URLs</li>
@@ -695,19 +640,43 @@ ssh -T git@github.com
             <li><strong>App Support restore:</strong> Restores Loopback and SoundSource config files (non-destructive)</li>
             <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Bitwarden, Chrono Plus, Dropbox, Hammerspoon, Ice, NordPass, Raycast, SoundSource, Stats</li>
           </ul>
-          <p>If preferences weren't auto-pulled:</p>
-          <pre><code>pull-prefs
-make post-install   # Re-run to import plists</code></pre>
           <div class="callout">
-            <span class="callout-label">Note — Preferences Not Restored</span>
-            <div class="callout-body">After <code>make all</code>, if <code>~/.mrk/preferences/</code> is absent, you'll be reminded to add your SSH key to GitHub and run <code>make pull-prefs</code>.</div>
+            <span class="callout-label">Note — MAS Entries</span>
+            <div class="callout-body">Mac App Store (<code>mas</code>) entries in the Brewfile are silently skipped. App Store apps must be reinstalled manually from Purchases.</div>
           </div>
         </div>
       </div>
 
-      <div class="proc" id="mrk-step6">
+      <div class="proc" id="mrk-step2">
         <div class="proc-header">
-          <span class="proc-num">Step 6</span>
+          <span class="proc-num">Step 2</span>
+          <h3>Set Up SSH</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Generate an SSH key and add it to GitHub. Required for pulling preferences and pushing mrk changes.</p>
+          <pre><code>ssh-keygen -t ed25519 -C "your-email@example.com"
+cat ~/.ssh/id_ed25519.pub | pbcopy
+# Add to: github.com → Settings → SSH and GPG keys → New SSH key
+ssh -T git@github.com
+# Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
+        </div>
+      </div>
+
+      <div class="proc" id="mrk-step3">
+        <div class="proc-header">
+          <span class="proc-num">Step 3</span>
+          <h3>Pull Preferences</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">If preferences weren't auto-pulled during install (SSH wasn't set up yet), pull them now and re-run Phase 3.</p>
+          <pre><code>pull-prefs
+make post-install   # Re-run to import plists</code></pre>
+        </div>
+      </div>
+
+      <div class="proc" id="mrk-step4">
+        <div class="proc-header">
+          <span class="proc-num">Step 4</span>
           <h3>Verify the Installation</h3>
         </div>
         <div class="proc-body">
