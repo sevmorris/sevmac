@@ -640,10 +640,6 @@ exec zsh</code></pre>
             <li><strong>App Support restore:</strong> Restores Loopback and SoundSource config files (non-destructive)</li>
             <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Bitwarden, Chrono Plus, Dropbox, Hammerspoon, Ice, NordPass, Raycast, SoundSource, Stats</li>
           </ul>
-          <div class="callout">
-            <span class="callout-label">Note — MAS Entries</span>
-            <div class="callout-body">Mac App Store (<code>mas</code>) entries in the Brewfile are silently skipped. App Store apps must be reinstalled manually from Purchases.</div>
-          </div>
         </div>
       </div>
 
@@ -963,7 +959,7 @@ git push</code></pre>
         <span class="section-sub">mrk-status / state files</span>
       </div>
 
-      <p>Running <code>make status</code> opens the interactive TUI health dashboard. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to run the suggested fix for any failing check, <strong>r</strong> to refresh.</p>
+      <p>Running <code>make status</code> opens the interactive TUI health dashboard. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix; mrk-status will prompt for confirmation before running it. Press <strong>r</strong> to refresh.</p>
 
       <ul>
         <li><strong>Dotfiles</strong> — Which files are symlinked into <code>~/</code> and which are missing</li>
@@ -1295,6 +1291,10 @@ make post-install</code></pre>
           <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td></tr>
         </tbody>
       </table>
+      <div class="callout">
+        <span class="callout-label">Note — Picard Plugins Path</span>
+        <div class="callout-body">The plugins path (<code>~/Library/Preferences/MusicBrainz/Picard/plugins</code>) may not exist on all machines. If the directory is absent, MBM silently skips this source — the backup is a no-op for plugins. Verify: <code>ls ~/Library/Preferences/MusicBrainz/Picard/plugins</code></div>
+      </div>
 
       <table class="ref-table">
         <caption>Table 4.6-4. Browsers</caption>
