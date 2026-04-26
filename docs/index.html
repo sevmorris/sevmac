@@ -640,10 +640,6 @@ exec zsh</code></pre>
             <li><strong>App Support restore:</strong> Restores Loopback and SoundSource config files (non-destructive)</li>
             <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Bitwarden, Chrono Plus, Dropbox, Hammerspoon, Ice, NordPass, Raycast, SoundSource, Stats</li>
           </ul>
-          <div class="callout">
-            <span class="callout-label">Note — MAS Entries</span>
-            <div class="callout-body">Mac App Store (<code>mas</code>) entries in the Brewfile are silently skipped. App Store apps must be reinstalled manually from Purchases.</div>
-          </div>
         </div>
       </div>
 
@@ -681,7 +677,7 @@ make post-install   # Re-run to import plists</code></pre>
         </div>
         <div class="proc-body">
           <pre><code>make status     # Open the mrk-status TUI health dashboard
-make doctor     # Check ~/bin is on PATH; --fix adds it to .zshrc</code></pre>
+make doctor     # Check ~/bin is on PATH; pass ARGS=--fix to add ~/bin to .zshrc</code></pre>
         </div>
       </div>
     </section>
@@ -792,7 +788,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <tr><td>Farrago</td><td>Plist imported</td></tr>
           <tr><td>Piezo</td><td>Plist imported</td></tr>
           <tr><td>Typora</td><td>Plist imported</td></tr>
-          <tr><td>Hot</td><td>Plist imported</td></tr>
+
           <tr><td>Keka</td><td>Plist imported</td></tr>
           <tr><td>TimeMachineEditor</td><td>Plist imported</td></tr>
           <tr><td>MacWhisper</td><td>Plist imported</td></tr>
@@ -945,9 +941,11 @@ git push</code></pre>
           <tr><td>make update</td><td>Upgrade all packages (topgrade or brew upgrade)</td></tr>
           <tr><td>make updates</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
           <tr><td>make uninstall</td><td>Remove symlinks and undo setup</td></tr>
+          <tr><td>make snapshot</td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
+          <tr><td>make tidy</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status)</td></tr>
           <tr class="tbl-cat"><td colspan="2">Diagnostics</td></tr>
           <tr><td>make status</td><td>Open the mrk-status TUI health dashboard</td></tr>
-          <tr><td>make doctor</td><td>Check ~/bin is on PATH; --fix adds it to .zshrc</td></tr>
+          <tr><td>make doctor</td><td>Check ~/bin is on PATH; pass <code>ARGS=--fix</code> to add ~/bin to .zshrc</td></tr>
           <tr><td>make fix-exec</td><td>Make all scripts and bin files executable</td></tr>
         </tbody>
       </table>
@@ -961,7 +959,7 @@ git push</code></pre>
         <span class="section-sub">mrk-status / state files</span>
       </div>
 
-      <p>Running <code>make status</code> opens the interactive TUI health dashboard. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to run the suggested fix for any failing check, <strong>r</strong> to refresh.</p>
+      <p>Running <code>make status</code> opens the interactive TUI health dashboard. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix; mrk-status will prompt for confirmation before running it. Press <strong>r</strong> to refresh.</p>
 
       <ul>
         <li><strong>Dotfiles</strong> — Which files are symlinked into <code>~/</code> and which are missing</li>
@@ -1006,7 +1004,7 @@ git push</code></pre>
           <tr><td>Dotfile conflict ("file exists")</td><td>Backup auto-created in <code>~/.mrk/backups/</code>; resolve manually then re-run</td></tr>
           <tr><td>post-install skips plist imports</td><td>SSH key not authenticated; run <code>pull-prefs</code> after adding key to GitHub</td></tr>
           <tr><td>mrk-picker not rendering</td><td>Rebuild the binary: <code>make picker</code></td></tr>
-          <tr><td>~/bin not on PATH</td><td>Run <code>make doctor --fix</code></td></tr>
+          <tr><td>~/bin not on PATH</td><td>Run <code>make doctor ARGS=--fix</code></td></tr>
           <tr><td>Brewfile entry shows ✗ (missing)</td><td>Package name may differ from formula name; check with <code>brew info &lt;pkg&gt;</code></td></tr>
           <tr><td>sync exits with "nothing to add"</td><td>All installed packages are already in the Brewfile</td></tr>
           <tr><td>snapshot-prefs fails for an app</td><td>App is not installed or <code>defaults export</code> failed; check the app is running</td></tr>
@@ -1293,6 +1291,10 @@ make post-install</code></pre>
           <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td></tr>
         </tbody>
       </table>
+      <div class="callout">
+        <span class="callout-label">Note — Picard Plugins Path</span>
+        <div class="callout-body">The plugins path (<code>~/Library/Preferences/MusicBrainz/Picard/plugins</code>) may not exist on all machines. If the directory is absent, MBM silently skips this source — the backup is a no-op for plugins. Verify: <code>ls ~/Library/Preferences/MusicBrainz/Picard/plugins</code></div>
+      </div>
 
       <table class="ref-table">
         <caption>Table 4.6-4. Browsers</caption>
