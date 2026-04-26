@@ -945,6 +945,8 @@ git push</code></pre>
           <tr><td>make update</td><td>Upgrade all packages (topgrade or brew upgrade)</td></tr>
           <tr><td>make updates</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
           <tr><td>make uninstall</td><td>Remove symlinks and undo setup</td></tr>
+          <tr><td>make snapshot</td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
+          <tr><td>make tidy</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status)</td></tr>
           <tr class="tbl-cat"><td colspan="2">Diagnostics</td></tr>
           <tr><td>make status</td><td>Open the mrk-status TUI health dashboard</td></tr>
           <tr><td>make doctor</td><td>Check ~/bin is on PATH; --fix adds it to .zshrc</td></tr>
