@@ -677,7 +677,7 @@ make post-install   # Re-run to import plists</code></pre>
         </div>
         <div class="proc-body">
           <pre><code>make status     # Open the mrk-status TUI health dashboard
-make doctor     # Check ~/bin is on PATH; --fix adds it to .zshrc</code></pre>
+make doctor     # Check ~/bin is on PATH; pass ARGS=--fix to add ~/bin to .zshrc</code></pre>
         </div>
       </div>
     </section>
@@ -945,7 +945,7 @@ git push</code></pre>
           <tr><td>make tidy</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status)</td></tr>
           <tr class="tbl-cat"><td colspan="2">Diagnostics</td></tr>
           <tr><td>make status</td><td>Open the mrk-status TUI health dashboard</td></tr>
-          <tr><td>make doctor</td><td>Check ~/bin is on PATH; --fix adds it to .zshrc</td></tr>
+          <tr><td>make doctor</td><td>Check ~/bin is on PATH; pass <code>ARGS=--fix</code> to add ~/bin to .zshrc</td></tr>
           <tr><td>make fix-exec</td><td>Make all scripts and bin files executable</td></tr>
         </tbody>
       </table>
