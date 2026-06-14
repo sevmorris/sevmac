@@ -581,7 +581,7 @@
         <caption>Table 2.1-1. The Three Phases</caption>
         <thead><tr><th>Phase</th><th>Command</th><th>What It Covers</th></tr></thead>
         <tbody>
-          <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell</td></tr>
+          <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell, installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
           <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs</td></tr>
           <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser policies, Barkeep install, preference plist imports, login items</td></tr>
         </tbody>
@@ -638,7 +638,7 @@ exec zsh</code></pre>
             <li><strong>Preferences auto-pull:</strong> Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated</li>
             <li><strong>Plist imports:</strong> Imports preferences for 14 apps (non-destructive — skips any app with existing prefs)</li>
             <li><strong>App Support restore:</strong> Restores Loopback and SoundSource config files (non-destructive)</li>
-            <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Bitwarden, Chrono Plus, Dropbox, Hammerspoon, Ice, NordPass, Raycast, SoundSource, Stats</li>
+            <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Ice, Raycast, SoundSource, Stats</li>
           </ul>
         </div>
       </div>
@@ -817,7 +817,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
         <li>Computes the diff: items on the system but not tracked, and tracked items no longer on the system</li>
         <li>Opens an interactive selector (<code>gum</code>) to choose which items to add or remove</li>
         <li>Updates <code>scripts/post-install</code> to reflect the new set</li>
-        <li>Also updates <code>docs/manual.md</code> and <code>docs/index.html</code> with the new login items list</li>
+        <li>Also updates <code>docs/manual.md</code> with the new login items list</li>
       </ol>
 
       <table class="ref-table">
@@ -826,12 +826,9 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
         <tbody>
           <tr><td>AlDente</td></tr>
           <tr><td>BetterSnapTool</td></tr>
-          <tr><td>Bitwarden</td></tr>
           <tr><td>Chrono Plus</td></tr>
           <tr><td>Dropbox</td></tr>
-          <tr><td>Hammerspoon</td></tr>
           <tr><td>Ice</td></tr>
-          <tr><td>NordPass</td></tr>
           <tr><td>Raycast</td></tr>
           <tr><td>SoundSource</td></tr>
           <tr><td>Stats</td></tr>
@@ -908,15 +905,11 @@ git push</code></pre>
         <tbody>
           <tr class="tbl-cat"><td colspan="2">Brewfile</td></tr>
           <tr><td>make sync</td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
-          <tr><td>make sync-login-items</td><td>Diff and sync system login items against post-install</td></tr>
           <tr class="tbl-cat"><td colspan="2">Preferences</td></tr>
           <tr><td>make snapshot-prefs</td><td>Export app preferences and push to mrk-prefs</td></tr>
           <tr><td>make pull-prefs</td><td>Clone or pull app preferences from mrk-prefs</td></tr>
           <tr class="tbl-cat"><td colspan="2">Build Tools</td></tr>
           <tr><td>make picker</td><td>Build the mrk-picker TUI binary</td></tr>
-          <tr><td>make bf</td><td>Build the bf Brewfile manager TUI binary</td></tr>
-          <tr><td>make mrk-status</td><td>Build the mrk-status TUI health dashboard binary</td></tr>
-          <tr><td>make build-tools</td><td>Build all Go TUI binaries (picker + bf + mrk-status)</td></tr>
           <tr class="tbl-cat"><td colspan="2">General</td></tr>
           <tr><td>make help</td><td>Show all available commands</td></tr>
         </tbody>
@@ -931,6 +924,7 @@ git push</code></pre>
           <tr><td>make setup / make install</td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
           <tr><td>make brew</td><td>Phase 2: Homebrew packages and casks</td></tr>
           <tr><td>make post-install</td><td>Phase 3: app configs and login items</td></tr>
+          <tr><td>make build-tools</td><td>Build all Go TUI binaries (picker + bf + mrk-status + mrk-menu)</td></tr>
           <tr class="tbl-cat"><td colspan="2">Partial Phases</td></tr>
           <tr><td>make dotfiles</td><td>Link dotfiles only</td></tr>
           <tr><td>make tools</td><td>Link scripts and bin into ~/bin only</td></tr>
@@ -940,12 +934,16 @@ git push</code></pre>
           <tr class="tbl-cat"><td colspan="2">Maintenance</td></tr>
           <tr><td>make update</td><td>Upgrade all packages (topgrade or brew upgrade)</td></tr>
           <tr><td>make updates</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
+          <tr><td>make pull</td><td>Fast-forward the mrk repo to origin (git pull --ff-only)</td></tr>
+          <tr><td>make maintain</td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
           <tr><td>make uninstall</td><td>Remove symlinks and undo setup</td></tr>
           <tr><td>make snapshot</td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
-          <tr><td>make tidy</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status)</td></tr>
+          <tr><td>make tidy</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status, mrk-menu)</td></tr>
           <tr class="tbl-cat"><td colspan="2">Diagnostics</td></tr>
           <tr><td>make status</td><td>Open the mrk-status TUI health dashboard</td></tr>
           <tr><td>make doctor</td><td>Check ~/bin is on PATH; pass <code>ARGS=--fix</code> to add ~/bin to .zshrc</td></tr>
+          <tr><td>make check</td><td>Run local CI checks (shellcheck, picker descriptions, go test)</td></tr>
+          <tr><td>make ci</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td>Make all scripts and bin files executable</td></tr>
         </tbody>
       </table>
