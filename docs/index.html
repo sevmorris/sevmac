@@ -936,10 +936,13 @@ git push</code></pre>
         <tbody>
           <tr class="tbl-cat"><td colspan="2">Bootstrap</td></tr>
           <tr><td>make all</td><td>Full install: setup + brew + post-install + TUI binaries</td></tr>
+          <tr><td>make adventure</td><td>Full install in narrative adventure mode</td></tr>
           <tr><td>make setup / make install</td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
+          <tr><td>make setup-dry</td><td>Preview Phase 1 changes without applying them</td></tr>
           <tr><td>make brew</td><td>Phase 2: Homebrew packages and casks</td></tr>
           <tr><td>make post-install</td><td>Phase 3: app configs and login items</td></tr>
           <tr><td>make build-tools</td><td>Build all Go TUI binaries (picker + bf + mrk-status + mrk-menu)</td></tr>
+          <tr><td>make picker / bf / mrk-status / mrk-menu</td><td>Build one TUI binary and link it into ~/bin</td></tr>
           <tr class="tbl-cat"><td colspan="2">Partial Phases</td></tr>
           <tr><td>make dotfiles</td><td>Link dotfiles only</td></tr>
           <tr><td>make tools</td><td>Link scripts and bin into ~/bin only</td></tr>
@@ -951,15 +954,31 @@ git push</code></pre>
           <tr><td>make updates</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
           <tr><td>make pull</td><td>Fast-forward the mrk repo to origin (git pull --ff-only)</td></tr>
           <tr><td>make maintain</td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
+          <tr><td>make dock</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
           <tr><td>make uninstall</td><td>Remove symlinks and undo setup</td></tr>
           <tr><td>make snapshot</td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
           <tr><td>make tidy</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status, mrk-menu)</td></tr>
           <tr class="tbl-cat"><td colspan="2">Diagnostics</td></tr>
-          <tr><td>make status</td><td>Open the mrk-status TUI health dashboard</td></tr>
+          <tr><td>make status</td><td>Plain-text installation status report (the TUI dashboard is the <code>status</code> command — Section 2.8)</td></tr>
           <tr><td>make doctor</td><td>Check ~/bin is on PATH; pass <code>ARGS=--fix</code> to add ~/bin to .zshrc</td></tr>
           <tr><td>make check</td><td>Run local CI checks (shellcheck, picker descriptions, go test)</td></tr>
           <tr><td>make ci</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td>Make all scripts and bin files executable</td></tr>
+        </tbody>
+      </table>
+
+      <p>Beyond the make targets, mrk ships standalone utilities in its <code>bin/</code> directory. Phase 1 symlinks every executable there into <code>~/bin</code>, so each runs by name from any directory. <code>mrk-menu</code> is a compiled Go TUI — if it's missing, build it with <code>make build-tools</code>.</p>
+
+      <table class="ref-table">
+        <caption>Table 2.7-3. Standalone Utilities (~/bin)</caption>
+        <thead><tr><th>Command</th><th>What It Does</th></tr></thead>
+        <tbody>
+          <tr><td>mrk-menu</td><td>TUI launcher: browse mrk's commands by category (Brewfile, Login items, Preferences, System state, Diagnostics, Maintenance, Nuclear options) and run the selected one</td></tr>
+          <tr><td>mrk-push "msg"</td><td>Commit, push, and prune all but the current GitHub Pages deployment (requires <code>gh</code>; prompts for the message if omitted)</td></tr>
+          <tr><td>nuke-mrk</td><td>Remove all mrk artifacts for a fresh test install: moves <code>~/mrk</code> and <code>~/.mrk</code> to Trash, removes <code>~/bin</code> and dotfile symlinks, optionally runs the defaults/hardening rollback scripts first. Does <em>not</em> uninstall Homebrew packages</td></tr>
+          <tr><td>audio-mode on|off|status</td><td>Studio toggle: pauses Dropbox, iCloud sync, and/or Google Drive for recording sessions (<code>on --icloud</code> / <code>--gdrive</code> / <code>--all</code>); snapshots the pre-toggle state so <code>off</code> only restores what was running</td></tr>
+          <tr><td>zoom-mode on|off|status</td><td>Zoom-session prep: pings the gateway every 30&nbsp;s to keep Wi-Fi alive, blocks sleep, stops any running Time Machine backup, then runs <code>audio-mode on --all</code>; <code>off</code> reverses everything</td></tr>
+          <tr><td>hide_tm.sh [names]</td><td>Hides Time Machine volumes from the Finder sidebar; volume names come from <code>$TM_VOLUMES</code> or the first argument (comma-separated), defaulting to "TimeMachine"</td></tr>
         </tbody>
       </table>
     </section>
