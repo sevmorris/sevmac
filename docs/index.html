@@ -1258,15 +1258,18 @@ make post-install</code></pre>
         <li><code>--delete</code> — ensures the backup is an exact mirror; files deleted from the source are removed from the backup</li>
         <li><code>--ignore-errors</code> — continues past individual file errors</li>
         <li><code>--stats</code> — prints a transfer summary at the end (no per-file listing)</li>
+        <li><code>.DS_Store</code> files are always excluded</li>
         <li>Source directories that don't exist on disk are skipped (marked "skipped" in orange)</li>
         <li>On success, a <code>last_backup.log</code> file is written to each destination recording the timestamp</li>
       </ul>
 
-      <p><strong>Destinations:</strong> Backup always writes to the local destination. If the external destination volume is mounted, it writes there as well. Both are created automatically if they don't exist.</p>
+      <p><strong>Destinations:</strong> Backup always writes to the local destination. If an external destination is configured and its volume is mounted, it writes there as well. Both are created automatically if they don't exist.</p>
 
-      <p>Each source directory is stored as a named subdirectory within the destination. For example, <code>~/Library/Audio/Presets</code> backs up to <code>~/.backups/Presets/</code>.</p>
+      <p>Each source directory is stored as a named subdirectory within the destination. For example, <code>~/Library/Audio/Presets</code> backs up to <code>~/.backups/Presets/</code>. With the dated-snapshots layout (Section 4.7), a <code>YYYY-MM-DD</code> folder is created under each destination per run instead of mirroring in place.</p>
 
-      <p><strong>Progress:</strong> The left panel shows each item's status during a run — pending (empty circle), in progress (spinner), success (green checkmark), failed (red ✗), or skipped (orange dash). rsync output streams in real time in the right panel.</p>
+      <p><strong>Run confirmation:</strong> Run Backup first opens a confirmation sheet summarizing the sources, destinations, and a preflight estimate (file count and total size of existing sources). From the sheet, <strong>Dry Run</strong> previews the run with <code>rsync --dry-run --itemize-changes</code> and reports how many files would transfer and how many would be deleted, per source. A notification is posted when a run completes.</p>
+
+      <p><strong>Progress:</strong> The left panel shows each item's status during a run — pending (empty circle), in progress (spinner), success (green checkmark), partial (yellow ⚠ — rsync exit 23/24, some files couldn't be transferred), failed (red ✗), or skipped (orange dash). rsync output streams in real time in the right panel. The header shows the date and destination of the last successful backup, and its folder button reveals the backup folder in Finder.</p>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
