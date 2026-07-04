@@ -991,7 +991,7 @@ git push</code></pre>
         <span class="section-sub">mrk-status / state files</span>
       </div>
 
-      <p>Running <code>make status</code> opens the interactive TUI health dashboard. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix; mrk-status will prompt for confirmation before running it. Press <strong>r</strong> to refresh.</p>
+      <p>Running <code>status</code> (linked into <code>~/bin</code> when the TUI binaries are built) opens the interactive mrk-status health dashboard; <code>make status</code> prints a plain-text report of the same ground instead. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix; mrk-status will prompt for confirmation before running it. Press <strong>r</strong> to refresh.</p>
 
       <ul>
         <li><strong>Dotfiles</strong> — Which files are symlinked into <code>~/</code> and which are missing</li>
@@ -1013,6 +1013,9 @@ git push</code></pre>
           <tr><td>~/.mrk/backups/</td><td>Timestamped backups of dotfiles replaced during setup</td></tr>
           <tr><td>~/.mrk/defaults-rollback.sh</td><td>Shell script to undo all <code>defaults write</code> changes</td></tr>
           <tr><td>~/.mrk/hardening-rollback.sh</td><td>Shell script to undo security hardening</td></tr>
+          <tr><td>~/.mrk/install.log</td><td>Rotating log written by the setup, brew, and post-install phases</td></tr>
+          <tr><td>~/.mrk/plist-backups/</td><td>Pre-import snapshots of preference domains, used by the rollback script</td></tr>
+          <tr><td>~/.mrk/sync-ignore</td><td>Optional list of packages <code>sync</code> should never suggest (Section 2.3)</td></tr>
         </tbody>
       </table>
 
