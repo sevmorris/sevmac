@@ -583,7 +583,7 @@
         <tbody>
           <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell, installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
           <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs</td></tr>
-          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser policies, Barkeep install, preference plist imports, login items</td></tr>
+          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser policies, dev runtimes (openjdk, nvm, pyenv), Barkeep install, preference plist imports, login items</td></tr>
         </tbody>
       </table>
 
@@ -632,12 +632,15 @@ exec zsh</code></pre>
           <p><strong>What Phase 3 does:</strong></p>
           <ul>
             <li><strong>Topgrade:</strong> Links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code></li>
-            <li><strong>Browsers:</strong> Applies Safari defaults, Chrome/Brave managed policies, Helium defaults; opens browser extension install URLs</li>
+            <li><strong>Browsers:</strong> Applies Safari defaults, Chrome/Brave managed policies, Helium defaults; asks before opening browser extension install URLs (skipped in non-interactive runs)</li>
+            <li><strong>Dev runtimes:</strong> Symlinks Homebrew's openjdk into <code>/Library/Java/JavaVirtualMachines/</code>, installs nvm into <code>~/.nvm</code>, and installs the pyenv Python version pinned in <code>.python-version</code></li>
             <li><strong>App defaults:</strong> Applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba apps</li>
             <li><strong>Barkeep:</strong> Downloads and installs Barkeep from the latest GitHub release</li>
+            <li><strong>Git remote:</strong> Switches mrk's origin from HTTPS to SSH once GitHub SSH auth succeeds</li>
             <li><strong>Preferences auto-pull:</strong> Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated</li>
             <li><strong>Plist imports:</strong> Imports preferences for 14 apps (non-destructive — skips any app with existing prefs)</li>
             <li><strong>App Support restore:</strong> Restores Loopback and SoundSource config files (non-destructive)</li>
+            <li><strong>Config trees:</strong> Restores Calibre's config directory (<code>~/Library/Preferences/calibre</code>) when the app is unconfigured</li>
             <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Ice, Raycast, SoundSource, Stats</li>
           </ul>
         </div>
@@ -676,7 +679,8 @@ make post-install   # Re-run to import plists</code></pre>
           <h3>Verify the Installation</h3>
         </div>
         <div class="proc-body">
-          <pre><code>make status     # Open the mrk-status TUI health dashboard
+          <pre><code>status          # Open the mrk-status TUI health dashboard (in ~/bin after exec zsh)
+make status     # Plain-text installation status report
 make doctor     # Check ~/bin is on PATH; pass ARGS=--fix to add ~/bin to .zshrc</code></pre>
         </div>
       </div>
@@ -718,7 +722,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <p><strong>How sync works:</strong></p>
           <ol>
             <li>Reads the Brewfile to build a list of already-tracked packages</li>
-            <li>Runs <code>brew leaves</code> (top-level formulae) and <code>brew list --cask</code> to see what's installed</li>
+            <li>Runs <code>brew leaves --installed-on-request</code> (top-level formulae) and <code>brew list --cask</code> to see what's installed</li>
             <li>Computes the diff — packages installed but not yet in the Brewfile</li>
             <li>Opens <strong>mrk-picker</strong> TUI: Space to select, Enter to confirm, q to quit</li>
             <li>Prompts via <code>gum</code> to choose which Brewfile section each formula goes into</li>
@@ -728,6 +732,10 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <div class="callout">
             <span class="callout-label">Note — mrk-picker Binary</span>
             <div class="callout-body">The mrk-picker binary lives at <code>bin/mrk-picker</code> (gitignored, platform-specific). If it's missing, rebuild with <code>make picker</code>.</div>
+          </div>
+          <div class="callout">
+            <span class="callout-label">Note — Ignore List</span>
+            <div class="callout-body">To keep a package installed but never have sync suggest it, list it in <code>~/.mrk/sync-ignore</code> — one formula or cask name per line, <code>#</code> comments allowed. The file is not created automatically.</div>
           </div>
         </div>
       </div>
@@ -753,11 +761,17 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <pre><code>snapshot-prefs</code></pre>
           <p><strong>How it works:</strong></p>
           <ol>
-            <li>Exports the preference plist for each managed app using <code>defaults export</code></li>
+            <li>Exports the preference plist for each managed app using <code>defaults export</code> (15-second timeout per app, converted to XML)</li>
+            <li>Copies managed Application Support files (Loopback, SoundSource) and config trees (Calibre)</li>
+            <li>Scans everything captured for secrets (API keys, tokens, private keys)</li>
             <li>Commits all changes to <code>~/.mrk/preferences/</code> with a timestamped message</li>
             <li>Pushes to <code>sevmorris/mrk-prefs</code> on GitHub</li>
           </ol>
-          <p>Idempotent — reports "No changes to push" if nothing changed.</p>
+          <p>Idempotent — reports "No changes to push" if nothing changed. Apps whose export failed or timed out are skipped with a warning and listed at the end of the run.</p>
+          <div class="callout callout-caution">
+            <span class="callout-label">Caution — Secret Scan</span>
+            <div class="callout-body">If the scan flags a possible secret in a staged file, the push stops for confirmation — and aborts outright in non-interactive runs. Review the flagged file before retrying.</div>
+          </div>
         </div>
       </div>
 
@@ -769,7 +783,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
         <div class="proc-body">
           <p class="desc">Clone or update preferences from the private repo.</p>
           <pre><code>pull-prefs</code></pre>
-          <p>Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if it doesn't exist, or fast-forward pulls if it does. <code>make post-install</code> calls this automatically when SSH is authenticated.</p>
+          <p>Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if it doesn't exist, or fast-forward pulls if it does. <code>make post-install</code> calls this automatically when SSH is authenticated and <code>~/.mrk/preferences/</code> doesn't exist yet — it never pulls updates into an existing clone.</p>
         </div>
       </div>
 
@@ -792,6 +806,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <tr><td>Keka</td><td>Plist imported</td></tr>
           <tr><td>TimeMachineEditor</td><td>Plist imported</td></tr>
           <tr><td>MacWhisper</td><td>Plist imported</td></tr>
+          <tr><td>Calibre</td><td>Config tree (<code>~/Library/Preferences/calibre</code>) — JSON/plist files, conversion presets, plugins</td></tr>
         </tbody>
       </table>
     </section>
@@ -858,7 +873,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
 
           <p><strong>2. Snapshot app preferences</strong></p>
           <pre><code>snapshot-prefs</code></pre>
-          <p>Exports and pushes all app preference plists and Application Support files. Verify "Pushed to git@github.com:sevmorris/mrk-prefs.git" appears in the output.</p>
+          <p>Exports and pushes all app preference plists and Application Support files. Verify "Pushed to git@github.com:sevmorris/mrk-prefs.git" appears in the output. If the secret scan flags a file, the push stops for confirmation — resolve it before moving on.</p>
 
           <p><strong>3. Push any pending mrk changes</strong></p>
           <pre><code>cd ~/mrk
@@ -921,10 +936,13 @@ git push</code></pre>
         <tbody>
           <tr class="tbl-cat"><td colspan="2">Bootstrap</td></tr>
           <tr><td>make all</td><td>Full install: setup + brew + post-install + TUI binaries</td></tr>
+          <tr><td>make adventure</td><td>Full install in narrative adventure mode</td></tr>
           <tr><td>make setup / make install</td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
+          <tr><td>make setup-dry</td><td>Preview Phase 1 changes without applying them</td></tr>
           <tr><td>make brew</td><td>Phase 2: Homebrew packages and casks</td></tr>
           <tr><td>make post-install</td><td>Phase 3: app configs and login items</td></tr>
           <tr><td>make build-tools</td><td>Build all Go TUI binaries (picker + bf + mrk-status + mrk-menu)</td></tr>
+          <tr><td>make picker / bf / mrk-status / mrk-menu</td><td>Build one TUI binary and link it into ~/bin</td></tr>
           <tr class="tbl-cat"><td colspan="2">Partial Phases</td></tr>
           <tr><td>make dotfiles</td><td>Link dotfiles only</td></tr>
           <tr><td>make tools</td><td>Link scripts and bin into ~/bin only</td></tr>
@@ -936,15 +954,31 @@ git push</code></pre>
           <tr><td>make updates</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
           <tr><td>make pull</td><td>Fast-forward the mrk repo to origin (git pull --ff-only)</td></tr>
           <tr><td>make maintain</td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
+          <tr><td>make dock</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
           <tr><td>make uninstall</td><td>Remove symlinks and undo setup</td></tr>
           <tr><td>make snapshot</td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
           <tr><td>make tidy</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status, mrk-menu)</td></tr>
           <tr class="tbl-cat"><td colspan="2">Diagnostics</td></tr>
-          <tr><td>make status</td><td>Open the mrk-status TUI health dashboard</td></tr>
+          <tr><td>make status</td><td>Plain-text installation status report (the TUI dashboard is the <code>status</code> command — Section 2.8)</td></tr>
           <tr><td>make doctor</td><td>Check ~/bin is on PATH; pass <code>ARGS=--fix</code> to add ~/bin to .zshrc</td></tr>
           <tr><td>make check</td><td>Run local CI checks (shellcheck, picker descriptions, go test)</td></tr>
           <tr><td>make ci</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td>Make all scripts and bin files executable</td></tr>
+        </tbody>
+      </table>
+
+      <p>Beyond the make targets, mrk ships standalone utilities in its <code>bin/</code> directory. Phase 1 symlinks every executable there into <code>~/bin</code>, so each runs by name from any directory. <code>mrk-menu</code> is a compiled Go TUI — if it's missing, build it with <code>make build-tools</code>.</p>
+
+      <table class="ref-table">
+        <caption>Table 2.7-3. Standalone Utilities (~/bin)</caption>
+        <thead><tr><th>Command</th><th>What It Does</th></tr></thead>
+        <tbody>
+          <tr><td>mrk-menu</td><td>TUI launcher: browse mrk's commands by category (Brewfile, Login items, Preferences, System state, Diagnostics, Maintenance, Nuclear options) and run the selected one</td></tr>
+          <tr><td>mrk-push "msg"</td><td>Commit, push, and prune all but the current GitHub Pages deployment (requires <code>gh</code>; prompts for the message if omitted)</td></tr>
+          <tr><td>nuke-mrk</td><td>Remove all mrk artifacts for a fresh test install: moves <code>~/mrk</code> and <code>~/.mrk</code> to Trash, removes <code>~/bin</code> and dotfile symlinks, optionally runs the defaults/hardening rollback scripts first. Does <em>not</em> uninstall Homebrew packages</td></tr>
+          <tr><td>audio-mode on|off|status</td><td>Studio toggle: pauses Dropbox, iCloud sync, and/or Google Drive for recording sessions (<code>on --icloud</code> / <code>--gdrive</code> / <code>--all</code>); snapshots the pre-toggle state so <code>off</code> only restores what was running</td></tr>
+          <tr><td>zoom-mode on|off|status</td><td>Zoom-session prep: pings the gateway every 30&nbsp;s to keep Wi-Fi alive, blocks sleep, stops any running Time Machine backup, then runs <code>audio-mode on --all</code>; <code>off</code> reverses everything</td></tr>
+          <tr><td>hide_tm.sh [names]</td><td>Hides Time Machine volumes from the Finder sidebar; volume names come from <code>$TM_VOLUMES</code> or the first argument (comma-separated), defaulting to "TimeMachine"</td></tr>
         </tbody>
       </table>
     </section>
@@ -957,7 +991,7 @@ git push</code></pre>
         <span class="section-sub">mrk-status / state files</span>
       </div>
 
-      <p>Running <code>make status</code> opens the interactive TUI health dashboard. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix; mrk-status will prompt for confirmation before running it. Press <strong>r</strong> to refresh.</p>
+      <p>Running <code>status</code> (linked into <code>~/bin</code> when the TUI binaries are built) opens the interactive mrk-status health dashboard; <code>make status</code> prints a plain-text report of the same ground instead. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix; mrk-status will prompt for confirmation before running it. Press <strong>r</strong> to refresh.</p>
 
       <ul>
         <li><strong>Dotfiles</strong> — Which files are symlinked into <code>~/</code> and which are missing</li>
@@ -979,6 +1013,9 @@ git push</code></pre>
           <tr><td>~/.mrk/backups/</td><td>Timestamped backups of dotfiles replaced during setup</td></tr>
           <tr><td>~/.mrk/defaults-rollback.sh</td><td>Shell script to undo all <code>defaults write</code> changes</td></tr>
           <tr><td>~/.mrk/hardening-rollback.sh</td><td>Shell script to undo security hardening</td></tr>
+          <tr><td>~/.mrk/install.log</td><td>Rotating log written by the setup, brew, and post-install phases</td></tr>
+          <tr><td>~/.mrk/plist-backups/</td><td>Pre-import snapshots of preference domains, used by the rollback script</td></tr>
+          <tr><td>~/.mrk/sync-ignore</td><td>Optional list of packages <code>sync</code> should never suggest (Section 2.3)</td></tr>
         </tbody>
       </table>
 
@@ -1005,7 +1042,7 @@ git push</code></pre>
           <tr><td>~/bin not on PATH</td><td>Run <code>make doctor ARGS=--fix</code></td></tr>
           <tr><td>Brewfile entry shows ✗ (missing)</td><td>Package name may differ from formula name; check with <code>brew info &lt;pkg&gt;</code></td></tr>
           <tr><td>sync exits with "nothing to add"</td><td>All installed packages are already in the Brewfile</td></tr>
-          <tr><td>snapshot-prefs fails for an app</td><td>App is not installed or <code>defaults export</code> failed; check the app is running</td></tr>
+          <tr><td>snapshot-prefs skips an app</td><td>Non-fatal — the export failed or hit its 15-second timeout; skipped apps are listed at the end of the run. Re-run <code>snapshot-prefs</code> to retry</td></tr>
           <tr><td>post-install login item already exists</td><td>Safe to ignore — <code>add_login_item</code> checks before adding</td></tr>
         </tbody>
       </table>
@@ -1028,9 +1065,13 @@ git push</code></pre>
         <thead><tr><th>Feature</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td>Brewfile view</td><td>Packages grouped by section with inline search; select any entry to see description, version, dependencies, examples, man page, and more</td></tr>
-          <tr><td>Console</td><td>Streaming brew command output with full history</td></tr>
-          <tr><td>Actions</td><td>Install, uninstall, upgrade, or remove from Brewfile for any selected package</td></tr>
-          <tr><td>Brewfile picker</td><td>Defaults to <code>~/mrk/Brewfile</code>; any path can be selected in Settings</td></tr>
+          <tr><td>Console</td><td>Streaming brew command output (cleared at the start of each command)</td></tr>
+          <tr><td>Actions</td><td>Install, uninstall, reinstall, upgrade, tap/untap, add to or remove from Brewfile — plus multi-select for batch upgrade, uninstall, and adopt</td></tr>
+          <tr><td>Installed view</td><td>Sidebar tab listing everything brew has installed — including packages not tracked in the Brewfile — with untracked and outdated counts shown in the toolbar</td></tr>
+          <tr><td>Bundle actions</td><td>Install Missing (⌘I, runs <code>brew bundle install</code>), Add Untracked to Brewfile…, Cleanup Untracked…, and Scan for Migratable Apps — in the toolbar stack menu and the Bundle menu</td></tr>
+          <tr><td>Auto-reload</td><td>Watches the Brewfile and reloads automatically when it changes on disk</td></tr>
+          <tr><td>Updates &amp; help</td><td>In-app update checker (runs at launch; also Barkeep → Check for Updates…) and a Help window (⌘?)</td></tr>
+          <tr><td>Brewfile picker</td><td>Defaults to <code>~/mrk/Brewfile</code>; change it with the toolbar folder button or File → Choose Brewfile… (⌘O)</td></tr>
         </tbody>
       </table>
     </section>
@@ -1092,10 +1133,12 @@ make post-install</code></pre>
         <div class="proc-body">
           <p class="desc">Select any package in the left column to see its full detail and available actions.</p>
           <ul>
-            <li><strong>Install</strong> — runs <code>brew install &lt;package&gt;</code></li>
-            <li><strong>Uninstall</strong> — runs <code>brew uninstall &lt;package&gt;</code></li>
-            <li><strong>Upgrade</strong> — runs <code>brew upgrade &lt;package&gt;</code></li>
+            <li><strong>Install / Uninstall / Reinstall</strong> — runs the matching <code>brew</code> command</li>
+            <li><strong>Upgrade</strong> — runs <code>brew upgrade &lt;package&gt;</code> (shown when the package is outdated)</li>
+            <li><strong>Tap / Untap</strong> — for tap entries</li>
+            <li><strong>Adopt</strong> — adds an installed-but-untracked package to the Brewfile</li>
             <li><strong>Remove from Brewfile</strong> — removes the entry from the Brewfile (does not uninstall)</li>
+            <li><strong>Multi-select</strong> — select several packages for batch upgrade, uninstall, or add-to-Brewfile</li>
           </ul>
           <p>Console output streams in real time in the right column.</p>
         </div>
@@ -1104,12 +1147,12 @@ make post-install</code></pre>
       <div class="proc">
         <div class="proc-header">
           <span class="proc-num">3.3.2</span>
-          <h3>Settings</h3>
+          <h3>Changing the Brewfile</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Open Settings (⌘,) to configure the Brewfile path and other preferences.</p>
+          <p class="desc">Barkeep has no Settings window — the Brewfile is chosen directly.</p>
           <ul>
-            <li><strong>Brewfile path</strong> — defaults to <code>~/mrk/Brewfile</code>; use the picker to select any other location</li>
+            <li><strong>Brewfile path</strong> — defaults to <code>~/mrk/Brewfile</code>; change it with the folder button in the toolbar or File → Choose Brewfile… (⌘O)</li>
           </ul>
         </div>
       </div>
@@ -1133,16 +1176,18 @@ make post-install</code></pre>
         <tbody>
           <tr><td>Shell, dotfiles, macOS defaults</td><td>mrk</td></tr>
           <tr><td>Homebrew packages</td><td>mrk (Brewfile)</td></tr>
-          <tr><td>App plists (BetterSnapTool, Raycast, Rogue Amoeba, etc.)</td><td>mrk (mrk-prefs) <em>and</em> MBM</td></tr>
-          <tr><td>Logic Pro templates, presets, channel strips, key commands</td><td>MBM</td></tr>
+          <tr><td>App plists (BetterSnapTool, Raycast, Rogue Amoeba, etc.)</td><td>mrk (mrk-prefs) <em>and</em> MBM (App Preferences source — off by default)</td></tr>
+          <tr><td>Logic Pro templates, presets, channel strips, key commands, databases</td><td>MBM</td></tr>
           <tr><td>Audio Unit presets (Apple, accentize, Waves, etc.)</td><td>MBM</td></tr>
-          <tr><td>iZotope RX user presets</td><td>MBM</td></tr>
+          <tr><td>iZotope RX user presets &amp; iZotope app support</td><td>MBM</td></tr>
+          <tr><td>BetterTouchTool app support</td><td>MBM</td></tr>
+          <tr><td>WaxOn app data</td><td>MBM</td></tr>
           <tr><td>Audio Hijack sessions &amp; presets</td><td>MBM</td></tr>
           <tr><td>Loopback / SoundSource app config</td><td>mrk (App Support restore) <em>and</em> MBM</td></tr>
-          <tr><td>Browser profiles (Chrome, Brave, Safari)</td><td>MBM</td></tr>
+          <tr><td>Browser profiles (Chrome, Brave, Safari)</td><td>MBM (off by default)</td></tr>
           <tr><td>Farrago sound sets &amp; metadata</td><td>MBM</td></tr>
           <tr><td>MusicBrainz Picard config &amp; plugins</td><td>MBM</td></tr>
-          <tr><td>Chrono Plus timekeeping data</td><td>MBM</td></tr>
+          <tr><td>Chrono Plus timekeeping data</td><td>MBM (off by default)</td></tr>
           <tr><td>Login items</td><td>mrk</td></tr>
         </tbody>
       </table>
@@ -1172,6 +1217,8 @@ make post-install</code></pre>
           </div>
         </div>
       </div>
+
+      <p>After installation, updates come from inside the app: <strong>Help → Check for Updates…</strong> checks the latest release, and this works against the private repo. The app also accepts a <code>--auto-backup</code> launch argument, used by scheduled backups (Section 4.7).</p>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1182,9 +1229,10 @@ make post-install</code></pre>
         <span class="section-sub">full disk access</span>
       </div>
 
-      <p>On first launch, MBM checks whether it has Full Disk Access. If it doesn't, a yellow warning banner appears at the top with two buttons:</p>
+      <p>On first launch, MBM checks whether it has Full Disk Access. If it doesn't, a yellow warning banner appears at the top with three buttons:</p>
 
       <ul>
+        <li><strong>Test Sources</strong> — re-runs the Full Disk Access check and refreshes source availability without relaunching</li>
         <li><strong>Open System Settings</strong> — opens Privacy &amp; Security → Full Disk Access directly</li>
         <li><strong>Quit &amp; Relaunch</strong> — restarts the app so macOS picks up the new permission</li>
       </ul>
@@ -1210,15 +1258,18 @@ make post-install</code></pre>
         <li><code>--delete</code> — ensures the backup is an exact mirror; files deleted from the source are removed from the backup</li>
         <li><code>--ignore-errors</code> — continues past individual file errors</li>
         <li><code>--stats</code> — prints a transfer summary at the end (no per-file listing)</li>
+        <li><code>.DS_Store</code> files are always excluded</li>
         <li>Source directories that don't exist on disk are skipped (marked "skipped" in orange)</li>
         <li>On success, a <code>last_backup.log</code> file is written to each destination recording the timestamp</li>
       </ul>
 
-      <p><strong>Destinations:</strong> Backup always writes to the local destination. If the external destination volume is mounted, it writes there as well. Both are created automatically if they don't exist.</p>
+      <p><strong>Destinations:</strong> Backup always writes to the local destination. If an external destination is configured and its volume is mounted, it writes there as well. Both are created automatically if they don't exist.</p>
 
-      <p>Each source directory is stored as a named subdirectory within the destination. For example, <code>~/Library/Audio/Presets</code> backs up to <code>~/.backups/Presets/</code>.</p>
+      <p>Each source directory is stored as a named subdirectory within the destination. For example, <code>~/Library/Audio/Presets</code> backs up to <code>~/.backups/Presets/</code>. With the dated-snapshots layout (Section 4.7), a <code>YYYY-MM-DD</code> folder is created under each destination per run instead of mirroring in place.</p>
 
-      <p><strong>Progress:</strong> The left panel shows each item's status during a run — pending (empty circle), in progress (spinner), success (green checkmark), failed (red ✗), or skipped (orange dash). rsync output streams in real time in the right panel.</p>
+      <p><strong>Run confirmation:</strong> Run Backup first opens a confirmation sheet summarizing the sources, destinations, and a preflight estimate (file count and total size of existing sources). From the sheet, <strong>Dry Run</strong> previews the run with <code>rsync --dry-run --itemize-changes</code> and reports how many files would transfer and how many would be deleted, per source. A notification is posted when a run completes.</p>
+
+      <p><strong>Progress:</strong> The left panel shows each item's status during a run — pending (empty circle), in progress (spinner), success (green checkmark), partial (yellow ⚠ — rsync exit 23/24, some files couldn't be transferred), failed (red ✗), or skipped (orange dash). rsync output streams in real time in the right panel. The header shows the date and destination of the last successful backup, and its folder button reveals the backup folder in Finder.</p>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1238,7 +1289,7 @@ make post-install</code></pre>
         <li>Items not found in the backup are skipped</li>
       </ul>
 
-      <p>Restore reads from whichever destinations are available (local, external, or both).</p>
+      <p>Restore reads from one destination at a time. A "Restore from" picker (Local/External) appears when both destinations are available; if the selected one becomes unavailable, MBM switches to one that is and says so. With the dated-snapshots layout, a Snapshot picker selects which dated backup to restore from.</p>
 
       <div class="callout">
         <span class="callout-label">Note — Switching Modes</span>
@@ -1254,39 +1305,48 @@ make post-install</code></pre>
         <span class="section-sub">what gets backed up</span>
       </div>
 
-      <p>The app ships with these source directories. Each is backed up in its entirety unless filters are noted.</p>
+      <p>The app ships with these source directories. Each is backed up in its entirety unless filters are noted. The <strong>Default</strong> column shows whether the source ships enabled — sources marked Off stay dormant until switched on with their toggle in Settings.</p>
 
       <table class="ref-table">
         <caption>Table 4.6-1. Logic Pro</caption>
-        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Logic Pro Project Templates</td><td><code>~/Music/Audio Music Apps/Project Templates</code></td></tr>
-          <tr><td>Logic Pro Plug-In Settings</td><td><code>~/Music/Audio Music Apps/Plug-In Settings</code></td></tr>
-          <tr><td>Logic Pro Channel Strips</td><td><code>~/Music/Audio Music Apps/Channel Strip Settings</code></td></tr>
-          <tr><td>Logic Pro Key Commands</td><td><code>~/Music/Audio Music Apps/Key Commands</code></td></tr>
+          <tr><td>Logic Pro Project Templates</td><td><code>~/Music/Audio Music Apps/Project Templates</code></td><td>On</td></tr>
+          <tr><td>Logic Pro Plug-In Settings</td><td><code>~/Music/Audio Music Apps/Plug-In Settings</code></td><td>On</td></tr>
+          <tr><td>Logic Pro Channel Strips</td><td><code>~/Music/Audio Music Apps/Channel Strip Settings</code></td><td>On</td></tr>
+          <tr><td>Logic Pro Key Commands</td><td><code>~/Music/Audio Music Apps/Key Commands</code></td><td>On</td></tr>
+          <tr><td>Logic Pro Databases</td><td><code>~/Music/Audio Music Apps/Databases</code></td><td>On</td></tr>
         </tbody>
       </table>
 
       <table class="ref-table">
         <caption>Table 4.6-2. Audio &amp; Apps</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Notes</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Audio Unit Presets</td><td><code>~/Library/Audio/Presets</code></td><td>Presets for AU plugins (Apple, accentize, Waves, etc.)</td></tr>
-          <tr><td>iZotope RX Presets</td><td><code>~/Documents/iZotope/RX Audio Editor/User Presets</code></td><td></td></tr>
-          <tr><td>Audio Hijack Sessions &amp; Presets</td><td><code>~/Library/Application Support/Audio Hijack 4</code></td><td>Excludes <code>models/</code> (AI enhance models, ~2.9 GB) and <code>Recordings/</code></td></tr>
-          <tr><td>Farrago Sound Sets</td><td><code>~/Library/Application Support/Farrago 2/Sound Sets</code></td><td></td></tr>
-          <tr><td>Farrago Metadata</td><td><code>~/Library/Application Support/Farrago 2/Metadata</code></td><td></td></tr>
-          <tr><td>Loopback App Support</td><td><code>~/Library/Application Support/Loopback</code></td><td>Virtual audio device configs</td></tr>
-          <tr><td>SoundSource App Support</td><td><code>~/Library/Application Support/SoundSource</code></td><td>Presets, sources, custom configs</td></tr>
+          <tr><td>Audio Unit Presets</td><td><code>~/Library/Audio/Presets</code></td><td>Presets for AU plugins (Apple, accentize, Waves, etc.)</td><td>On</td></tr>
+          <tr><td>iZotope RX Presets</td><td><code>~/Documents/iZotope/RX Audio Editor/User Presets</code></td><td></td><td>On</td></tr>
+          <tr><td>iZotope App Support</td><td><code>~/Library/Application Support/iZotope</code></td><td></td><td>On</td></tr>
+          <tr><td>Audio Hijack Sessions &amp; Presets</td><td><code>~/Library/Application Support/Audio Hijack 4</code></td><td>Excludes <code>models/</code> (AI enhance models, ~2.9 GB) and <code>Recordings/</code></td><td>On</td></tr>
+          <tr><td>Farrago Sound Sets</td><td><code>~/Library/Application Support/Farrago 2/Sound Sets</code></td><td></td><td>On</td></tr>
+          <tr><td>Farrago Metadata</td><td><code>~/Library/Application Support/Farrago 2/Metadata</code></td><td></td><td>On</td></tr>
+          <tr><td>Loopback App Support</td><td><code>~/Library/Application Support/Loopback</code></td><td>Virtual audio device configs</td><td>On</td></tr>
+          <tr><td>SoundSource App Support</td><td><code>~/Library/Application Support/SoundSource</code></td><td>Presets, sources, custom configs</td><td>On</td></tr>
+          <tr><td>BetterTouchTool</td><td><code>~/Library/Application Support/BetterTouchTool</code></td><td></td><td>On</td></tr>
+          <tr><td>WaxOn App Data</td><td><code>~/Library/Containers/io.github.sevmorris.WaxOn/Data/Library/Application Support/WaxOn</code></td><td></td><td>On</td></tr>
+          <tr><td>Image-Line (FL Studio)</td><td><code>~/Documents/Image-Line</code></td><td></td><td>Off</td></tr>
+          <tr><td>Two notes Audio Engineering</td><td><code>~/Documents/Two notes Audio Engineering</code></td><td></td><td>Off</td></tr>
+          <tr><td>Waves App Support</td><td><code>~/Library/Application Support/Waves Audio</code></td><td></td><td>Off</td></tr>
+          <tr><td>Pulsar App Support</td><td><code>~/Library/Application Support/Pulsar</code></td><td></td><td>Off</td></tr>
+          <tr><td>Accusonus Documents</td><td><code>~/Documents/Accusonus</code></td><td></td><td>Off</td></tr>
         </tbody>
       </table>
 
       <table class="ref-table">
         <caption>Table 4.6-3. MusicBrainz Picard</caption>
-        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Picard Config</td><td><code>~/.config/MusicBrainz</code></td></tr>
-          <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td></tr>
+          <tr><td>Picard Config</td><td><code>~/.config/MusicBrainz</code></td><td>On</td></tr>
+          <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td><td>On</td></tr>
         </tbody>
       </table>
       <div class="callout">
@@ -1296,31 +1356,34 @@ make post-install</code></pre>
 
       <table class="ref-table">
         <caption>Table 4.6-4. Browsers</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Notes</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Safari Data</td><td><code>~/Library/Safari</code></td><td>Bookmarks, history, per-site settings; requires Full Disk Access</td></tr>
-          <tr><td>Chrome Data</td><td><code>~/Library/Application Support/Google/Chrome</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td></tr>
-          <tr><td>Brave Data</td><td><code>~/Library/Application Support/BraveSoftware/Brave-Browser</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td></tr>
+          <tr><td>Safari Data</td><td><code>~/Library/Safari</code></td><td>Bookmarks, history, per-site settings; requires Full Disk Access</td><td>Off</td></tr>
+          <tr><td>Chrome Data</td><td><code>~/Library/Application Support/Google/Chrome</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td><td>Off</td></tr>
+          <tr><td>Brave Data</td><td><code>~/Library/Application Support/BraveSoftware/Brave-Browser</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td><td>Off</td></tr>
         </tbody>
       </table>
 
       <table class="ref-table">
         <caption>Table 4.6-5. Other</caption>
-        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Chrono Plus Data</td><td><code>~/Library/Containers/com.xwavesoft.timetrackermac/Data/Documents</code></td></tr>
+          <tr><td>Chrono Plus Data</td><td><code>~/Library/Containers/com.xwavesoft.timetrackermac/Data/Documents</code></td><td>Off</td></tr>
         </tbody>
       </table>
 
       <table class="ref-table">
-        <caption>Table 4.6-6. App Preferences (Filtered — include patterns only)</caption>
+        <caption>Table 4.6-6. App Preferences (Filtered — include patterns only; source ships Off by default)</caption>
         <thead><tr><th>File / Pattern</th><th>Application</th></tr></thead>
         <tbody>
           <tr><td>com.apple.logic10.plist</td><td>Logic Pro main preferences</td></tr>
           <tr><td>com.apple.logic.pro.cs/**</td><td>Logic Pro control surface settings</td></tr>
           <tr><td>com.izotope.*</td><td>All iZotope app preferences</td></tr>
           <tr><td>com.rogueamoeba.*</td><td>All Rogue Amoeba app preferences</td></tr>
+          <tr><td>io.github.sevmorris.*</td><td>All sevmorris app preferences</td></tr>
           <tr><td>com.hegenberg.BetterSnapTool.plist</td><td>BetterSnapTool</td></tr>
+          <tr><td>com.hegenberg.BetterTouchTool.plist</td><td>BetterTouchTool</td></tr>
+          <tr><td>com.hegenberg.bettertouchtool-setapp.plist</td><td>BetterTouchTool (Setapp)</td></tr>
           <tr><td>com.jordanbaird.Ice.plist</td><td>Ice menu bar manager</td></tr>
           <tr><td>com.raycast.macos.plist</td><td>Raycast</td></tr>
           <tr><td>com.WavesAudio.central.plist</td><td>Waves Central</td></tr>
@@ -1329,13 +1392,16 @@ make post-install</code></pre>
           <tr><td>com.apple.Safari.plist</td><td>Safari</td></tr>
           <tr><td>com.google.Chrome.plist</td><td>Chrome</td></tr>
           <tr><td>com.brave.Browser.plist</td><td>Brave</td></tr>
+          <tr><td>com.goodsnooze.MacWhisper.plist</td><td>MacWhisper</td></tr>
+          <tr><td>com.googlecode.iterm2.plist</td><td>iTerm2</td></tr>
+          <tr><td>com.descript.beachcube.plist</td><td>Descript</td></tr>
           <tr><td>Waves Preferences/**</td><td>Waves Audio preferences</td></tr>
         </tbody>
       </table>
 
       <div class="callout">
         <span class="callout-label">Note — App Preferences Filtering</span>
-        <div class="callout-body">The App Preferences entry does <strong>not</strong> back up the entire <code>~/Library/Preferences</code> directory. It uses rsync include filters to sync only the files listed above. Everything else is excluded by a trailing <code>--exclude *</code> rule.</div>
+        <div class="callout-body">The App Preferences entry does <strong>not</strong> back up the entire <code>~/Library/Preferences</code> directory. It uses rsync include filters to sync only the files listed above. Everything else is excluded by a trailing <code>--exclude *</code> rule. The source ships disabled — enable it in Settings to use it.</div>
       </div>
     </section>
 
@@ -1350,9 +1416,12 @@ make post-install</code></pre>
       <p>Open Settings with the gear icon in the header. The sheet contains:</p>
 
       <ul>
-        <li><strong>Source Directories</strong> — Lists all configured sources with labels, abbreviated paths, and filter summaries. Each entry has a remove button. Use <strong>Add Directory</strong> to add a new source via a folder picker.</li>
+        <li><strong>Source Directories</strong> — Lists all configured sources with labels, abbreviated paths, and filter summaries. Each entry has an enable/disable toggle, a <strong>Filters</strong> editor for its include/exclude patterns, and a remove button. Use <strong>Add Directory</strong> to add a new source via a folder picker.</li>
+        <li><strong>Backup Layout</strong> — <strong>Mirror</strong> (default) overwrites backups in place; <strong>Dated snapshots</strong> creates a <code>YYYY-MM-DD</code> folder under each destination on every run.</li>
         <li><strong>Local Backup Destination</strong> — Default: <code>~/.backups</code>. Change with <strong>Choose...</strong></li>
-        <li><strong>External Backup Destination</strong> — Default: <code>/Volumes/Personal Backup/scripted_backup</code>. Only used when the volume is mounted. Change with <strong>Choose...</strong></li>
+        <li><strong>External Backup Destination</strong> — Not configured by default. Optional; only used when the volume is mounted. Set with <strong>Choose...</strong>, remove with <strong>Clear</strong>.</li>
+        <li><strong>Scheduled Backup</strong> — Optional daily run at a configurable hour and minute, installed as a launch agent that opens the app with <code>--auto-backup</code>; scheduled runs can skip the confirmation sheet. Requires Full Disk Access and the app in <code>/Applications</code>; logs go to <code>~/Library/Logs/Magic Backup Machine/</code>.</li>
+        <li><strong>Settings File</strong> — Export or import the full configuration (sources, destinations, filters, preferences) as JSON.</li>
         <li><strong>Reset to Defaults</strong> — Reverts all settings to the built-in defaults.</li>
       </ul>
 
@@ -1362,7 +1431,7 @@ make post-install</code></pre>
 
       <div class="callout">
         <span class="callout-label">Note — New Source Directories After an Update</span>
-        <div class="callout-body">When MBM is updated with new default source directories, existing saved settings are not automatically updated — UserDefaults takes precedence. Use <strong>Reset to Defaults</strong> in Settings, or run the <code>defaults delete</code> command above to pick up the new defaults.</div>
+        <div class="callout-body">When an MBM update ships new default source directories, a settings migration appends them to existing installs automatically — but they arrive <strong>disabled</strong>, so nothing new starts syncing unannounced. Enable them with their toggle in Settings. Alternatively, <strong>Reset to Defaults</strong> or the <code>defaults delete</code> command above starts over from the shipped defaults.</div>
       </div>
     </section>
 
