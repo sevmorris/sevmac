@@ -1416,9 +1416,12 @@ make post-install</code></pre>
       <p>Open Settings with the gear icon in the header. The sheet contains:</p>
 
       <ul>
-        <li><strong>Source Directories</strong> — Lists all configured sources with labels, abbreviated paths, and filter summaries. Each entry has a remove button. Use <strong>Add Directory</strong> to add a new source via a folder picker.</li>
+        <li><strong>Source Directories</strong> — Lists all configured sources with labels, abbreviated paths, and filter summaries. Each entry has an enable/disable toggle, a <strong>Filters</strong> editor for its include/exclude patterns, and a remove button. Use <strong>Add Directory</strong> to add a new source via a folder picker.</li>
+        <li><strong>Backup Layout</strong> — <strong>Mirror</strong> (default) overwrites backups in place; <strong>Dated snapshots</strong> creates a <code>YYYY-MM-DD</code> folder under each destination on every run.</li>
         <li><strong>Local Backup Destination</strong> — Default: <code>~/.backups</code>. Change with <strong>Choose...</strong></li>
-        <li><strong>External Backup Destination</strong> — Default: <code>/Volumes/Personal Backup/scripted_backup</code>. Only used when the volume is mounted. Change with <strong>Choose...</strong></li>
+        <li><strong>External Backup Destination</strong> — Not configured by default. Optional; only used when the volume is mounted. Set with <strong>Choose...</strong>, remove with <strong>Clear</strong>.</li>
+        <li><strong>Scheduled Backup</strong> — Optional daily run at a configurable hour and minute, installed as a launch agent that opens the app with <code>--auto-backup</code>; scheduled runs can skip the confirmation sheet. Requires Full Disk Access and the app in <code>/Applications</code>; logs go to <code>~/Library/Logs/Magic Backup Machine/</code>.</li>
+        <li><strong>Settings File</strong> — Export or import the full configuration (sources, destinations, filters, preferences) as JSON.</li>
         <li><strong>Reset to Defaults</strong> — Reverts all settings to the built-in defaults.</li>
       </ul>
 
@@ -1428,7 +1431,7 @@ make post-install</code></pre>
 
       <div class="callout">
         <span class="callout-label">Note — New Source Directories After an Update</span>
-        <div class="callout-body">When MBM is updated with new default source directories, existing saved settings are not automatically updated — UserDefaults takes precedence. Use <strong>Reset to Defaults</strong> in Settings, or run the <code>defaults delete</code> command above to pick up the new defaults.</div>
+        <div class="callout-body">When an MBM update ships new default source directories, a settings migration appends them to existing installs automatically — but they arrive <strong>disabled</strong>, so nothing new starts syncing unannounced. Enable them with their toggle in Settings. Alternatively, <strong>Reset to Defaults</strong> or the <code>defaults delete</code> command above starts over from the shipped defaults.</div>
       </div>
     </section>
 
