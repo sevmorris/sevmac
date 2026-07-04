@@ -1042,7 +1042,7 @@ git push</code></pre>
           <tr><td>~/bin not on PATH</td><td>Run <code>make doctor ARGS=--fix</code></td></tr>
           <tr><td>Brewfile entry shows ✗ (missing)</td><td>Package name may differ from formula name; check with <code>brew info &lt;pkg&gt;</code></td></tr>
           <tr><td>sync exits with "nothing to add"</td><td>All installed packages are already in the Brewfile</td></tr>
-          <tr><td>snapshot-prefs fails for an app</td><td>App is not installed or <code>defaults export</code> failed; check the app is running</td></tr>
+          <tr><td>snapshot-prefs skips an app</td><td>Non-fatal — the export failed or hit its 15-second timeout; skipped apps are listed at the end of the run. Re-run <code>snapshot-prefs</code> to retry</td></tr>
           <tr><td>post-install login item already exists</td><td>Safe to ignore — <code>add_login_item</code> checks before adding</td></tr>
         </tbody>
       </table>
