@@ -1305,39 +1305,48 @@ make post-install</code></pre>
         <span class="section-sub">what gets backed up</span>
       </div>
 
-      <p>The app ships with these source directories. Each is backed up in its entirety unless filters are noted.</p>
+      <p>The app ships with these source directories. Each is backed up in its entirety unless filters are noted. The <strong>Default</strong> column shows whether the source ships enabled — sources marked Off stay dormant until switched on with their toggle in Settings.</p>
 
       <table class="ref-table">
         <caption>Table 4.6-1. Logic Pro</caption>
-        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Logic Pro Project Templates</td><td><code>~/Music/Audio Music Apps/Project Templates</code></td></tr>
-          <tr><td>Logic Pro Plug-In Settings</td><td><code>~/Music/Audio Music Apps/Plug-In Settings</code></td></tr>
-          <tr><td>Logic Pro Channel Strips</td><td><code>~/Music/Audio Music Apps/Channel Strip Settings</code></td></tr>
-          <tr><td>Logic Pro Key Commands</td><td><code>~/Music/Audio Music Apps/Key Commands</code></td></tr>
+          <tr><td>Logic Pro Project Templates</td><td><code>~/Music/Audio Music Apps/Project Templates</code></td><td>On</td></tr>
+          <tr><td>Logic Pro Plug-In Settings</td><td><code>~/Music/Audio Music Apps/Plug-In Settings</code></td><td>On</td></tr>
+          <tr><td>Logic Pro Channel Strips</td><td><code>~/Music/Audio Music Apps/Channel Strip Settings</code></td><td>On</td></tr>
+          <tr><td>Logic Pro Key Commands</td><td><code>~/Music/Audio Music Apps/Key Commands</code></td><td>On</td></tr>
+          <tr><td>Logic Pro Databases</td><td><code>~/Music/Audio Music Apps/Databases</code></td><td>On</td></tr>
         </tbody>
       </table>
 
       <table class="ref-table">
         <caption>Table 4.6-2. Audio &amp; Apps</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Notes</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Audio Unit Presets</td><td><code>~/Library/Audio/Presets</code></td><td>Presets for AU plugins (Apple, accentize, Waves, etc.)</td></tr>
-          <tr><td>iZotope RX Presets</td><td><code>~/Documents/iZotope/RX Audio Editor/User Presets</code></td><td></td></tr>
-          <tr><td>Audio Hijack Sessions &amp; Presets</td><td><code>~/Library/Application Support/Audio Hijack 4</code></td><td>Excludes <code>models/</code> (AI enhance models, ~2.9 GB) and <code>Recordings/</code></td></tr>
-          <tr><td>Farrago Sound Sets</td><td><code>~/Library/Application Support/Farrago 2/Sound Sets</code></td><td></td></tr>
-          <tr><td>Farrago Metadata</td><td><code>~/Library/Application Support/Farrago 2/Metadata</code></td><td></td></tr>
-          <tr><td>Loopback App Support</td><td><code>~/Library/Application Support/Loopback</code></td><td>Virtual audio device configs</td></tr>
-          <tr><td>SoundSource App Support</td><td><code>~/Library/Application Support/SoundSource</code></td><td>Presets, sources, custom configs</td></tr>
+          <tr><td>Audio Unit Presets</td><td><code>~/Library/Audio/Presets</code></td><td>Presets for AU plugins (Apple, accentize, Waves, etc.)</td><td>On</td></tr>
+          <tr><td>iZotope RX Presets</td><td><code>~/Documents/iZotope/RX Audio Editor/User Presets</code></td><td></td><td>On</td></tr>
+          <tr><td>iZotope App Support</td><td><code>~/Library/Application Support/iZotope</code></td><td></td><td>On</td></tr>
+          <tr><td>Audio Hijack Sessions &amp; Presets</td><td><code>~/Library/Application Support/Audio Hijack 4</code></td><td>Excludes <code>models/</code> (AI enhance models, ~2.9 GB) and <code>Recordings/</code></td><td>On</td></tr>
+          <tr><td>Farrago Sound Sets</td><td><code>~/Library/Application Support/Farrago 2/Sound Sets</code></td><td></td><td>On</td></tr>
+          <tr><td>Farrago Metadata</td><td><code>~/Library/Application Support/Farrago 2/Metadata</code></td><td></td><td>On</td></tr>
+          <tr><td>Loopback App Support</td><td><code>~/Library/Application Support/Loopback</code></td><td>Virtual audio device configs</td><td>On</td></tr>
+          <tr><td>SoundSource App Support</td><td><code>~/Library/Application Support/SoundSource</code></td><td>Presets, sources, custom configs</td><td>On</td></tr>
+          <tr><td>BetterTouchTool</td><td><code>~/Library/Application Support/BetterTouchTool</code></td><td></td><td>On</td></tr>
+          <tr><td>WaxOn App Data</td><td><code>~/Library/Containers/io.github.sevmorris.WaxOn/Data/Library/Application Support/WaxOn</code></td><td></td><td>On</td></tr>
+          <tr><td>Image-Line (FL Studio)</td><td><code>~/Documents/Image-Line</code></td><td></td><td>Off</td></tr>
+          <tr><td>Two notes Audio Engineering</td><td><code>~/Documents/Two notes Audio Engineering</code></td><td></td><td>Off</td></tr>
+          <tr><td>Waves App Support</td><td><code>~/Library/Application Support/Waves Audio</code></td><td></td><td>Off</td></tr>
+          <tr><td>Pulsar App Support</td><td><code>~/Library/Application Support/Pulsar</code></td><td></td><td>Off</td></tr>
+          <tr><td>Accusonus Documents</td><td><code>~/Documents/Accusonus</code></td><td></td><td>Off</td></tr>
         </tbody>
       </table>
 
       <table class="ref-table">
         <caption>Table 4.6-3. MusicBrainz Picard</caption>
-        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Picard Config</td><td><code>~/.config/MusicBrainz</code></td></tr>
-          <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td></tr>
+          <tr><td>Picard Config</td><td><code>~/.config/MusicBrainz</code></td><td>On</td></tr>
+          <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td><td>On</td></tr>
         </tbody>
       </table>
       <div class="callout">
@@ -1347,31 +1356,34 @@ make post-install</code></pre>
 
       <table class="ref-table">
         <caption>Table 4.6-4. Browsers</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Notes</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Safari Data</td><td><code>~/Library/Safari</code></td><td>Bookmarks, history, per-site settings; requires Full Disk Access</td></tr>
-          <tr><td>Chrome Data</td><td><code>~/Library/Application Support/Google/Chrome</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td></tr>
-          <tr><td>Brave Data</td><td><code>~/Library/Application Support/BraveSoftware/Brave-Browser</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td></tr>
+          <tr><td>Safari Data</td><td><code>~/Library/Safari</code></td><td>Bookmarks, history, per-site settings; requires Full Disk Access</td><td>Off</td></tr>
+          <tr><td>Chrome Data</td><td><code>~/Library/Application Support/Google/Chrome</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td><td>Off</td></tr>
+          <tr><td>Brave Data</td><td><code>~/Library/Application Support/BraveSoftware/Brave-Browser</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td><td>Off</td></tr>
         </tbody>
       </table>
 
       <table class="ref-table">
         <caption>Table 4.6-5. Other</caption>
-        <thead><tr><th>Label</th><th>Path</th></tr></thead>
+        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
-          <tr><td>Chrono Plus Data</td><td><code>~/Library/Containers/com.xwavesoft.timetrackermac/Data/Documents</code></td></tr>
+          <tr><td>Chrono Plus Data</td><td><code>~/Library/Containers/com.xwavesoft.timetrackermac/Data/Documents</code></td><td>Off</td></tr>
         </tbody>
       </table>
 
       <table class="ref-table">
-        <caption>Table 4.6-6. App Preferences (Filtered — include patterns only)</caption>
+        <caption>Table 4.6-6. App Preferences (Filtered — include patterns only; source ships Off by default)</caption>
         <thead><tr><th>File / Pattern</th><th>Application</th></tr></thead>
         <tbody>
           <tr><td>com.apple.logic10.plist</td><td>Logic Pro main preferences</td></tr>
           <tr><td>com.apple.logic.pro.cs/**</td><td>Logic Pro control surface settings</td></tr>
           <tr><td>com.izotope.*</td><td>All iZotope app preferences</td></tr>
           <tr><td>com.rogueamoeba.*</td><td>All Rogue Amoeba app preferences</td></tr>
+          <tr><td>io.github.sevmorris.*</td><td>All sevmorris app preferences</td></tr>
           <tr><td>com.hegenberg.BetterSnapTool.plist</td><td>BetterSnapTool</td></tr>
+          <tr><td>com.hegenberg.BetterTouchTool.plist</td><td>BetterTouchTool</td></tr>
+          <tr><td>com.hegenberg.bettertouchtool-setapp.plist</td><td>BetterTouchTool (Setapp)</td></tr>
           <tr><td>com.jordanbaird.Ice.plist</td><td>Ice menu bar manager</td></tr>
           <tr><td>com.raycast.macos.plist</td><td>Raycast</td></tr>
           <tr><td>com.WavesAudio.central.plist</td><td>Waves Central</td></tr>
@@ -1380,13 +1392,16 @@ make post-install</code></pre>
           <tr><td>com.apple.Safari.plist</td><td>Safari</td></tr>
           <tr><td>com.google.Chrome.plist</td><td>Chrome</td></tr>
           <tr><td>com.brave.Browser.plist</td><td>Brave</td></tr>
+          <tr><td>com.goodsnooze.MacWhisper.plist</td><td>MacWhisper</td></tr>
+          <tr><td>com.googlecode.iterm2.plist</td><td>iTerm2</td></tr>
+          <tr><td>com.descript.beachcube.plist</td><td>Descript</td></tr>
           <tr><td>Waves Preferences/**</td><td>Waves Audio preferences</td></tr>
         </tbody>
       </table>
 
       <div class="callout">
         <span class="callout-label">Note — App Preferences Filtering</span>
-        <div class="callout-body">The App Preferences entry does <strong>not</strong> back up the entire <code>~/Library/Preferences</code> directory. It uses rsync include filters to sync only the files listed above. Everything else is excluded by a trailing <code>--exclude *</code> rule.</div>
+        <div class="callout-body">The App Preferences entry does <strong>not</strong> back up the entire <code>~/Library/Preferences</code> directory. It uses rsync include filters to sync only the files listed above. Everything else is excluded by a trailing <code>--exclude *</code> rule. The source ships disabled — enable it in Settings to use it.</div>
       </div>
     </section>
 
