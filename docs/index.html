@@ -722,7 +722,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <p><strong>How sync works:</strong></p>
           <ol>
             <li>Reads the Brewfile to build a list of already-tracked packages</li>
-            <li>Runs <code>brew leaves</code> (top-level formulae) and <code>brew list --cask</code> to see what's installed</li>
+            <li>Runs <code>brew leaves --installed-on-request</code> (top-level formulae) and <code>brew list --cask</code> to see what's installed</li>
             <li>Computes the diff — packages installed but not yet in the Brewfile</li>
             <li>Opens <strong>mrk-picker</strong> TUI: Space to select, Enter to confirm, q to quit</li>
             <li>Prompts via <code>gum</code> to choose which Brewfile section each formula goes into</li>
@@ -732,6 +732,10 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <div class="callout">
             <span class="callout-label">Note — mrk-picker Binary</span>
             <div class="callout-body">The mrk-picker binary lives at <code>bin/mrk-picker</code> (gitignored, platform-specific). If it's missing, rebuild with <code>make picker</code>.</div>
+          </div>
+          <div class="callout">
+            <span class="callout-label">Note — Ignore List</span>
+            <div class="callout-body">To keep a package installed but never have sync suggest it, list it in <code>~/.mrk/sync-ignore</code> — one formula or cask name per line, <code>#</code> comments allowed. The file is not created automatically.</div>
           </div>
         </div>
       </div>
