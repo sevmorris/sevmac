@@ -583,7 +583,7 @@
         <tbody>
           <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell, installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
           <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs</td></tr>
-          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser policies, Barkeep install, preference plist imports, login items</td></tr>
+          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser policies, dev runtimes (openjdk, nvm, pyenv), Barkeep install, preference plist imports, login items</td></tr>
         </tbody>
       </table>
 
@@ -632,12 +632,15 @@ exec zsh</code></pre>
           <p><strong>What Phase 3 does:</strong></p>
           <ul>
             <li><strong>Topgrade:</strong> Links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code></li>
-            <li><strong>Browsers:</strong> Applies Safari defaults, Chrome/Brave managed policies, Helium defaults; opens browser extension install URLs</li>
+            <li><strong>Browsers:</strong> Applies Safari defaults, Chrome/Brave managed policies, Helium defaults; asks before opening browser extension install URLs (skipped in non-interactive runs)</li>
+            <li><strong>Dev runtimes:</strong> Symlinks Homebrew's openjdk into <code>/Library/Java/JavaVirtualMachines/</code>, installs nvm into <code>~/.nvm</code>, and installs the pyenv Python version pinned in <code>.python-version</code></li>
             <li><strong>App defaults:</strong> Applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba apps</li>
             <li><strong>Barkeep:</strong> Downloads and installs Barkeep from the latest GitHub release</li>
+            <li><strong>Git remote:</strong> Switches mrk's origin from HTTPS to SSH once GitHub SSH auth succeeds</li>
             <li><strong>Preferences auto-pull:</strong> Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated</li>
             <li><strong>Plist imports:</strong> Imports preferences for 14 apps (non-destructive — skips any app with existing prefs)</li>
             <li><strong>App Support restore:</strong> Restores Loopback and SoundSource config files (non-destructive)</li>
+            <li><strong>Config trees:</strong> Restores Calibre's config directory (<code>~/Library/Preferences/calibre</code>) when the app is unconfigured</li>
             <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Ice, Raycast, SoundSource, Stats</li>
           </ul>
         </div>
@@ -676,7 +679,8 @@ make post-install   # Re-run to import plists</code></pre>
           <h3>Verify the Installation</h3>
         </div>
         <div class="proc-body">
-          <pre><code>make status     # Open the mrk-status TUI health dashboard
+          <pre><code>status          # Open the mrk-status TUI health dashboard (in ~/bin after exec zsh)
+make status     # Plain-text installation status report
 make doctor     # Check ~/bin is on PATH; pass ARGS=--fix to add ~/bin to .zshrc</code></pre>
         </div>
       </div>
