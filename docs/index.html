@@ -1065,9 +1065,13 @@ git push</code></pre>
         <thead><tr><th>Feature</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td>Brewfile view</td><td>Packages grouped by section with inline search; select any entry to see description, version, dependencies, examples, man page, and more</td></tr>
-          <tr><td>Console</td><td>Streaming brew command output with full history</td></tr>
-          <tr><td>Actions</td><td>Install, uninstall, upgrade, or remove from Brewfile for any selected package</td></tr>
-          <tr><td>Brewfile picker</td><td>Defaults to <code>~/mrk/Brewfile</code>; any path can be selected in Settings</td></tr>
+          <tr><td>Console</td><td>Streaming brew command output (cleared at the start of each command)</td></tr>
+          <tr><td>Actions</td><td>Install, uninstall, reinstall, upgrade, tap/untap, add to or remove from Brewfile — plus multi-select for batch upgrade, uninstall, and adopt</td></tr>
+          <tr><td>Installed view</td><td>Sidebar tab listing everything brew has installed — including packages not tracked in the Brewfile — with untracked and outdated counts shown in the toolbar</td></tr>
+          <tr><td>Bundle actions</td><td>Install Missing (⌘I, runs <code>brew bundle install</code>), Add Untracked to Brewfile…, Cleanup Untracked…, and Scan for Migratable Apps — in the toolbar stack menu and the Bundle menu</td></tr>
+          <tr><td>Auto-reload</td><td>Watches the Brewfile and reloads automatically when it changes on disk</td></tr>
+          <tr><td>Updates &amp; help</td><td>In-app update checker (runs at launch; also Barkeep → Check for Updates…) and a Help window (⌘?)</td></tr>
+          <tr><td>Brewfile picker</td><td>Defaults to <code>~/mrk/Brewfile</code>; change it with the toolbar folder button or File → Choose Brewfile… (⌘O)</td></tr>
         </tbody>
       </table>
     </section>
@@ -1129,10 +1133,12 @@ make post-install</code></pre>
         <div class="proc-body">
           <p class="desc">Select any package in the left column to see its full detail and available actions.</p>
           <ul>
-            <li><strong>Install</strong> — runs <code>brew install &lt;package&gt;</code></li>
-            <li><strong>Uninstall</strong> — runs <code>brew uninstall &lt;package&gt;</code></li>
-            <li><strong>Upgrade</strong> — runs <code>brew upgrade &lt;package&gt;</code></li>
+            <li><strong>Install / Uninstall / Reinstall</strong> — runs the matching <code>brew</code> command</li>
+            <li><strong>Upgrade</strong> — runs <code>brew upgrade &lt;package&gt;</code> (shown when the package is outdated)</li>
+            <li><strong>Tap / Untap</strong> — for tap entries</li>
+            <li><strong>Adopt</strong> — adds an installed-but-untracked package to the Brewfile</li>
             <li><strong>Remove from Brewfile</strong> — removes the entry from the Brewfile (does not uninstall)</li>
+            <li><strong>Multi-select</strong> — select several packages for batch upgrade, uninstall, or add-to-Brewfile</li>
           </ul>
           <p>Console output streams in real time in the right column.</p>
         </div>
@@ -1141,12 +1147,12 @@ make post-install</code></pre>
       <div class="proc">
         <div class="proc-header">
           <span class="proc-num">3.3.2</span>
-          <h3>Settings</h3>
+          <h3>Changing the Brewfile</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Open Settings (⌘,) to configure the Brewfile path and other preferences.</p>
+          <p class="desc">Barkeep has no Settings window — the Brewfile is chosen directly.</p>
           <ul>
-            <li><strong>Brewfile path</strong> — defaults to <code>~/mrk/Brewfile</code>; use the picker to select any other location</li>
+            <li><strong>Brewfile path</strong> — defaults to <code>~/mrk/Brewfile</code>; change it with the folder button in the toolbar or File → Choose Brewfile… (⌘O)</li>
           </ul>
         </div>
       </div>
