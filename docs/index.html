@@ -761,11 +761,17 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <pre><code>snapshot-prefs</code></pre>
           <p><strong>How it works:</strong></p>
           <ol>
-            <li>Exports the preference plist for each managed app using <code>defaults export</code></li>
+            <li>Exports the preference plist for each managed app using <code>defaults export</code> (15-second timeout per app, converted to XML)</li>
+            <li>Copies managed Application Support files (Loopback, SoundSource) and config trees (Calibre)</li>
+            <li>Scans everything captured for secrets (API keys, tokens, private keys)</li>
             <li>Commits all changes to <code>~/.mrk/preferences/</code> with a timestamped message</li>
             <li>Pushes to <code>sevmorris/mrk-prefs</code> on GitHub</li>
           </ol>
-          <p>Idempotent — reports "No changes to push" if nothing changed.</p>
+          <p>Idempotent — reports "No changes to push" if nothing changed. Apps whose export failed or timed out are skipped with a warning and listed at the end of the run.</p>
+          <div class="callout callout-caution">
+            <span class="callout-label">Caution — Secret Scan</span>
+            <div class="callout-body">If the scan flags a possible secret in a staged file, the push stops for confirmation — and aborts outright in non-interactive runs. Review the flagged file before retrying.</div>
+          </div>
         </div>
       </div>
 
@@ -777,7 +783,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
         <div class="proc-body">
           <p class="desc">Clone or update preferences from the private repo.</p>
           <pre><code>pull-prefs</code></pre>
-          <p>Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if it doesn't exist, or fast-forward pulls if it does. <code>make post-install</code> calls this automatically when SSH is authenticated.</p>
+          <p>Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if it doesn't exist, or fast-forward pulls if it does. <code>make post-install</code> calls this automatically when SSH is authenticated and <code>~/.mrk/preferences/</code> doesn't exist yet — it never pulls updates into an existing clone.</p>
         </div>
       </div>
 
@@ -800,6 +806,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <tr><td>Keka</td><td>Plist imported</td></tr>
           <tr><td>TimeMachineEditor</td><td>Plist imported</td></tr>
           <tr><td>MacWhisper</td><td>Plist imported</td></tr>
+          <tr><td>Calibre</td><td>Config tree (<code>~/Library/Preferences/calibre</code>) — JSON/plist files, conversion presets, plugins</td></tr>
         </tbody>
       </table>
     </section>
@@ -866,7 +873,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
 
           <p><strong>2. Snapshot app preferences</strong></p>
           <pre><code>snapshot-prefs</code></pre>
-          <p>Exports and pushes all app preference plists and Application Support files. Verify "Pushed to git@github.com:sevmorris/mrk-prefs.git" appears in the output.</p>
+          <p>Exports and pushes all app preference plists and Application Support files. Verify "Pushed to git@github.com:sevmorris/mrk-prefs.git" appears in the output. If the secret scan flags a file, the push stops for confirmation — resolve it before moving on.</p>
 
           <p><strong>3. Push any pending mrk changes</strong></p>
           <pre><code>cd ~/mrk
