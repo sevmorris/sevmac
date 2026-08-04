@@ -529,7 +529,7 @@
         <span class="section-num">1.</span>
         <h2>Overview</h2>
       </div>
-      <p>This is a personal reference guide — it documents <em>my</em> specific setup, tooling choices, and workflows. The tools are open source and the approach is broadly applicable, but the configuration (dotfiles, Brewfile, app preferences, backup targets) is tailored to my machine. Adapting any of this for your own use will require significant customization.</p>
+      <p>This reference guide documents my setup, tools, and workflows. The tools are open source. The methods apply to many systems, but the configuration applies only to my computer. You must change the configuration to use these tools on your system.</p>
 
       <table class="ref-table">
         <caption>Table 1-1. Tools at a Glance</caption>
@@ -537,23 +537,23 @@
         <tbody>
           <tr>
             <td>mrk</td>
-            <td>Bootstrap system — shell environment, dotfiles, macOS defaults, Homebrew packages, app configuration, login items, and personal preference management</td>
+            <td>System bootstrap tool. It manages the shell environment, dotfiles, macOS defaults, Homebrew packages, application configuration, login items, and personal preferences.</td>
             <td><a href="https://github.com/sevmorris/mrk">sevmorris/mrk</a></td>
           </tr>
           <tr>
             <td>Barkeep</td>
-            <td>Native macOS GUI for browsing and managing the Brewfile, viewing package details, and running Homebrew operations</td>
+            <td>Native macOS application to browse and manage the Brewfile, view package details, and run Homebrew commands.</td>
             <td><a href="https://github.com/sevmorris/Barkeep">sevmorris/Barkeep</a></td>
           </tr>
           <tr>
             <td>Magic Backup Machine</td>
-            <td>Native macOS GUI for backing up and restoring app settings, presets, and configuration files using rsync</td>
+            <td>Native macOS application to back up and restore application settings, presets, and configuration files with rsync.</td>
             <td>sevmorris/magic-backup-machine (private)</td>
           </tr>
         </tbody>
       </table>
 
-      <p><strong>How they fit together:</strong> mrk bootstraps a new machine from scratch — packages, dotfiles, shell, app configs — and keeps things current day-to-day. Barkeep is the GUI companion to mrk's Brewfile management. Magic Backup Machine protects app settings and presets that aren't covered by mrk's preference system — Logic Pro projects, Audio Unit presets, browser profiles, and more.</p>
+      <p><strong>How the tools work together:</strong> The mrk tool installs a new system from the beginning. It manages packages, dotfiles, the shell, and application configurations. Barkeep is the graphical user interface for Brewfile management. The Magic Backup Machine protects application settings and presets that mrk does not manage (for example, Logic Pro projects, Audio Unit presets, and browser profiles).</p>
 
       <table class="ref-table" style="margin-top: 1rem;">
         <caption>Table 1-2. Key Repositories</caption>
@@ -575,7 +575,7 @@
         <span class="section-sub">three-phase bootstrap</span>
       </div>
 
-      <p><strong>mrk</strong> is a personal macOS bootstrap system that automates everything from a clean install: shell environment, dotfiles, system preferences, Homebrew packages, app settings, login items, and personal app preferences. It runs in three independent phases, each of which is safe to re-run.</p>
+      <p>The <strong>mrk</strong> tool is a personal macOS bootstrap system. It automates a clean installation. It manages the shell environment, dotfiles, system preferences, Homebrew packages, application settings, login items, and personal application preferences. The system operates in three independent phases. You can safely run each phase again.</p>
 
       <table class="ref-table">
         <caption>Table 2.1-1. The Three Phases</caption>
@@ -592,7 +592,7 @@
 
       <div class="callout">
         <span class="callout-label">Two-Repo Design</span>
-        <div class="callout-body">mrk splits into two repos: <strong>sevmorris/mrk</strong> (public — scripts, Brewfile, dotfiles) and <strong>sevmorris/mrk-prefs</strong> (private — app plists, App Support files). This keeps personal preference data out of the public repo while keeping everything portable. As long as both repos are current, the full setup can be restored from scratch on any machine.</div>
+        <div class="callout-body">The mrk system uses two repositories: <strong>sevmorris/mrk</strong> (public) and <strong>sevmorris/mrk-prefs</strong> (private). The public repository contains scripts, the Brewfile, and dotfiles. The private repository contains application plists and Application Support files. This design keeps personal data out of the public repository. You can restore the full setup on any machine if both repositories are current.</div>
       </div>
     </section>
 
@@ -610,11 +610,11 @@
           <h3>Clone and Install</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Clone mrk over HTTPS (SSH isn't set up yet on a new machine) and run the full install.</p>
+          <p class="desc">Clone mrk over HTTPS. Do not use SSH because it is not set up yet on a new machine. Run the full installation.</p>
           <pre><code>git clone https://github.com/sevmorris/mrk.git ~/mrk
 make -C ~/mrk all
 exec zsh</code></pre>
-          <p>This runs all three phases plus builds the TUI binaries. <code>exec zsh</code> reloads the shell to pick up dotfiles and <code>~/bin</code>.</p>
+          <p>This command runs all three phases. It also builds the TUI binaries. The command <code>exec zsh</code> reloads the shell to load dotfiles and <code>~/bin</code>.</p>
           <p><strong>What gets linked (Phase 1):</strong></p>
           <table class="ref-table" style="margin-top: 8px;">
             <thead><tr><th>File</th><th>Purpose</th></tr></thead>
@@ -628,20 +628,20 @@ exec zsh</code></pre>
               <tr><td>Makefile</td><td>mrk commands available from <code>~/</code></td></tr>
             </tbody>
           </table>
-          <p>Backups of any replaced files go to <code>~/.mrk/backups/</code>. A rollback script for macOS defaults is generated at <code>~/.mrk/defaults-rollback.sh</code>.</p>
+          <p>The system copies replaced files to <code>~/.mrk/backups/</code> as backups. The system creates a rollback script for macOS defaults at <code>~/.mrk/defaults-rollback.sh</code>.</p>
           <p><strong>What Phase 3 does:</strong></p>
           <ul>
-            <li><strong>Topgrade:</strong> Links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code></li>
-            <li><strong>Browsers:</strong> Applies Safari defaults, Chrome/Brave managed policies, Helium defaults; asks before opening browser extension install URLs (skipped in non-interactive runs)</li>
-            <li><strong>Dev runtimes:</strong> Symlinks Homebrew's openjdk into <code>/Library/Java/JavaVirtualMachines/</code>, installs nvm into <code>~/.nvm</code>, and installs the pyenv Python version pinned in <code>.python-version</code></li>
-            <li><strong>App defaults:</strong> Applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba apps</li>
-            <li><strong>Barkeep:</strong> Downloads and installs Barkeep from the latest GitHub release</li>
-            <li><strong>Git remote:</strong> Switches mrk's origin from HTTPS to SSH once GitHub SSH auth succeeds</li>
-            <li><strong>Preferences auto-pull:</strong> Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated</li>
-            <li><strong>Plist imports:</strong> Imports preferences for 14 apps (non-destructive — skips any app with existing prefs)</li>
-            <li><strong>App Support restore:</strong> Restores Loopback and SoundSource config files (non-destructive)</li>
-            <li><strong>Config trees:</strong> Restores Calibre's config directory (<code>~/Library/Preferences/calibre</code>) when the app is unconfigured</li>
-            <li><strong>Login items:</strong> Registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Ice, Raycast, SoundSource, Stats</li>
+            <li><strong>Topgrade:</strong> The system links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code>.</li>
+            <li><strong>Browsers:</strong> The system applies Safari defaults, managed policies for Chrome and Brave, and Helium defaults. The system asks before it opens browser extension install URLs. Non-interactive runs skip this step.</li>
+            <li><strong>Dev runtimes:</strong> The system symlinks the Homebrew openjdk into <code>/Library/Java/JavaVirtualMachines/</code>. The system installs nvm into <code>~/.nvm</code>. The system installs the pyenv Python version specified in <code>.python-version</code>.</li>
+            <li><strong>App defaults:</strong> The system applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba applications.</li>
+            <li><strong>Barkeep:</strong> The system downloads and installs Barkeep from the latest GitHub release.</li>
+            <li><strong>Git remote:</strong> The system changes the mrk origin from HTTPS to SSH after GitHub SSH authentication succeeds.</li>
+            <li><strong>Preferences auto-pull:</strong> The system clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated.</li>
+            <li><strong>Plist imports:</strong> The system imports preferences for 14 applications. This step is non-destructive. It skips any application with existing preferences.</li>
+            <li><strong>App Support restore:</strong> The system restores Loopback and SoundSource configuration files. This step is non-destructive.</li>
+            <li><strong>Config trees:</strong> The system restores the Calibre configuration directory (<code>~/Library/Preferences/calibre</code>) when the application is unconfigured.</li>
+            <li><strong>Login items:</strong> The system registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Ice, Raycast, SoundSource, and Stats.</li>
           </ul>
         </div>
       </div>
@@ -652,7 +652,7 @@ exec zsh</code></pre>
           <h3>Set Up SSH</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Generate an SSH key and add it to GitHub. Required for pulling preferences and pushing mrk changes.</p>
+          <p class="desc">Generate an SSH key and add it to GitHub. You must do this to pull preferences and push mrk changes.</p>
           <pre><code>ssh-keygen -t ed25519 -C "your-email@example.com"
 cat ~/.ssh/id_ed25519.pub | pbcopy
 # Add to: github.com → Settings → SSH and GPG keys → New SSH key
@@ -667,7 +667,7 @@ ssh -T git@github.com
           <h3>Pull Preferences</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">If preferences weren't auto-pulled during install (SSH wasn't set up yet), pull them now and re-run Phase 3.</p>
+          <p class="desc">If the installation did not automatically pull preferences (because SSH was not set up), pull them now. Then, run Phase 3 again.</p>
           <pre><code>pull-prefs
 make post-install   # Re-run to import plists</code></pre>
         </div>
@@ -700,11 +700,11 @@ make doctor     # Check ~/bin is on PATH; pass ARGS=--fix to add ~/bin to .zshrc
           <h3>bf — Brewfile Manager TUI</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Interactive TUI for browsing, adding, deleting, moving, and pruning Brewfile entries.</p>
+          <p class="desc">Interactive TUI to browse, add, delete, move, and prune Brewfile entries.</p>
           <pre><code>bf                    # Open the Brewfile manager TUI
 bf --help             # Show keys and options</code></pre>
           <p><strong>Key operations:</strong> <code>a</code> add · <code>d</code> delete · <code>m</code> move · <code>g</code> toggle greedy · <code>p</code> prune uninstalled · <code>/</code> search · <code>w</code> write · <code>c</code> commit</p>
-          <p><strong>Prune mode</strong> (<code>p</code>) — fetches <code>brew list</code>, shows all Brewfile entries not currently installed. Space to mark, <code>a</code> to toggle all, Enter to delete marked entries.</p>
+          <p><strong>Prune mode</strong> (<code>p</code>) — gets <code>brew list</code>. It shows all Brewfile entries that are not currently installed. Press Space to mark items. Press <code>a</code> to toggle all. Press Enter to delete the marked entries.</p>
         </div>
       </div>
 
@@ -714,20 +714,20 @@ bf --help             # Show keys and options</code></pre>
           <h3>sync — Scan and Update</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Scans installed packages, diffs against the Brewfile, and adds anything missing.</p>
+          <p class="desc">Scan installed packages, compare them to the Brewfile, and add missing packages.</p>
           <pre><code>sync                  # Interactive — opens mrk-picker TUI to select packages
 sync -n               # Dry run — show what would be added, make no changes
 sync -c               # Auto-commit the Brewfile after updating
 sync -p               # Prune — remove Brewfile entries for packages no longer installed</code></pre>
           <p><strong>How sync works:</strong></p>
           <ol>
-            <li>Reads the Brewfile to build a list of already-tracked packages</li>
-            <li>Runs <code>brew leaves --installed-on-request</code> (top-level formulae) and <code>brew list --cask</code> to see what's installed</li>
-            <li>Computes the diff — packages installed but not yet in the Brewfile</li>
-            <li>Opens <strong>mrk-picker</strong> TUI: Space to select, Enter to confirm, q to quit</li>
-            <li>Prompts via <code>gum</code> to choose which Brewfile section each formula goes into</li>
-            <li>Casks are auto-assigned to the existing cask section</li>
-            <li>Inserts each entry alphabetically within its section</li>
+            <li>The tool reads the Brewfile to find packages that are already tracked.</li>
+            <li>The tool runs <code>brew leaves --installed-on-request</code> and <code>brew list --cask</code> to find installed packages.</li>
+            <li>The tool finds packages that are installed but not in the Brewfile.</li>
+            <li>The tool opens the <strong>mrk-picker</strong> TUI. Press Space to select, Enter to confirm, or q to quit.</li>
+            <li>The tool prompts you with <code>gum</code> to choose a Brewfile section for each formula.</li>
+            <li>The tool automatically assigns casks to the existing cask section.</li>
+            <li>The tool inserts each entry alphabetically into its section.</li>
           </ol>
           <div class="callout">
             <span class="callout-label">Note — mrk-picker Binary</span>
@@ -749,7 +749,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
         <span class="section-sub">snapshot-prefs / pull-prefs</span>
       </div>
 
-      <p>App preferences are stored in the private <code>sevmorris/mrk-prefs</code> repo and cloned to <code>~/.mrk/preferences/</code>. After configuring an app, capture and push the changes.</p>
+      <p>The private <code>sevmorris/mrk-prefs</code> repository stores application preferences. The system clones this repository to <code>~/.mrk/preferences/</code>. After you configure an application, capture and push the changes.</p>
 
       <div class="proc">
         <div class="proc-header">
@@ -757,20 +757,20 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <h3>snapshot-prefs — Capture and Push</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Export all managed app preferences and push to the private repo.</p>
+          <p class="desc">Export all managed application preferences and push them to the private repository.</p>
           <pre><code>snapshot-prefs</code></pre>
           <p><strong>How it works:</strong></p>
           <ol>
-            <li>Exports the preference plist for each managed app using <code>defaults export</code> (15-second timeout per app, converted to XML)</li>
-            <li>Copies managed Application Support files (Loopback, SoundSource) and config trees (Calibre)</li>
-            <li>Scans everything captured for secrets (API keys, tokens, private keys)</li>
-            <li>Commits all changes to <code>~/.mrk/preferences/</code> with a timestamped message</li>
-            <li>Pushes to <code>sevmorris/mrk-prefs</code> on GitHub</li>
+            <li>The tool exports the preference plist for each managed application with <code>defaults export</code>. It has a 15-second timeout for each application and converts files to XML.</li>
+            <li>The tool copies managed Application Support files (Loopback, SoundSource) and configuration trees (Calibre).</li>
+            <li>The tool scans all captured files for secrets (API keys, tokens, and private keys).</li>
+            <li>The tool commits all changes to <code>~/.mrk/preferences/</code> with a timestamped message.</li>
+            <li>The tool pushes the commits to <code>sevmorris/mrk-prefs</code> on GitHub.</li>
           </ol>
-          <p>Idempotent — reports "No changes to push" if nothing changed. Apps whose export failed or timed out are skipped with a warning and listed at the end of the run.</p>
+          <p>This command is idempotent. It reports "No changes to push" if nothing changed. The tool skips applications if their export fails or times out. It shows a warning and lists skipped applications at the end of the run.</p>
           <div class="callout callout-caution">
             <span class="callout-label">Caution — Secret Scan</span>
-            <div class="callout-body">If the scan flags a possible secret in a staged file, the push stops for confirmation — and aborts outright in non-interactive runs. Review the flagged file before retrying.</div>
+            <div class="callout-body">If the scan finds a possible secret in a staged file, the push stops for confirmation. The push aborts immediately in non-interactive runs. You must review the flagged file before you try again.</div>
           </div>
         </div>
       </div>
@@ -781,9 +781,9 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <h3>pull-prefs — Clone or Update</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Clone or update preferences from the private repo.</p>
+          <p class="desc">Clone or update preferences from the private repository.</p>
           <pre><code>pull-prefs</code></pre>
-          <p>Clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if it doesn't exist, or fast-forward pulls if it does. <code>make post-install</code> calls this automatically when SSH is authenticated and <code>~/.mrk/preferences/</code> doesn't exist yet — it never pulls updates into an existing clone.</p>
+          <p>The tool clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if the directory does not exist. It performs a fast-forward pull if the directory does exist. The <code>make post-install</code> command calls this automatically when SSH is authenticated and <code>~/.mrk/preferences/</code> does not exist. It does not pull updates into an existing clone.</p>
         </div>
       </div>
 
@@ -819,7 +819,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
         <span class="section-sub">sync-login-items</span>
       </div>
 
-      <p><code>sync-login-items</code> diffs the system's current login items against the list tracked in <code>scripts/post-install</code> and syncs them.</p>
+      <p>The <code>sync-login-items</code> tool compares current system login items to the list in <code>scripts/post-install</code> and synchronizes them.</p>
 
       <pre><code>sync-login-items          # Interactive — select items to add or remove
 sync-login-items -n       # Dry run — show what would change, make no changes
@@ -827,12 +827,12 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
 
       <p><strong>How it works:</strong></p>
       <ol>
-        <li>Reads the system's current login items via AppleScript</li>
-        <li>Parses tracked <code>add_login_item</code> calls from <code>scripts/post-install</code></li>
-        <li>Computes the diff: items on the system but not tracked, and tracked items no longer on the system</li>
-        <li>Opens an interactive selector (<code>gum</code>) to choose which items to add or remove</li>
-        <li>Updates <code>scripts/post-install</code> to reflect the new set</li>
-        <li>Also updates <code>docs/manual.md</code> with the new login items list</li>
+        <li>The tool reads the current system login items with AppleScript.</li>
+        <li>The tool parses <code>add_login_item</code> calls from <code>scripts/post-install</code>.</li>
+        <li>The tool finds the differences between the system and the tracked list.</li>
+        <li>The tool opens an interactive selector (<code>gum</code>) for you to choose items to add or remove.</li>
+        <li>The tool updates <code>scripts/post-install</code> with the new items.</li>
+        <li>The tool also updates <code>docs/manual.md</code> with the new list.</li>
       </ol>
 
       <table class="ref-table">
@@ -859,7 +859,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
         <span class="section-sub">before moving to a new machine</span>
       </div>
 
-      <p>Run these steps on the <strong>old machine</strong> before transferring.</p>
+      <p>Do these steps on the <strong>old machine</strong> before you transfer data.</p>
 
       <div class="proc">
         <div class="proc-header">
@@ -869,11 +869,11 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
         <div class="proc-body">
           <p><strong>1. Sync the Brewfile</strong></p>
           <pre><code>sync -c</code></pre>
-          <p>Captures any packages installed since the last sync and commits the updated Brewfile.</p>
+          <p>This command captures packages that you installed since the last sync. It commits the updated Brewfile.</p>
 
           <p><strong>2. Snapshot app preferences</strong></p>
           <pre><code>snapshot-prefs</code></pre>
-          <p>Exports and pushes all app preference plists and Application Support files. Verify "Pushed to git@github.com:sevmorris/mrk-prefs.git" appears in the output. If the secret scan flags a file, the push stops for confirmation — resolve it before moving on.</p>
+          <p>This command exports and pushes all application preference plists and Application Support files. Make sure that "Pushed to git@github.com:sevmorris/mrk-prefs.git" shows in the output. If the secret scan finds a secret, the push stops for confirmation. You must resolve the problem before you continue.</p>
 
           <p><strong>3. Push any pending mrk changes</strong></p>
           <pre><code>cd ~/mrk
@@ -881,7 +881,7 @@ git status
 git push</code></pre>
 
           <p><strong>4. Run a Magic Backup Machine backup</strong></p>
-          <p>Open Magic Backup Machine and run a full backup to both local and external destinations. This captures Logic Pro projects, audio presets, browser profiles, and other data not covered by mrk.</p>
+          <p>Open Magic Backup Machine. Run a full backup to the local and external destinations. This backup copies Logic Pro projects, audio presets, browser profiles, and other data that mrk does not manage.</p>
 
           <p><strong>5. Verify SSH authentication</strong></p>
           <pre><code>ssh -T git@github.com
@@ -889,9 +889,9 @@ git push</code></pre>
 
           <p><strong>6. Note anything not covered</strong></p>
           <ul>
-            <li>App Store apps — reinstall manually from Purchases</li>
-            <li>Software licenses — export from your license manager</li>
-            <li>VPN configurations, certificates, system settings not captured by <code>defaults write</code></li>
+            <li>App Store applications — You must manually install these again from your Purchases.</li>
+            <li>Software licenses — Export licenses from your license manager.</li>
+            <li>VPN configurations, certificates, and system settings that <code>defaults write</code> does not capture.</li>
           </ul>
         </div>
       </div>
@@ -899,7 +899,7 @@ git push</code></pre>
       <div class="callout">
         <span class="callout-label">On the New Machine</span>
         <div class="callout-body">
-          Follow the full <a href="#mrk-new-machine">New Machine Setup</a> walkthrough (Section 2.2), then restore from Magic Backup Machine after apps are reinstalled.
+          Do the <a href="#mrk-new-machine">New Machine Setup</a> procedure (Section 2.2). Then, restore data from Magic Backup Machine after you install the applications.
         </div>
       </div>
     </section>
@@ -912,7 +912,7 @@ git push</code></pre>
         <span class="section-sub">all make targets</span>
       </div>
 
-      <p><code>~/Makefile</code> is deployed automatically by <code>make setup</code>. Run <code>make help</code> from <code>~/</code> to see all commands.</p>
+      <p>The <code>make setup</code> command automatically deploys <code>~/Makefile</code>. Run <code>make help</code> from <code>~/</code> to see all commands.</p>
 
       <table class="ref-table">
         <caption>Table 2.7-1. Commands from ~/</caption>
@@ -967,7 +967,7 @@ git push</code></pre>
         </tbody>
       </table>
 
-      <p>Beyond the make targets, mrk ships standalone utilities in its <code>bin/</code> directory. Phase 1 symlinks every executable there into <code>~/bin</code>, so each runs by name from any directory. <code>mrk-menu</code> is a compiled Go TUI — if it's missing, build it with <code>make build-tools</code>.</p>
+      <p>The mrk tool includes standalone utilities in its <code>bin/</code> directory. Phase 1 creates a symlink for each executable in <code>~/bin</code>. You can run each command by name from any directory. The <code>mrk-menu</code> utility is a compiled Go TUI. If it is missing, run <code>make build-tools</code> to build it.</p>
 
       <table class="ref-table">
         <caption>Table 2.7-3. Standalone Utilities (~/bin)</caption>
@@ -991,18 +991,18 @@ git push</code></pre>
         <span class="section-sub">mrk-status / state files</span>
       </div>
 
-      <p>Running <code>status</code> (linked into <code>~/bin</code> when the TUI binaries are built) opens the interactive mrk-status health dashboard; <code>make status</code> prints a plain-text report of the same ground instead. Nine checks are shown with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix; mrk-status will prompt for confirmation before running it. Press <strong>r</strong> to refresh.</p>
+      <p>Run the <code>status</code> command to open the interactive mrk-status health dashboard. Run <code>make status</code> to print a plain-text report. The dashboard shows nine checks with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix. The <code>mrk-status</code> tool prompts for confirmation before it runs the fix. Press <strong>r</strong> to refresh the dashboard.</p>
 
       <ul>
-        <li><strong>Dotfiles</strong> — Which files are symlinked into <code>~/</code> and which are missing</li>
-        <li><strong>Tools</strong> — Which scripts/bin symlinks are live in <code>~/bin</code> and which are broken</li>
-        <li><strong>macOS Defaults</strong> — Whether defaults have been applied (rollback script present)</li>
-        <li><strong>Security Hardening</strong> — Whether hardening has been applied</li>
-        <li><strong>Backups</strong> — Number of dotfile backups in <code>~/.mrk/backups/</code></li>
-        <li><strong>Shell</strong> — Current login shell (should be Zsh)</li>
-        <li><strong>PATH</strong> — Whether <code>~/bin</code> is on the PATH</li>
-        <li><strong>Homebrew</strong> — Version installed</li>
-        <li><strong>Brewfile packages</strong> — Each formula and cask: ✓ installed or ✗ missing</li>
+        <li><strong>Dotfiles</strong> — The tool shows the files symlinked into <code>~/</code> and missing files.</li>
+        <li><strong>Tools</strong> — The tool shows live and broken symlinks in <code>~/bin</code>.</li>
+        <li><strong>macOS Defaults</strong> — The tool shows if defaults are applied (it looks for the rollback script).</li>
+        <li><strong>Security Hardening</strong> — The tool shows if security hardening is applied.</li>
+        <li><strong>Backups</strong> — The tool shows the number of dotfile backups in <code>~/.mrk/backups/</code>.</li>
+        <li><strong>Shell</strong> — The tool shows the current login shell. It must be Zsh.</li>
+        <li><strong>PATH</strong> — The tool shows if <code>~/bin</code> is on the PATH.</li>
+        <li><strong>Homebrew</strong> — The tool shows the installed version.</li>
+        <li><strong>Brewfile packages</strong> — The tool shows if each formula and cask is installed or missing.</li>
       </ul>
 
       <table class="ref-table" style="margin-top: 1.25rem;">
@@ -1019,7 +1019,7 @@ git push</code></pre>
         </tbody>
       </table>
 
-      <p>To undo macOS defaults applied by mrk:</p>
+      <p>Run this command to undo macOS defaults that mrk applied:</p>
       <pre><code>bash ~/.mrk/defaults-rollback.sh</code></pre>
     </section>
 
@@ -1056,22 +1056,22 @@ git push</code></pre>
         <span class="section-sub">homebrew manager</span>
       </div>
 
-      <p><strong>Barkeep</strong> is a native macOS app (SwiftUI, macOS 14+) for visually managing your Homebrew Brewfile. It's a companion to mrk, defaulting to <code>~/mrk/Brewfile</code>, but works with any Brewfile.</p>
+      <p>The <strong>Barkeep</strong> application is a native macOS application. It visually manages your Homebrew Brewfile. It works with mrk and defaults to <code>~/mrk/Brewfile</code>. But, it can work with any Brewfile.</p>
 
-      <p>Three-pane interface for browsing entries, viewing package details (man pages, tldr examples, reverse dependencies), and running Homebrew operations — all without touching the terminal.</p>
+      <p>The application has a three-pane interface. You can browse entries, view package details (such as man pages, tldr examples, and reverse dependencies), and run Homebrew commands. You do not need to use the terminal.</p>
 
       <table class="ref-table">
         <caption>Table 3.1-1. Barkeep Feature Overview</caption>
         <thead><tr><th>Feature</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td>Brewfile view</td><td>Packages grouped by section with inline search; select any entry to see description, version, dependencies, examples, man page, and more</td></tr>
-          <tr><td>Console</td><td>Streaming brew command output (cleared at the start of each command)</td></tr>
-          <tr><td>Actions</td><td>Install, uninstall, reinstall, upgrade, tap/untap, add to or remove from Brewfile — plus multi-select for batch upgrade, uninstall, and adopt</td></tr>
-          <tr><td>Installed view</td><td>Sidebar tab listing everything brew has installed — including packages not tracked in the Brewfile — with untracked and outdated counts shown in the toolbar</td></tr>
-          <tr><td>Bundle actions</td><td>Install Missing (⌘I, runs <code>brew bundle install</code>), Add Untracked to Brewfile…, Cleanup Untracked…, and Scan for Migratable Apps — in the toolbar stack menu and the Bundle menu</td></tr>
-          <tr><td>Auto-reload</td><td>Watches the Brewfile and reloads automatically when it changes on disk</td></tr>
-          <tr><td>Updates &amp; help</td><td>In-app update checker (runs at launch; also Barkeep → Check for Updates…) and a Help window (⌘?)</td></tr>
-          <tr><td>Brewfile picker</td><td>Defaults to <code>~/mrk/Brewfile</code>; change it with the toolbar folder button or File → Choose Brewfile… (⌘O)</td></tr>
+          <tr><td>Brewfile view</td><td>Packages are in groups by section with an inline search. Select an entry to see its description, version, dependencies, examples, man page, and other data.</td></tr>
+          <tr><td>Console</td><td>The console shows streaming <code>brew</code> command output. The application clears the console at the start of each command.</td></tr>
+          <tr><td>Actions</td><td>You can install, uninstall, reinstall, upgrade, tap, untap, add to the Brewfile, or remove from the Brewfile. You can select multiple items for a batch upgrade, uninstall, and adopt.</td></tr>
+          <tr><td>Installed view</td><td>A sidebar tab shows all installed <code>brew</code> packages. This includes packages that the Brewfile does not track. The toolbar shows untracked and outdated package counts.</td></tr>
+          <tr><td>Bundle actions</td><td>The toolbar stack menu and the Bundle menu have these actions: Install Missing (⌘I, runs <code>brew bundle install</code>), Add Untracked to Brewfile, Cleanup Untracked, and Scan for Migratable Apps.</td></tr>
+          <tr><td>Auto-reload</td><td>The application watches the Brewfile. It reloads automatically when the file changes on the disk.</td></tr>
+          <tr><td>Updates &amp; help</td><td>An update checker runs at launch. You can also select Barkeep → Check for Updates. Press ⌘? to open a Help window.</td></tr>
+          <tr><td>Brewfile picker</td><td>The default is <code>~/mrk/Brewfile</code>. You can change it with the toolbar folder button or File → Choose Brewfile (⌘O).</td></tr>
         </tbody>
       </table>
     </section>
@@ -1090,8 +1090,8 @@ git push</code></pre>
           <h3>Automatic Install (via mrk)</h3>
         </div>
         <div class="proc-body">
-          <p class="desc"><code>make post-install</code> downloads and installs Barkeep from the latest GitHub release automatically. Skipped if <code>/Applications/Barkeep.app</code> already exists.</p>
-          <p>To force a reinstall, remove the app first:</p>
+          <p class="desc">The <code>make post-install</code> command automatically downloads and installs Barkeep from the latest GitHub release. The system skips this step if <code>/Applications/Barkeep.app</code> already exists.</p>
+          <p>Remove the application first to force a reinstall:</p>
           <pre><code>rm -rf /Applications/Barkeep.app
 make post-install</code></pre>
         </div>
@@ -1103,11 +1103,11 @@ make post-install</code></pre>
           <h3>Manual Install</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Download the DMG from the GitHub releases page, drag to Applications.</p>
+          <p class="desc">Download the DMG from the GitHub releases page. Drag it to Applications.</p>
           <p>Download: <a href="https://github.com/sevmorris/Barkeep/releases/latest">github.com/sevmorris/Barkeep/releases/latest</a></p>
           <div class="callout callout-caution">
             <span class="callout-label">Caution — First Launch</span>
-            <div class="callout-body">macOS will block the app because it is not notarized with Apple. After dragging Barkeep to Applications, run this in Terminal:
+            <div class="callout-body">The macOS blocks the application because it is not notarized with Apple. Drag Barkeep to Applications, and then run this command in Terminal:
               <pre style="margin-top: 8px; margin-bottom: 0;">xattr -cr /Applications/Barkeep.app</pre>
             </div>
           </div>
@@ -1123,7 +1123,7 @@ make post-install</code></pre>
         <span class="section-sub">three-pane layout</span>
       </div>
 
-      <p>The interface is a three-column layout. The left column lists Brewfile entries grouped by section. Selecting an entry loads its detail in the center column. The right column is the console — streaming output from any brew commands you run.</p>
+      <p>The interface has a three-column layout. The left column lists Brewfile entries in groups by section. Select an entry to show its details in the center column. The right column is the console. It shows streaming output from your <code>brew</code> commands.</p>
 
       <div class="proc">
         <div class="proc-header">
@@ -1131,16 +1131,16 @@ make post-install</code></pre>
           <h3>Package Actions</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Select any package in the left column to see its full detail and available actions.</p>
+          <p class="desc">Select a package in the left column to see its full details and available actions.</p>
           <ul>
-            <li><strong>Install / Uninstall / Reinstall</strong> — runs the matching <code>brew</code> command</li>
-            <li><strong>Upgrade</strong> — runs <code>brew upgrade &lt;package&gt;</code> (shown when the package is outdated)</li>
-            <li><strong>Tap / Untap</strong> — for tap entries</li>
-            <li><strong>Adopt</strong> — adds an installed-but-untracked package to the Brewfile</li>
-            <li><strong>Remove from Brewfile</strong> — removes the entry from the Brewfile (does not uninstall)</li>
-            <li><strong>Multi-select</strong> — select several packages for batch upgrade, uninstall, or add-to-Brewfile</li>
+            <li><strong>Install / Uninstall / Reinstall</strong> — This action runs the matching <code>brew</code> command.</li>
+            <li><strong>Upgrade</strong> — This action runs <code>brew upgrade &lt;package&gt;</code>. The application shows this option when the package is outdated.</li>
+            <li><strong>Tap / Untap</strong> — This action is for tap entries.</li>
+            <li><strong>Adopt</strong> — This action adds an installed package to the Brewfile if it is not already tracked.</li>
+            <li><strong>Remove from Brewfile</strong> — This action removes the entry from the Brewfile. It does not uninstall the package.</li>
+            <li><strong>Multi-select</strong> — Select multiple packages for a batch upgrade, uninstall, or add-to-Brewfile.</li>
           </ul>
-          <p>Console output streams in real time in the right column.</p>
+          <p>The console output streams in real time in the right column.</p>
         </div>
       </div>
 
@@ -1150,9 +1150,9 @@ make post-install</code></pre>
           <h3>Changing the Brewfile</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Barkeep has no Settings window — the Brewfile is chosen directly.</p>
+          <p class="desc">The Barkeep application does not have a Settings window. You choose the Brewfile directly.</p>
           <ul>
-            <li><strong>Brewfile path</strong> — defaults to <code>~/mrk/Brewfile</code>; change it with the folder button in the toolbar or File → Choose Brewfile… (⌘O)</li>
+            <li><strong>Brewfile path</strong> — The default is <code>~/mrk/Brewfile</code>. Change the path with the folder button in the toolbar, or select File → Choose Brewfile (⌘O).</li>
           </ul>
         </div>
       </div>
@@ -1166,9 +1166,9 @@ make post-install</code></pre>
         <span class="section-sub">rsync-based backup &amp; restore</span>
       </div>
 
-      <p><strong>Magic Backup Machine</strong> is a native macOS app (SwiftUI, macOS 15+) for backing up and restoring application settings, presets, and configuration files. It uses <code>rsync</code> to mirror source directories to one or two destinations: a local backup folder (<code>~/.backups</code> by default) and an optional external drive.</p>
+      <p>The <strong>Magic Backup Machine</strong> application is a native macOS application. It backs up and restores application settings, presets, and configuration files. It uses <code>rsync</code> to mirror source directories to a local backup folder (<code>~/.backups</code> by default) and an optional external drive.</p>
 
-      <p>MBM covers what mrk doesn't — things like Logic Pro projects and presets, Audio Unit presets, iZotope RX presets, Audio Hijack sessions, browser profiles, and targeted app plists.</p>
+      <p>This application copies files that mrk does not manage. These files include Logic Pro projects and presets, Audio Unit presets, iZotope RX presets, Audio Hijack sessions, browser profiles, and specific application plists.</p>
 
       <table class="ref-table">
         <caption>Table 4.1-1. MBM vs mrk — What Each Covers</caption>
@@ -1176,7 +1176,7 @@ make post-install</code></pre>
         <tbody>
           <tr><td>Shell, dotfiles, macOS defaults</td><td>mrk</td></tr>
           <tr><td>Homebrew packages</td><td>mrk (Brewfile)</td></tr>
-          <tr><td>App plists (BetterSnapTool, Raycast, Rogue Amoeba, etc.)</td><td>mrk (mrk-prefs) <em>and</em> MBM (App Preferences source — off by default)</td></tr>
+          <tr><td>App plists (BetterSnapTool, Raycast, Rogue Amoeba, etc.)</td><td>mrk (mrk-prefs) <em>and</em> MBM (App Preferences source — The default is off)</td></tr>
           <tr><td>Logic Pro templates, presets, channel strips, key commands, databases</td><td>MBM</td></tr>
           <tr><td>Audio Unit presets (Apple, accentize, Waves, etc.)</td><td>MBM</td></tr>
           <tr><td>iZotope RX user presets &amp; iZotope app support</td><td>MBM</td></tr>
@@ -1184,10 +1184,10 @@ make post-install</code></pre>
           <tr><td>WaxOn app data</td><td>MBM</td></tr>
           <tr><td>Audio Hijack sessions &amp; presets</td><td>MBM</td></tr>
           <tr><td>Loopback / SoundSource app config</td><td>mrk (App Support restore) <em>and</em> MBM</td></tr>
-          <tr><td>Browser profiles (Chrome, Brave, Safari)</td><td>MBM (off by default)</td></tr>
+          <tr><td>Browser profiles (Chrome, Brave, Safari)</td><td>MBM (The default is off)</td></tr>
           <tr><td>Farrago sound sets &amp; metadata</td><td>MBM</td></tr>
           <tr><td>MusicBrainz Picard config &amp; plugins</td><td>MBM</td></tr>
-          <tr><td>Chrono Plus timekeeping data</td><td>MBM (off by default)</td></tr>
+          <tr><td>Chrono Plus timekeeping data</td><td>MBM (The default is off)</td></tr>
           <tr><td>Login items</td><td>mrk</td></tr>
         </tbody>
       </table>
@@ -1207,18 +1207,18 @@ make post-install</code></pre>
           <h3>Download and Install</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Download the DMG from the latest release, drag to Applications, then clear the quarantine flag.</p>
-          <p>Download from: <strong>sevmorris/magic-backup-machine</strong> (private repo) → Releases</p>
+          <p class="desc">Download the DMG from the latest release. Drag it to Applications. Then, clear the quarantine flag.</p>
+          <p>Download from: <strong>sevmorris/magic-backup-machine</strong> (private repository) → Releases</p>
           <div class="callout callout-caution">
             <span class="callout-label">Caution — Required Before First Launch</span>
-            <div class="callout-body">macOS will block the app because it is not notarized with Apple. After dragging Magic Backup Machine to Applications, run this in Terminal:
+            <div class="callout-body">The macOS blocks the application because it is not notarized with Apple. Drag Magic Backup Machine to Applications, and then run this command in Terminal:
               <pre style="margin-top: 8px; margin-bottom: 0;">xattr -cr "/Applications/Magic Backup Machine.app"</pre>
             </div>
           </div>
         </div>
       </div>
 
-      <p>After installation, updates come from inside the app: <strong>Help → Check for Updates…</strong> checks the latest release, and this works against the private repo. The app also accepts a <code>--auto-backup</code> launch argument, used by scheduled backups (Section 4.7).</p>
+      <p>After installation, you can update from inside the application. Select <strong>Help → Check for Updates</strong>. This action checks the latest release in the private repository. The application also accepts an <code>--auto-backup</code> launch argument for scheduled backups (Section 4.7).</p>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1229,17 +1229,17 @@ make post-install</code></pre>
         <span class="section-sub">full disk access</span>
       </div>
 
-      <p>On first launch, MBM checks whether it has Full Disk Access. If it doesn't, a yellow warning banner appears at the top with three buttons:</p>
+      <p>On the first launch, the application checks for Full Disk Access. If it does not have this access, a yellow warning banner shows at the top with three buttons:</p>
 
       <ul>
-        <li><strong>Test Sources</strong> — re-runs the Full Disk Access check and refreshes source availability without relaunching</li>
-        <li><strong>Open System Settings</strong> — opens Privacy &amp; Security → Full Disk Access directly</li>
-        <li><strong>Quit &amp; Relaunch</strong> — restarts the app so macOS picks up the new permission</li>
+        <li><strong>Test Sources</strong> — This action runs the Full Disk Access check again and refreshes source availability. It does not restart the application.</li>
+        <li><strong>Open System Settings</strong> — This action opens Privacy &amp; Security → Full Disk Access.</li>
+        <li><strong>Quit &amp; Relaunch</strong> — This action restarts the application to apply the new permission.</li>
       </ul>
 
       <div class="callout callout-warn">
         <span class="callout-label">Warning — Full Disk Access Required</span>
-        <div class="callout-body">Without Full Disk Access, <code>rsync</code> will fail on protected directories under <code>~/Library</code>. Add the app in System Settings → Privacy &amp; Security → Full Disk Access before running a backup.</div>
+        <div class="callout-body">If you do not have Full Disk Access, <code>rsync</code> fails on protected directories in <code>~/Library</code>. Add the application in System Settings → Privacy &amp; Security → Full Disk Access before you run a backup.</div>
       </div>
     </section>
 
@@ -1251,25 +1251,25 @@ make post-install</code></pre>
         <span class="section-sub">mirror source → destination</span>
       </div>
 
-      <p>Backup mirrors each source directory to every available destination using:</p>
+      <p>The backup operation mirrors each source directory to every available destination with this command:</p>
       <pre><code>rsync -a --delete --ignore-errors --stats &lt;source&gt;/ &lt;destination&gt;/&lt;source_name&gt;/</code></pre>
 
       <ul>
-        <li><code>--delete</code> — ensures the backup is an exact mirror; files deleted from the source are removed from the backup</li>
-        <li><code>--ignore-errors</code> — continues past individual file errors</li>
-        <li><code>--stats</code> — prints a transfer summary at the end (no per-file listing)</li>
-        <li><code>.DS_Store</code> files are always excluded</li>
-        <li>Source directories that don't exist on disk are skipped (marked "skipped" in orange)</li>
-        <li>On success, a <code>last_backup.log</code> file is written to each destination recording the timestamp</li>
+        <li><code>--delete</code> — This flag makes the backup an exact mirror. The tool removes files from the backup if they are not in the source.</li>
+        <li><code>--ignore-errors</code> — This flag lets the tool continue if a file has an error.</li>
+        <li><code>--stats</code> — This flag prints a transfer summary at the end.</li>
+        <li>The tool always excludes <code>.DS_Store</code> files.</li>
+        <li>The tool skips source directories that do not exist (it marks them "skipped" in orange).</li>
+        <li>If successful, the tool writes a <code>last_backup.log</code> file to each destination with the timestamp.</li>
       </ul>
 
-      <p><strong>Destinations:</strong> Backup always writes to the local destination. If an external destination is configured and its volume is mounted, it writes there as well. Both are created automatically if they don't exist.</p>
+      <p><strong>Destinations:</strong> The backup operation always writes to the local destination. If you configure an external destination and mount its volume, it writes there too. The application creates both destinations automatically if they do not exist.</p>
 
-      <p>Each source directory is stored as a named subdirectory within the destination. For example, <code>~/Library/Audio/Presets</code> backs up to <code>~/.backups/Presets/</code>. With the dated-snapshots layout (Section 4.7), a <code>YYYY-MM-DD</code> folder is created under each destination per run instead of mirroring in place.</p>
+      <p>The application stores each source directory as a named subdirectory in the destination. For example, <code>~/Library/Audio/Presets</code> backs up to <code>~/.backups/Presets/</code>. If you use the dated-snapshots layout (Section 4.7), the application creates a <code>YYYY-MM-DD</code> folder in each destination for each run.</p>
 
-      <p><strong>Run confirmation:</strong> Run Backup first opens a confirmation sheet summarizing the sources, destinations, and a preflight estimate (file count and total size of existing sources). From the sheet, <strong>Dry Run</strong> previews the run with <code>rsync --dry-run --itemize-changes</code> and reports how many files would transfer and how many would be deleted, per source. A notification is posted when a run completes.</p>
+      <p><strong>Run confirmation:</strong> When you select Run Backup, a confirmation sheet opens. This sheet shows the sources, destinations, and a size estimate. From this sheet, select <strong>Dry Run</strong> to preview the run. This action uses <code>rsync --dry-run --itemize-changes</code> and shows the number of files to transfer and delete. The application shows a notification when a run completes.</p>
 
-      <p><strong>Progress:</strong> The left panel shows each item's status during a run — pending (empty circle), in progress (spinner), success (green checkmark), partial (yellow ⚠ — rsync exit 23/24, some files couldn't be transferred), failed (red ✗), or skipped (orange dash). rsync output streams in real time in the right panel. The header shows the date and destination of the last successful backup, and its folder button reveals the backup folder in Finder.</p>
+      <p><strong>Progress:</strong> The left panel shows the status of each item during a run. The statuses are: pending (empty circle), in progress (spinner), success (green checkmark), partial (yellow ⚠), failed (red ✗), or skipped (orange dash). The console output streams in real time in the right panel. The header shows the date and destination of the last successful backup. Click the folder button to show the backup folder in Finder.</p>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1280,20 +1280,20 @@ make post-install</code></pre>
         <span class="section-sub">copy backup → source</span>
       </div>
 
-      <p>Restore copies files from the backup back to their original source locations using:</p>
+      <p>The restore operation copies files from the backup to their original source locations with this command:</p>
       <pre><code>rsync -au --stats &lt;destination&gt;/&lt;source_name&gt;/ &lt;source_parent&gt;/</code></pre>
 
       <ul>
-        <li><code>-u</code> (update) — only files newer in the backup than on disk are copied</li>
-        <li>No <code>--delete</code> flag — restore will never remove files from the source that aren't in the backup</li>
-        <li>Items not found in the backup are skipped</li>
+        <li><code>-u</code> (update) — This flag copies only files that are newer in the backup than on the disk.</li>
+        <li>No <code>--delete</code> flag — The restore operation never removes files from the source.</li>
+        <li>The tool skips items that are not in the backup.</li>
       </ul>
 
-      <p>Restore reads from one destination at a time. A "Restore from" picker (Local/External) appears when both destinations are available; if the selected one becomes unavailable, MBM switches to one that is and says so. With the dated-snapshots layout, a Snapshot picker selects which dated backup to restore from.</p>
+      <p>The restore operation reads from one destination at a time. A "Restore from" picker (Local/External) shows when both destinations are available. If a destination becomes unavailable, the application switches to an available destination and shows a message. If you use the dated-snapshots layout, a Snapshot picker lets you choose the backup date to restore.</p>
 
       <div class="callout">
         <span class="callout-label">Note — Switching Modes</span>
-        <div class="callout-body">Use the mode picker in the header to switch between Backup and Restore. The footer always shows a note about the current mode's rsync behavior.</div>
+        <div class="callout-body">Use the mode picker in the header to switch between Backup and Restore. The footer always shows a note about the <code>rsync</code> behavior for the current mode.</div>
       </div>
     </section>
 
@@ -1305,7 +1305,7 @@ make post-install</code></pre>
         <span class="section-sub">what gets backed up</span>
       </div>
 
-      <p>The app ships with these source directories. Each is backed up in its entirety unless filters are noted. The <strong>Default</strong> column shows whether the source ships enabled — sources marked Off stay dormant until switched on with their toggle in Settings.</p>
+      <p>The application includes these default source directories. The backup copies each directory completely, unless the table shows filters. The <strong>Default</strong> column shows if the source is enabled. Sources that are marked Off do not operate until you turn them on in Settings.</p>
 
       <table class="ref-table">
         <caption>Table 4.6-1. Logic Pro</caption>
@@ -1401,7 +1401,7 @@ make post-install</code></pre>
 
       <div class="callout">
         <span class="callout-label">Note — App Preferences Filtering</span>
-        <div class="callout-body">The App Preferences entry does <strong>not</strong> back up the entire <code>~/Library/Preferences</code> directory. It uses rsync include filters to sync only the files listed above. Everything else is excluded by a trailing <code>--exclude *</code> rule. The source ships disabled — enable it in Settings to use it.</div>
+        <div class="callout-body">The App Preferences entry does <strong>not</strong> back up all of <code>~/Library/Preferences</code>. It uses <code>rsync</code> include filters to sync only the listed files. A trailing <code>--exclude *</code> rule excludes everything else. This source is off by default. You must enable it in Settings to use it.</div>
       </div>
     </section>
 
@@ -1413,25 +1413,25 @@ make post-install</code></pre>
         <span class="section-sub">gear icon → Settings sheet</span>
       </div>
 
-      <p>Open Settings with the gear icon in the header. The sheet contains:</p>
+      <p>Select the gear icon in the header to open Settings. The Settings sheet has these options:</p>
 
       <ul>
-        <li><strong>Source Directories</strong> — Lists all configured sources with labels, abbreviated paths, and filter summaries. Each entry has an enable/disable toggle, a <strong>Filters</strong> editor for its include/exclude patterns, and a remove button. Use <strong>Add Directory</strong> to add a new source via a folder picker.</li>
-        <li><strong>Backup Layout</strong> — <strong>Mirror</strong> (default) overwrites backups in place; <strong>Dated snapshots</strong> creates a <code>YYYY-MM-DD</code> folder under each destination on every run.</li>
-        <li><strong>Local Backup Destination</strong> — Default: <code>~/.backups</code>. Change with <strong>Choose...</strong></li>
-        <li><strong>External Backup Destination</strong> — Not configured by default. Optional; only used when the volume is mounted. Set with <strong>Choose...</strong>, remove with <strong>Clear</strong>.</li>
-        <li><strong>Scheduled Backup</strong> — Optional daily run at a configurable hour and minute, installed as a launch agent that opens the app with <code>--auto-backup</code>; scheduled runs can skip the confirmation sheet. Requires Full Disk Access and the app in <code>/Applications</code>; logs go to <code>~/Library/Logs/Magic Backup Machine/</code>.</li>
-        <li><strong>Settings File</strong> — Export or import the full configuration (sources, destinations, filters, preferences) as JSON.</li>
-        <li><strong>Reset to Defaults</strong> — Reverts all settings to the built-in defaults.</li>
+        <li><strong>Source Directories</strong> — This section lists all configured sources with labels, paths, and filter summaries. Each entry has an enable/disable toggle, a <strong>Filters</strong> editor for its include and exclude patterns, and a remove button. Select <strong>Add Directory</strong> to add a new source.</li>
+        <li><strong>Backup Layout</strong> — The <strong>Mirror</strong> option (default) overwrites backups in place. The <strong>Dated snapshots</strong> option creates a <code>YYYY-MM-DD</code> folder in each destination for each run.</li>
+        <li><strong>Local Backup Destination</strong> — The default is <code>~/.backups</code>. Select <strong>Choose...</strong> to change it.</li>
+        <li><strong>External Backup Destination</strong> — This destination is not configured by default. It is optional. The application uses it only when the volume is mounted. Select <strong>Choose...</strong> to set it. Select <strong>Clear</strong> to remove it.</li>
+        <li><strong>Scheduled Backup</strong> — This is an optional daily backup at a specific hour and minute. It installs as a launch agent that opens the application with <code>--auto-backup</code>. Scheduled runs can skip the confirmation sheet. You must have Full Disk Access and the application must be in <code>/Applications</code>. The logs are in <code>~/Library/Logs/Magic Backup Machine/</code>.</li>
+        <li><strong>Settings File</strong> — Select this to export or import the full configuration as a JSON file.</li>
+        <li><strong>Reset to Defaults</strong> — Select this to revert all settings to the built-in defaults.</li>
       </ul>
 
-      <p>Settings are persisted in UserDefaults under the app domain <code>io.github.sevmorris.BackupRestore</code>. To force a reload of built-in defaults after an app update:</p>
+      <p>The application saves settings in UserDefaults under <code>io.github.sevmorris.BackupRestore</code>. Run this command to force a reload of built-in defaults after an application update:</p>
 
       <pre><code>defaults delete io.github.sevmorris.BackupRestore BackupSettings</code></pre>
 
       <div class="callout">
         <span class="callout-label">Note — New Source Directories After an Update</span>
-        <div class="callout-body">When an MBM update ships new default source directories, a settings migration appends them to existing installs automatically — but they arrive <strong>disabled</strong>, so nothing new starts syncing unannounced. Enable them with their toggle in Settings. Alternatively, <strong>Reset to Defaults</strong> or the <code>defaults delete</code> command above starts over from the shipped defaults.</div>
+        <div class="callout-body">When an application update has new default source directories, a settings migration adds them automatically. These new directories are disabled by default. You must enable them in Settings. Or, you can select <strong>Reset to Defaults</strong>, or run the <code>defaults delete</code> command above, to reset to the shipped defaults.</div>
       </div>
     </section>
 
