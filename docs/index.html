@@ -722,20 +722,6 @@ make doctor     # Check ~/bin is on PATH; pass ARGS=--fix to add ~/bin to .zshrc
       <div class="proc">
         <div class="proc-header">
           <span class="proc-num">2.3.1</span>
-          <h3>bf — Brewfile Manager TUI</h3>
-        </div>
-        <div class="proc-body">
-          <p class="desc">Interactive TUI to browse, add, delete, move, and prune Brewfile entries.</p>
-          <pre><code>bf                    # Open the Brewfile manager TUI
-bf --help             # Show keys and options</code></pre>
-          <p><strong>Key operations:</strong> <code>a</code> add · <code>d</code> delete · <code>m</code> move · <code>g</code> toggle greedy · <code>p</code> prune uninstalled · <code>/</code> search · <code>w</code> write · <code>c</code> commit</p>
-          <p><strong>Prune mode</strong> (<code>p</code>) — gets <code>brew list</code>. It shows all Brewfile entries that are not currently installed. Press Space to mark items. Press <code>a</code> to toggle all. Press Enter to delete the marked entries.</p>
-        </div>
-      </div>
-
-      <div class="proc">
-        <div class="proc-header">
-          <span class="proc-num">2.3.2</span>
           <h3>sync — Scan and Update</h3>
         </div>
         <div class="proc-body">
@@ -965,8 +951,8 @@ git push</code></pre>
           <tr><td>make setup-dry</td><td>—</td><td>Preview Phase 1 changes without applying them</td></tr>
           <tr><td>make brew</td><td>—</td><td>Phase 2: Homebrew packages and casks</td></tr>
           <tr><td>make post-install</td><td>—</td><td>Phase 3: app configs and login items</td></tr>
-          <tr><td>make build-tools</td><td>—</td><td>Build all Go TUI binaries (picker + bf + mrk-status + mrk-menu)</td></tr>
-          <tr><td>make picker / bf / mrk-status / mrk-menu</td><td>—</td><td>Build one TUI binary and link it into ~/bin</td></tr>
+          <tr><td>make build-tools</td><td>—</td><td>Build all Go TUI binaries (picker + mrk-status + mrk-menu)</td></tr>
+          <tr><td>make picker / mrk-status / mrk-menu</td><td>—</td><td>Build one TUI binary and link it into ~/bin</td></tr>
           <tr class="tbl-cat"><td colspan="3">Partial Phases</td></tr>
           <tr><td>make dotfiles</td><td>—</td><td>Link dotfiles only</td></tr>
           <tr><td>make tools</td><td>—</td><td>Link scripts and bin into ~/bin only</td></tr>
@@ -988,7 +974,7 @@ git push</code></pre>
           <tr><td>make dock</td><td>—</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
           <tr><td>make uninstall</td><td>—</td><td>Remove symlinks and undo setup</td></tr>
           <tr><td>make snapshot</td><td><code>snapshot</code></td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
-          <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status, mrk-menu)</td></tr>
+          <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, mrk-status, mrk-menu)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
