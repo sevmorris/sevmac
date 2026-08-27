@@ -1022,8 +1022,6 @@ git push</code></pre>
           <tr><td>nuke-mrk</td><td>Remove all mrk artifacts for a fresh test install: moves <code>~/mrk</code> and <code>~/.mrk</code> to Trash, removes <code>~/bin</code> and dotfile symlinks, optionally runs the defaults/hardening rollback scripts first. Does <em>not</em> uninstall Homebrew packages</td></tr>
           <tr><td>clear-app-caches</td><td>Clears cache directories for common apps. Runs daily at 3 AM via an automatically installed LaunchAgent.</td></tr>
           <tr><td>clear-derived-data</td><td>Clears the Xcode DerivedData directory. Runs on Sundays at 3 AM via an automatically installed LaunchAgent.</td></tr>
-          <tr><td>audio-mode on|off|status</td><td>Studio toggle: pauses Dropbox, iCloud sync, and/or Google Drive for recording sessions (<code>on --icloud</code> / <code>--gdrive</code> / <code>--all</code>); snapshots the pre-toggle state so <code>off</code> only restores what was running</td></tr>
-          <tr><td>zoom-mode on|off|status</td><td>Zoom-session prep: pings the gateway every 30&nbsp;s to keep Wi-Fi alive, blocks sleep, stops any running Time Machine backup, then runs <code>audio-mode on --all</code>; <code>off</code> reverses everything</td></tr>
           <tr><td>hide_tm.sh [names]</td><td>Hides Time Machine volumes from the Finder sidebar; volume names come from <code>$TM_VOLUMES</code> or the first argument (comma-separated), defaulting to "TimeMachine"</td></tr>
         </tbody>
       </table>

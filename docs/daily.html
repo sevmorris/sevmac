@@ -358,7 +358,7 @@
     <div class="lead">
       <h1>Daily Operations</h1>
       <p>This card shows the commands to use each day. It does not tell you how the tools operate. For that information, read <a href="index.html">SMAC-1</a>.</p>
-      <p>Each part of this page starts with a moment: you install a package, you start a recording, or a problem occurs. Find the moment. Then run the command.</p>
+      <p>Each part of this page starts with a moment: you install a package, a week goes by, or a problem occurs. Find the moment. Then run the command.</p>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -366,7 +366,7 @@
       <div class="block-heading">
         <span class="block-tag">A</span>
         <h2>The Card</h2>
-        <span class="block-sub">nine commands</span>
+        <span class="block-sub">seven commands</span>
       </div>
 
       <p>These are the commands to use most days. Each one is a script in <code>~/bin</code> or a shell function in <code>~/.aliases</code>. You can run each one from any directory.</p>
@@ -399,14 +399,6 @@
         <div class="cmd">
           <span class="name">bf</span>
           <span class="what">Opens the Brewfile manager. Add, delete, move, or prune entries.</span>
-        </div>
-        <div class="cmd">
-          <span class="name">audio-mode on --all</span>
-          <span class="what">Stops the cloud sync services before you record.</span>
-        </div>
-        <div class="cmd">
-          <span class="name">zoom-mode on</span>
-          <span class="what">Prepares the computer for a Zoom session.</span>
         </div>
       </div>
 
@@ -526,42 +518,9 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
-    <section id="sessions">
-      <div class="block-heading">
-        <span class="block-tag">D</span>
-        <h2>Before and After a Session</h2>
-        <span class="block-sub">audio-mode · zoom-mode</span>
-      </div>
-
-      <div class="callout callout-caution">
-        <span class="callout-label">Caution — Always Run the off Command</span>
-        <div class="callout-body">The <code>on</code> command stops the cloud sync services. It can also prevent sleep and stop a Time&nbsp;Machine backup. These services stay stopped until you run the <code>off</code> command. Run the <code>off</code> command when the session is complete.</div>
-      </div>
-
-      <p><strong>For a recording session.</strong> The <code>audio-mode</code> command pauses the sync services that cause disk activity.</p>
-
-<pre><code>audio-mode on --all     # Pause Dropbox, iCloud, and Google Drive
-audio-mode status       # Show which services are paused
-audio-mode off          # Start again only the services that were running</code></pre>
-
-      <p><strong>For a Zoom session.</strong> The <code>zoom-mode</code> command does more. It pings the gateway each 30 seconds to keep the Wi-Fi active. It prevents sleep. It stops a Time Machine backup that is in operation. Then it runs <code>audio-mode on --all</code>.</p>
-
-<pre><code>zoom-mode on            # Prepare the computer for the call
-zoom-mode status        # Show the current state
-zoom-mode off           # Reverse all the changes</code></pre>
-
-      <p>Do not run both commands. The <code>zoom-mode</code> command includes <code>audio-mode</code>. Use <code>audio-mode</code> for a local recording. Use <code>zoom-mode</code> for a remote call.</p>
-
-      <div class="callout">
-        <span class="callout-label">Note — Other Session Commands</span>
-        <div class="callout-body">The <code>rx</code> command opens iZotope&nbsp;RX in the background. It does not take the window focus. The <code>hide_tm.sh</code> command hides the Time Machine volumes from the Finder sidebar.</div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
     <section id="rhythm">
       <div class="block-heading">
-        <span class="block-tag">E</span>
+        <span class="block-tag">D</span>
         <h2>Each Week, Each Month</h2>
         <span class="block-sub">the short routine</span>
       </div>
@@ -619,7 +578,7 @@ update-full --no-reboot  # Do not offer a reboot</code></pre>
     <!-- ═══════════════════════════════════════════════════════════ -->
     <section id="wrong">
       <div class="block-heading">
-        <span class="block-tag">F</span>
+        <span class="block-tag">E</span>
         <h2>If Something Is Wrong</h2>
         <span class="block-sub">four steps</span>
       </div>
@@ -657,7 +616,7 @@ exec zsh</code></pre>
     <!-- ═══════════════════════════════════════════════════════════ -->
     <section id="more">
       <div class="block-heading">
-        <span class="block-tag">G</span>
+        <span class="block-tag">F</span>
         <h2>More Information</h2>
         <span class="block-sub">SMAC-1 sections</span>
       </div>
