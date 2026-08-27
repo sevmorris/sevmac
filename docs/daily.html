@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMAC-2 — Daily Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary:              #0066cc;
+      --color-accent:               #0f766e;
+      --color-text:                 #333333;
+      --color-text-secondary:       #666666;
+      --color-text-tertiary:        #999999;
+      --color-border:               #cccccc;
+      --color-border-light:         #e5e5e5;
+      --color-background:           #ffffff;
+      --color-background-secondary: #f8f9fa;
+      --color-background-tertiary:  #f1f3f4;
+      --color-danger:               #dc3545;
+      --color-warning-dark:         #7a5500;
+      --font-family-base: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      --font-family-mono: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-family-base);
+      font-size: 16px;
+      background: #e8ecf0;
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── Header ──────────────────────────────────────────────── */
+    .main-header { position: sticky; top: 0; z-index: 200; }
+
+    .doc-masthead {
+      background-color: #1a365d;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.025em;
+      border-bottom: 3px solid var(--color-accent);
+    }
+    .masthead-org    { flex: 1; text-align: left; }
+    .masthead-center { flex: 2; text-align: center; font-weight: 400; }
+    .masthead-center strong { font-weight: 600; }
+    .masthead-meta   { flex: 1; text-align: right; font-family: var(--font-family-mono); font-size: 0.78rem; }
+
+    .doc-infobar {
+      background: var(--color-background);
+      border-bottom: 2px solid var(--color-border);
+      padding: 0.5rem 1.5rem;
+      display: flex;
+      gap: 2.5rem;
+      font-size: 0.78rem;
+      font-family: var(--font-family-mono);
+    }
+    .infobar-cell .lbl {
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+      margin-right: 6px;
+    }
+    .infobar-cell .val   { color: var(--color-text); font-weight: 500; }
+    .infobar-cell .val a { color: var(--color-primary); text-decoration: none; }
+    .infobar-cell .val a:hover { text-decoration: underline; }
+
+    /* ─── Page frame ──────────────────────────────────────────── */
+    main {
+      max-width: 940px;
+      margin: 0 auto;
+      background: #e8ecf0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .content { padding: 2.25rem 2.5rem 4rem; flex: 1; }
+
+    /* ─── Lead ────────────────────────────────────────────────── */
+    .lead {
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 3px 3px 0;
+      padding: 1.125rem 1.375rem;
+      margin-bottom: 2.5rem;
+    }
+    .lead h1 {
+      font-size: 1.7rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      line-height: 1.25;
+    }
+    .lead p { font-size: 0.95rem; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+    .lead p:last-child { margin-bottom: 0; }
+
+    /* ─── Blocks ──────────────────────────────────────────────── */
+    section { margin-bottom: 2.75rem; }
+
+    .block-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      border-bottom: 2px solid var(--color-border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.125rem;
+    }
+    .block-tag {
+      font-family: var(--font-family-mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-accent);
+      min-width: 30px;
+    }
+    .block-heading h2 { font-size: 1.4rem; font-weight: 500; color: var(--color-text); }
+    .block-sub {
+      font-size: 0.76rem;
+      color: var(--color-text-tertiary);
+      font-family: var(--font-family-mono);
+      margin-left: auto;
+      text-align: right;
+    }
+
+    p { margin-bottom: 0.75rem; }
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 0.75rem; }
+    li { margin-bottom: 0.3rem; line-height: 1.55; }
+    strong { font-weight: 600; }
+
+    code {
+      font-family: var(--font-family-mono);
+      font-size: 0.85em;
+      background: var(--color-background-tertiary);
+      border: 1px solid var(--color-border-light);
+      padding: 1px 5px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    pre {
+      font-family: var(--font-family-mono);
+      font-size: 0.875rem;
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+      border-radius: 4px;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; white-space: pre; }
+
+    /* ─── Command card grid ───────────────────────────────────── */
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+      gap: 0.75rem;
+    }
+    .cmd {
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-top: 3px solid var(--color-accent);
+      border-radius: 0 0 3px 3px;
+      padding: 0.75rem 0.875rem 0.8rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .cmd .name {
+      font-family: var(--font-family-mono);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--color-text);
+      display: block;
+      margin-bottom: 0.3rem;
+      word-break: break-word;
+      white-space: normal;
+    }
+    .cmd .what { font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; }
+
+    /* ─── Wide-table scroll container ─────────────────────────── */
+    /* Tables can exceed the viewport on narrow screens. body has
+       overflow-x:hidden, so an overflowing table is clipped with no way to
+       reach the cut-off columns. Each table scrolls inside its own box. */
+    .table-scroll {
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    .table-scroll > .ref-table { margin-bottom: 0; }
+
+    /* ─── Tables ──────────────────────────────────────────────── */
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--color-border);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      background: var(--color-background);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .ref-table caption {
+      caption-side: top;
+      text-align: left;
+      font-size: 0.72rem;
+      font-family: var(--font-family-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-tertiary);
+      padding-bottom: 5px;
+    }
+    .ref-table th {
+      background: var(--color-background-secondary);
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-secondary);
+      border-bottom: 2px solid var(--color-border);
+      border-right: 1px solid var(--color-border-light);
+    }
+    .ref-table th:last-child { border-right: none; }
+    .ref-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--color-border-light);
+      border-right: 1px solid var(--color-border-light);
+      vertical-align: top;
+    }
+    .ref-table td:last-child { border-right: none; }
+    .ref-table tr:last-child td { border-bottom: none; }
+    .ref-table td:first-child { font-family: var(--font-family-mono); font-size: 0.85rem; white-space: nowrap; }
+    .ref-table.wrap-first td:first-child { font-family: var(--font-family-base); font-size: 0.9rem; white-space: normal; }
+
+    /* ─── Callouts ────────────────────────────────────────────── */
+    .callout {
+      border: 1px solid var(--color-border);
+      border-left: 4px solid var(--color-primary);
+      background: var(--color-background);
+      margin: 1rem 0;
+      border-radius: 0 3px 3px 0;
+      overflow: hidden;
+    }
+    .callout-label {
+      display: block;
+      background: var(--color-background-secondary);
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .callout-body { padding: 0.625rem 0.875rem; font-size: 0.9rem; }
+    .callout-rule { border-left-color: var(--color-accent); }
+    .callout-rule .callout-label { background: #effcf9; color: var(--color-accent); }
+    .callout-caution { border-left-color: #e6a800; }
+    .callout-caution .callout-label { background: #fffdf0; color: var(--color-warning-dark); }
+
+    /* ─── Steps ───────────────────────────────────────────────── */
+    .steps { counter-reset: step; list-style: none; padding-left: 0; }
+    .steps > li {
+      counter-increment: step;
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: 3px;
+      padding: 0.75rem 0.875rem 0.75rem 3rem;
+      margin-bottom: 0.625rem;
+      position: relative;
+      font-size: 0.92rem;
+    }
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0.875rem;
+      top: 0.7rem;
+      font-family: var(--font-family-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #fff;
+      background: var(--color-accent);
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .steps > li pre { margin: 0.5rem 0 0; }
+    .steps > li p:last-child { margin-bottom: 0; }
+
+    /* ─── Footer ──────────────────────────────────────────────── */
+    .doc-footer {
+      border-top: 2px solid var(--color-border);
+      padding: 0.625rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.72rem;
+      font-family: var(--font-family-mono);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-tertiary);
+      background: var(--color-background-secondary);
+    }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .doc-masthead { flex-direction: column; gap: 3px; padding: 0.625rem 1.25rem; }
+      .masthead-org, .masthead-center, .masthead-meta { flex: none; text-align: center; }
+      .doc-infobar { flex-direction: column; gap: 3px; padding: 0.5rem 1.25rem; }
+      .content { padding: 1.75rem 1.25rem 3.5rem; }
+      .doc-footer { padding: 0.625rem 1.25rem; flex-direction: column; gap: 3px; text-align: center; }
+      .block-heading { flex-wrap: wrap; }
+      .block-sub { margin-left: 0; flex-basis: 100%; text-align: left; }
+      .ref-table td:first-child { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="main-header">
+  <div class="doc-masthead">
+    <div class="masthead-org">Personal Systems / Mac Management</div>
+    <div class="masthead-center">DAILY OPERATIONS / <strong>sevmac — Day-to-Day Use</strong></div>
+    <div class="masthead-meta">SMAC-2 / PAGES: N/A</div>
+  </div>
+  <div class="doc-infobar">
+    <div class="infobar-cell">
+      <span class="lbl">SYSTEM:</span>
+      <span class="val">macOS 15</span>
+    </div>
+    <div class="infobar-cell">
+      <span class="lbl">REFERENCE:</span>
+      <span class="val"><a href="index.html">SMAC-1 — Mac Setup &amp; Management</a></span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="content">
+
+    <div class="lead">
+      <h1>Daily Operations</h1>
+      <p>This card shows the commands to use each day. It does not tell you how the tools operate. For that information, read <a href="index.html">SMAC-1</a>.</p>
+      <p>Each part of this page starts with a moment: you install a package, you start a recording, or a problem occurs. Find the moment. Then run the command.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="card">
+      <div class="block-heading">
+        <span class="block-tag">A</span>
+        <h2>The Card</h2>
+        <span class="block-sub">nine commands</span>
+      </div>
+
+      <p>These are the commands to use most days. Each one is a script in <code>~/bin</code> or a shell function in <code>~/.aliases</code>. You can run each one from any directory.</p>
+
+      <div class="cmd-grid">
+        <div class="cmd">
+          <span class="name">status</span>
+          <span class="what">Opens the health dashboard. Press <code>f</code> for a fix. Press <code>r</code> to refresh.</span>
+        </div>
+        <div class="cmd">
+          <span class="name">mrk-menu</span>
+          <span class="what">Opens the command launcher. Use it when you do not remember a command.</span>
+        </div>
+        <div class="cmd">
+          <span class="name">sync -c</span>
+          <span class="what">Adds new installed packages to the Brewfile. Then it commits the change.</span>
+        </div>
+        <div class="cmd">
+          <span class="name">snapshot-prefs</span>
+          <span class="what">Exports the application preferences. Then it pushes them to mrk-prefs.</span>
+        </div>
+        <div class="cmd">
+          <span class="name">pushall</span>
+          <span class="what">Pushes each repository in <code>~/Projects</code>. Then it syncs <code>~/mrk</code>.</span>
+        </div>
+        <div class="cmd">
+          <span class="name">update</span>
+          <span class="what">Runs topgrade. It upgrades the packages. It does not close the applications.</span>
+        </div>
+        <div class="cmd">
+          <span class="name">bf</span>
+          <span class="what">Opens the Brewfile manager. Add, delete, move, or prune entries.</span>
+        </div>
+        <div class="cmd">
+          <span class="name">audio-mode on --all</span>
+          <span class="what">Stops the cloud sync services before you record.</span>
+        </div>
+        <div class="cmd">
+          <span class="name">zoom-mode on</span>
+          <span class="what">Prepares the computer for a Zoom session.</span>
+        </div>
+      </div>
+
+      <div class="callout callout-rule">
+        <span class="callout-label">Rule — When You Do Not Remember</span>
+        <div class="callout-body">Run <code>mrk-menu</code>. It shows all the mrk commands in groups. Select a command to run it. You do not need to remember the flags.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="automatic">
+      <div class="block-heading">
+        <span class="block-tag">B</span>
+        <h2>Automatic Tasks</h2>
+        <span class="block-sub">no action necessary</span>
+      </div>
+
+      <p>The system does these tasks for you. Do not put them in a manual routine.</p>
+
+      <div class="table-scroll">
+<table class="ref-table">
+        <caption>Table B-1. Scheduled Tasks</caption>
+        <thead><tr><th>Task</th><th>Schedule</th><th>What It Does</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>clear-app-caches</td>
+            <td>Each day at 03:00</td>
+            <td>Clears the cache directories of the usual applications. A LaunchAgent starts it.</td>
+          </tr>
+          <tr>
+            <td>clear-derived-data</td>
+            <td>Each Sunday at 03:00</td>
+            <td>Clears the Xcode DerivedData directory. A LaunchAgent starts it.</td>
+          </tr>
+          <tr>
+            <td>check-updates</td>
+            <td>Each 7 days, at shell start</td>
+            <td>Compares <code>~/mrk</code> to the remote. It is silent if there are no updates.</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>You can also run <code>clear-app-caches</code> or <code>clear-derived-data</code> manually. This is not usually necessary. Run <code>clear-derived-data</code> manually if a build fails and you think the cause is a stale build product.</p>
+
+      <div class="callout">
+        <span class="callout-label">Note — After check-updates Reports an Update</span>
+        <div class="callout-body">Run <code>make -C ~/mrk pull</code> to get the update. This command is a fast-forward pull. It does not change your local work.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="triggers">
+      <div class="block-heading">
+        <span class="block-tag">C</span>
+        <h2>After You Change Something</h2>
+        <span class="block-sub">the important part</span>
+      </div>
+
+      <p>The system does not find your changes. You must record them. Each row below shows an action and the command that records it.</p>
+
+      <div class="table-scroll">
+<table class="ref-table wrap-first">
+        <caption>Table C-1. Change and Command</caption>
+        <thead><tr><th>You did this</th><th>Run this</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>You installed a package with Homebrew.</td>
+            <td><code>sync -c</code></td>
+            <td>Adds the package to the Brewfile. A package that is not in the Brewfile is not installed on a new machine.</td>
+          </tr>
+          <tr>
+            <td>You changed the settings of an application.</td>
+            <td><code>snapshot-prefs</code></td>
+            <td>Exports the plist and pushes it to mrk-prefs. See Table&nbsp;2.4-1 in <a href="index.html#mrk-prefs">SMAC-1</a> for the managed applications.</td>
+          </tr>
+          <tr>
+            <td>You added or removed a login item.</td>
+            <td><code>sync-login-items -c</code></td>
+            <td>Updates the tracked list in <code>scripts/post-install</code>.</td>
+          </tr>
+          <tr>
+            <td>You removed a package with Homebrew.</td>
+            <td><code>sync -p</code></td>
+            <td>Removes the Brewfile entry for the package.</td>
+          </tr>
+          <tr>
+            <td>You changed a file in <code>~/mrk</code>.</td>
+            <td><code>mrk-push "message"</code></td>
+            <td>Commits and pushes the change. It also prunes the old Pages deployments.</td>
+          </tr>
+          <tr>
+            <td>You made commits in a project.</td>
+            <td><code>pushall</code></td>
+            <td>Pushes each repository in <code>~/Projects</code>. Then it syncs <code>~/mrk</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Note — The pushall Secret Scan</span>
+        <div class="callout-body">The <code>pushall</code> command examines each file before it makes a commit. If it finds a possible secret, it stops for that repository and continues with the others. It leaves the changes staged, so <code>git diff --cached</code> shows you what it stopped. The command stages only the tracked files. It never adds an untracked file. Use <code>pushall --dry-run</code> to run the scan and change nothing.</div>
+      </div>
+
+      <div class="callout callout-rule">
+        <span class="callout-label">Rule — The Only Rule That Is Important</span>
+        <div class="callout-body">If you install it with Homebrew, run <code>sync -c</code>. If you configure it in a window, run <code>snapshot-prefs</code>. A change that you do not record does not move to the next machine.</div>
+      </div>
+
+      <p>Do not run <code>sync</code> after each installation. Once each week is sufficient. But always run it before a migration. See the checklist in <a href="index.html#mrk-migration">SMAC-1, Section 2.6</a>.</p>
+
+      <div class="callout">
+        <span class="callout-label">Note — To Keep a Package but Hide It from sync</span>
+        <div class="callout-body">Put the formula or cask name in <code>~/.mrk/sync-ignore</code>. Use one name for each line. The <code>sync</code> command then does not suggest it. The file does not exist until you make it.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="sessions">
+      <div class="block-heading">
+        <span class="block-tag">D</span>
+        <h2>Before and After a Session</h2>
+        <span class="block-sub">audio-mode · zoom-mode</span>
+      </div>
+
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — Always Run the off Command</span>
+        <div class="callout-body">The <code>on</code> command stops the cloud sync services. It can also prevent sleep and stop a Time&nbsp;Machine backup. These services stay stopped until you run the <code>off</code> command. Run the <code>off</code> command when the session is complete.</div>
+      </div>
+
+      <p><strong>For a recording session.</strong> The <code>audio-mode</code> command pauses the sync services that cause disk activity.</p>
+
+<pre><code>audio-mode on --all     # Pause Dropbox, iCloud, and Google Drive
+audio-mode status       # Show which services are paused
+audio-mode off          # Start again only the services that were running</code></pre>
+
+      <p><strong>For a Zoom session.</strong> The <code>zoom-mode</code> command does more. It pings the gateway each 30 seconds to keep the Wi-Fi active. It prevents sleep. It stops a Time Machine backup that is in operation. Then it runs <code>audio-mode on --all</code>.</p>
+
+<pre><code>zoom-mode on            # Prepare the computer for the call
+zoom-mode status        # Show the current state
+zoom-mode off           # Reverse all the changes</code></pre>
+
+      <p>Do not run both commands. The <code>zoom-mode</code> command includes <code>audio-mode</code>. Use <code>audio-mode</code> for a local recording. Use <code>zoom-mode</code> for a remote call.</p>
+
+      <div class="callout">
+        <span class="callout-label">Note — Other Session Commands</span>
+        <div class="callout-body">The <code>rx</code> command opens iZotope&nbsp;RX in the background. It does not take the window focus. The <code>hide_tm.sh</code> command hides the Time Machine volumes from the Finder sidebar.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="rhythm">
+      <div class="block-heading">
+        <span class="block-tag">E</span>
+        <h2>Each Week, Each Month</h2>
+        <span class="block-sub">the short routine</span>
+      </div>
+
+      <p><strong>Each week.</strong> These three commands take a few minutes.</p>
+
+<pre><code>update        # Upgrade all the packages with topgrade
+sync -c       # Add new packages to the Brewfile, then commit
+pushall       # Push all the project repos, then sync ~/mrk</code></pre>
+
+      <p>The <code>update</code> command is a shell function in <code>~/.aliases</code>. It runs topgrade and nothing more. It does not close the applications. It does not offer a reboot.</p>
+
+      <p><strong>Each month.</strong> Start with <code>update-full</code>. Then do three more steps.</p>
+
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — update-full Closes Your Applications</span>
+        <div class="callout-body">The <code>update-full</code> command closes all the running applications. It tells each application to save its open documents first. It keeps your terminal open only if the terminal is iTerm2, Terminal, Warp, or Ghostty. If the terminal is a different one, the command gives a warning first. Stop your work before you run this command. The command asks for confirmation before it starts. It stops with an error if there is no terminal, unless you give the <code>--yes</code> option.</div>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <p>Run the full update. This one command does all of these steps in sequence: it pulls <code>~/mrk</code>, closes the applications, runs the macOS software updates, runs topgrade, builds the mrk Go tools again, removes the <code>.DS_Store</code> files, and runs <code>brew doctor</code>. Then it offers a reboot.</p>
+<pre><code>update-full              # Ask before the start, offer a reboot at the end
+update-full --no-reboot  # Do not offer a reboot</code></pre>
+        </li>
+        <li>
+          <p>Export the application preferences. Do this after you change the settings of any application.</p>
+<pre><code>snapshot-prefs</code></pre>
+        </li>
+        <li>
+          <p>Open Magic Backup Machine. Run a backup to the local destination and the external destination. This backup copies the files that mrk does not manage. These files include the Logic&nbsp;Pro projects, the audio presets, and the browser profiles. See <a href="index.html#mbm-backup">SMAC-1, Section 4.4</a>.</p>
+        </li>
+        <li>
+          <p>Open the health dashboard. Look for a <code>⚠</code> or an <code>✗</code> indicator. Press <code>f</code> to get a suggested fix.</p>
+<pre><code>status</code></pre>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <span class="callout-label">Note — To Remove the .DS_Store Files Only</span>
+        <div class="callout-body">Step&nbsp;1 includes the <code>clean-ds</code> command. You can also run it alone. Use <code>clean-ds --dry-run</code> to see the files first. The command removes the <code>.DS_Store</code> files from the local disk only. It does not touch <code>~/Library</code>, <code>~/Desktop</code>, the network volumes, or the external volumes.</div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Note — Two Spellings, One Command</span>
+        <div class="callout-body">The <code>update-full</code> and <code>update --full</code> commands do the same thing. The <code>update</code> function sends <code>--full</code> to <code>update-full</code>. It sends all the other arguments to topgrade.</div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Note — Housekeeping</span>
+        <div class="callout-body">The <code>maintain</code> command prunes the Pages deployments, fetches with <code>--prune</code>, validates the scripts, and checks the builds. Run it when you work on mrk itself. Use <code>maintain --dry-run</code> to see the changes first.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="wrong">
+      <div class="block-heading">
+        <span class="block-tag">F</span>
+        <h2>If Something Is Wrong</h2>
+        <span class="block-sub">four steps</span>
+      </div>
+
+      <p>Do these steps in this sequence. Stop when the problem is corrected.</p>
+
+      <ol class="steps">
+        <li>
+          <p>Open the dashboard. It shows nine checks. Find the check that is not <code>✓</code>. Press <code>f</code> to get a suggested fix. The tool asks for confirmation before it makes the change.</p>
+<pre><code>status</code></pre>
+        </li>
+        <li>
+          <p>If a command is <strong>not found</strong>, the <code>~/bin</code> directory is possibly not on the PATH. Correct it, then start a new shell.</p>
+<pre><code>doctor --fix
+exec zsh</code></pre>
+        </li>
+        <li>
+          <p>If a TUI does not draw correctly, build the binaries again. This applies to <code>status</code>, <code>bf</code>, <code>mrk-menu</code>, and the <code>sync</code> picker.</p>
+<pre><code>make -C ~/mrk build-tools</code></pre>
+        </li>
+        <li>
+          <p>Read the log. The setup, brew, and post-install phases write to it.</p>
+<pre><code>tail -50 ~/.mrk/install.log</code></pre>
+        </li>
+      </ol>
+
+      <p>If the problem continues, find it in the troubleshooting table in <a href="index.html#mrk-troubleshooting">SMAC-1, Section 2.9</a>.</p>
+
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — To Undo the macOS Defaults</span>
+        <div class="callout-body">The rollback script removes all the <code>defaults write</code> changes that mrk applied. Read the script before you run it.<pre style="margin-top:0.5rem;"><code>bash ~/.mrk/defaults-rollback.sh</code></pre></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section id="more">
+      <div class="block-heading">
+        <span class="block-tag">G</span>
+        <h2>More Information</h2>
+        <span class="block-sub">SMAC-1 sections</span>
+      </div>
+
+      <p>This page does not give the full detail. Use <a href="index.html">SMAC-1</a> for the complete reference.</p>
+
+      <div class="table-scroll">
+<table class="ref-table wrap-first">
+        <caption>Table G-1. Where to Look</caption>
+        <thead><tr><th>You want to</th><th>Read</th></tr></thead>
+        <tbody>
+          <tr><td>Set up a new machine</td><td><a href="index.html#mrk-new-machine">Section 2.2 — New Machine Setup</a></td></tr>
+          <tr><td>Move to a new machine</td><td><a href="index.html#mrk-migration">Section 2.6 — Migration Checklist</a></td></tr>
+          <tr><td>See all the flags of a command</td><td><a href="index.html#mrk-commands">Section 2.7 — Command Reference</a></td></tr>
+          <tr><td>Understand the dashboard checks</td><td><a href="index.html#mrk-status">Section 2.8 — Status &amp; Diagnostics</a></td></tr>
+          <tr><td>Correct a known problem</td><td><a href="index.html#mrk-troubleshooting">Section 2.9 — Troubleshooting</a></td></tr>
+          <tr><td>Manage the Brewfile in a window</td><td><a href="index.html#barkeep-usage">Section 3.3 — Barkeep Interface &amp; Usage</a></td></tr>
+          <tr><td>Back up or restore the presets</td><td><a href="index.html#mbm-backup">Section 4.4 — Backup Mode</a></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+
+  <footer class="doc-footer">
+    <span>SMAC-2</span>
+    <span><a href="index.html">SMAC-1 — Full Reference</a></span>
+    <span>sevmac · Personal Mac Management</span>
+  </footer>
+
+</main>
+
+</body>
+</html>

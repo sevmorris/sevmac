@@ -334,6 +334,17 @@
       color: var(--color-warning-dark);
     }
 
+    /* ─── Wide-table scroll container ─────────────────────────── */
+    /* Tables can exceed the viewport on narrow screens. body has
+       overflow-x:hidden, so an overflowing table is clipped with no way to
+       reach the cut-off columns. Each table scrolls inside its own box. */
+    .table-scroll {
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    .table-scroll > .ref-table { margin-bottom: 0; }
+
     /* ─── Tables ──────────────────────────────────────────────── */
     .ref-table {
       width: 100%;
@@ -483,6 +494,10 @@
       <span class="lbl">TOOLS:</span>
       <span class="val">mrk · Barkeep · Magic Backup Machine</span>
     </div>
+    <div class="infobar-cell">
+      <span class="lbl">DAILY:</span>
+      <span class="val"><a href="daily.html">SMAC-2 — Daily Operations</a></span>
+    </div>
   </div>
 </header>
 
@@ -493,6 +508,8 @@
     <span class="nav-to-num">SMAC-1</span>
     <span class="nav-title">sevmac<br>Mac Setup Guide</span>
   </div>
+  <a class="section-head">Companion</a>
+  <a href="daily.html">SMAC-2 — Daily Operations</a>
   <a class="section-head">Sect. 1 — Overview</a>
   <a href="#overview">1. Overview</a>
   <a class="section-head">Sect. 2 — mrk</a>
@@ -531,7 +548,8 @@
       </div>
       <p>This reference guide documents my setup, tools, and workflows. The tools are open source. The methods apply to many systems, but the configuration applies only to my computer. You must change the configuration to use these tools on your system.</p>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 1-1. Tools at a Glance</caption>
         <thead><tr><th>Tool</th><th>What It Does</th><th>Repo</th></tr></thead>
         <tbody>
@@ -552,10 +570,12 @@
           </tr>
         </tbody>
       </table>
+      </div>
 
       <p><strong>How the tools work together:</strong> The mrk tool installs a new system from the beginning. It manages packages, dotfiles, the shell, and application configurations. Barkeep is the graphical user interface for Brewfile management. The Magic Backup Machine protects application settings and presets that mrk does not manage (for example, Logic Pro projects, Audio Unit presets, and browser profiles).</p>
 
-      <table class="ref-table" style="margin-top: 1rem;">
+      <div class="table-scroll">
+<table class="ref-table" style="margin-top: 1rem;">
         <caption>Table 1-2. Key Repositories</caption>
         <thead><tr><th>Repo</th><th>Local Path</th><th>Visibility</th></tr></thead>
         <tbody>
@@ -565,6 +585,7 @@
           <tr><td>sevmorris/magic-backup-machine</td><td><code>~/Projects/Magic Backup Machine/</code></td><td>Private</td></tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -577,7 +598,8 @@
 
       <p>The <strong>mrk</strong> tool is a personal macOS bootstrap system. It automates a clean installation. It manages the shell environment, dotfiles, system preferences, Homebrew packages, application settings, login items, and personal application preferences. The system operates in three independent phases. You can safely run each phase again.</p>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 2.1-1. The Three Phases</caption>
         <thead><tr><th>Phase</th><th>Command</th><th>What It Covers</th></tr></thead>
         <tbody>
@@ -586,6 +608,7 @@
           <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser policies, dev runtimes (openjdk, nvm, pyenv), Barkeep install, preference plist imports, login items</td></tr>
         </tbody>
       </table>
+      </div>
 
       <p>Run all three phases at once:</p>
       <pre><code>make all && exec zsh</code></pre>
@@ -616,7 +639,8 @@ make -C ~/mrk all
 exec zsh</code></pre>
           <p>This command runs all three phases. It also builds the TUI binaries. The command <code>exec zsh</code> reloads the shell to load dotfiles and <code>~/bin</code>.</p>
           <p><strong>What gets linked (Phase 1):</strong></p>
-          <table class="ref-table" style="margin-top: 8px;">
+          <div class="table-scroll">
+<table class="ref-table" style="margin-top: 8px;">
             <thead><tr><th>File</th><th>Purpose</th></tr></thead>
             <tbody>
               <tr><td>.aliases</td><td>Shell aliases</td></tr>
@@ -628,6 +652,7 @@ exec zsh</code></pre>
               <tr><td>Makefile</td><td>mrk commands available from <code>~/</code></td></tr>
             </tbody>
           </table>
+      </div>
           <p>The system copies replaced files to <code>~/.mrk/backups/</code> as backups. The system creates a rollback script for macOS defaults at <code>~/.mrk/defaults-rollback.sh</code>.</p>
           <p><strong>What Phase 3 does:</strong></p>
           <ul>
@@ -787,7 +812,8 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
         </div>
       </div>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 2.4-1. Managed App Preferences</caption>
         <thead><tr><th>App</th><th>Notes</th></tr></thead>
         <tbody>
@@ -809,6 +835,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <tr><td>Calibre</td><td>Config tree (<code>~/Library/Preferences/calibre</code>) — JSON/plist files, conversion presets, plugins</td></tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -835,7 +862,8 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
         <li>The tool also updates <code>docs/manual.md</code> with the new list.</li>
       </ol>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 2.5-1. Registered Login Items</caption>
         <thead><tr><th>App</th></tr></thead>
         <tbody>
@@ -849,6 +877,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
           <tr><td>Stats</td></tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -909,72 +938,81 @@ git push</code></pre>
       <div class="section-heading">
         <span class="section-num">2.7</span>
         <h2>Command Reference</h2>
-        <span class="section-sub">all make targets</span>
+        <span class="section-sub">make targets · standalone utilities</span>
       </div>
 
-      <p>The <code>make setup</code> command automatically deploys <code>~/Makefile</code>. Run <code>make help</code> from <code>~/</code> to see all commands.</p>
+      <div class="callout">
+        <span class="callout-label">Note — Where to Run These</span>
+        <div class="callout-body">Each target in Table 2.7-1 runs from any directory as <code>make -C ~/mrk &lt;target&gt;</code>. From inside <code>~/mrk</code>, the shorter <code>make &lt;target&gt;</code> is the same thing. The <code>make setup</code> command also deploys <code>~/Makefile</code>, which gives you <code>make help</code>, <code>make sync</code>, <code>make snapshot-prefs</code>, <code>make pull-prefs</code>, and <code>make picker</code> from your home directory.</div>
+      </div>
 
-      <table class="ref-table">
-        <caption>Table 2.7-1. Commands from ~/</caption>
-        <thead><tr><th>Command</th><th>Description</th></tr></thead>
+      <p>Many targets have a shorter equivalent in <code>~/bin</code>. Where the Shortcut column gives a command, that command and the make target run the same script. Use either one. Read the caution below the table before you use <code>status</code>.</p>
+
+      <div class="table-scroll">
+<table class="ref-table">
+        <caption>Table 2.7-1. Make Targets</caption>
+        <thead><tr><th>Make Target</th><th>Shortcut</th><th>Description</th></tr></thead>
         <tbody>
-          <tr class="tbl-cat"><td colspan="2">Brewfile</td></tr>
-          <tr><td>make sync</td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
-          <tr class="tbl-cat"><td colspan="2">Preferences</td></tr>
-          <tr><td>make snapshot-prefs</td><td>Export app preferences and push to mrk-prefs</td></tr>
-          <tr><td>make pull-prefs</td><td>Clone or pull app preferences from mrk-prefs</td></tr>
-          <tr class="tbl-cat"><td colspan="2">Build Tools</td></tr>
-          <tr><td>make picker</td><td>Build the mrk-picker TUI binary</td></tr>
-          <tr class="tbl-cat"><td colspan="2">General</td></tr>
-          <tr><td>make help</td><td>Show all available commands</td></tr>
+          <tr class="tbl-cat"><td colspan="3">Bootstrap</td></tr>
+          <tr><td>make all</td><td>—</td><td>Full install: setup + brew + post-install + TUI binaries</td></tr>
+          <tr><td>make adventure</td><td>—</td><td>Full install in narrative adventure mode</td></tr>
+          <tr><td>make setup / make install</td><td>—</td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
+          <tr><td>make setup-dry</td><td>—</td><td>Preview Phase 1 changes without applying them</td></tr>
+          <tr><td>make brew</td><td>—</td><td>Phase 2: Homebrew packages and casks</td></tr>
+          <tr><td>make post-install</td><td>—</td><td>Phase 3: app configs and login items</td></tr>
+          <tr><td>make build-tools</td><td>—</td><td>Build all Go TUI binaries (picker + bf + mrk-status + mrk-menu)</td></tr>
+          <tr><td>make picker / bf / mrk-status / mrk-menu</td><td>—</td><td>Build one TUI binary and link it into ~/bin</td></tr>
+          <tr class="tbl-cat"><td colspan="3">Partial Phases</td></tr>
+          <tr><td>make dotfiles</td><td>—</td><td>Link dotfiles only</td></tr>
+          <tr><td>make tools</td><td>—</td><td>Link scripts and bin into ~/bin only</td></tr>
+          <tr><td>make defaults</td><td>—</td><td>Apply macOS defaults only</td></tr>
+          <tr><td>make trackpad</td><td>—</td><td>Apply macOS defaults including trackpad settings</td></tr>
+          <tr><td>make harden</td><td>—</td><td>Apply macOS security hardening</td></tr>
+          <tr class="tbl-cat"><td colspan="3">Brewfile</td></tr>
+          <tr><td>make sync</td><td><code>sync</code></td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
+          <tr class="tbl-cat"><td colspan="3">Login Items</td></tr>
+          <tr><td>make sync-login-items</td><td><code>sync-login-items</code></td><td>Compare the system login items to the tracked list and sync them (<code>-c</code> commit · <code>-n</code> dry run)</td></tr>
+          <tr class="tbl-cat"><td colspan="3">Preferences</td></tr>
+          <tr><td>make snapshot-prefs</td><td><code>snapshot-prefs</code></td><td>Export app preferences and push to mrk-prefs</td></tr>
+          <tr><td>make pull-prefs</td><td><code>pull-prefs</code></td><td>Clone or pull app preferences from mrk-prefs</td></tr>
+          <tr class="tbl-cat"><td colspan="3">Maintenance</td></tr>
+          <tr><td>make update</td><td><code>update</code></td><td>Upgrade all packages. The target falls back to <code>brew upgrade</code> when topgrade is absent; the <code>update</code> shell function runs topgrade only. Use <code>update --full</code> for the full pass (Table 2.7-2)</td></tr>
+          <tr><td>make updates</td><td>—</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
+          <tr><td>make pull</td><td>—</td><td>Fast-forward the mrk repo to origin (git pull --ff-only)</td></tr>
+          <tr><td>make maintain</td><td><code>maintain</code></td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
+          <tr><td>make dock</td><td>—</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
+          <tr><td>make uninstall</td><td>—</td><td>Remove symlinks and undo setup</td></tr>
+          <tr><td>make snapshot</td><td><code>snapshot</code></td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
+          <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status, mrk-menu)</td></tr>
+          <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
+          <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
+          <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
+          <tr><td>make check</td><td>—</td><td>Run local CI checks (shellcheck, picker descriptions, go test)</td></tr>
+          <tr><td>make ci</td><td>—</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
+          <tr><td>make fix-exec</td><td><code>fix-exec</code></td><td>Make all scripts and bin files executable</td></tr>
+          <tr class="tbl-cat"><td colspan="3">General</td></tr>
+          <tr><td>make help</td><td>—</td><td>Show all available commands</td></tr>
         </tbody>
       </table>
+      </div>
 
-      <table class="ref-table">
-        <caption>Table 2.7-2. Commands from ~/mrk/</caption>
-        <thead><tr><th>Command</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr class="tbl-cat"><td colspan="2">Bootstrap</td></tr>
-          <tr><td>make all</td><td>Full install: setup + brew + post-install + TUI binaries</td></tr>
-          <tr><td>make adventure</td><td>Full install in narrative adventure mode</td></tr>
-          <tr><td>make setup / make install</td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
-          <tr><td>make setup-dry</td><td>Preview Phase 1 changes without applying them</td></tr>
-          <tr><td>make brew</td><td>Phase 2: Homebrew packages and casks</td></tr>
-          <tr><td>make post-install</td><td>Phase 3: app configs and login items</td></tr>
-          <tr><td>make build-tools</td><td>Build all Go TUI binaries (picker + bf + mrk-status + mrk-menu)</td></tr>
-          <tr><td>make picker / bf / mrk-status / mrk-menu</td><td>Build one TUI binary and link it into ~/bin</td></tr>
-          <tr class="tbl-cat"><td colspan="2">Partial Phases</td></tr>
-          <tr><td>make dotfiles</td><td>Link dotfiles only</td></tr>
-          <tr><td>make tools</td><td>Link scripts and bin into ~/bin only</td></tr>
-          <tr><td>make defaults</td><td>Apply macOS defaults only</td></tr>
-          <tr><td>make trackpad</td><td>Apply macOS defaults including trackpad settings</td></tr>
-          <tr><td>make harden</td><td>Apply macOS security hardening</td></tr>
-          <tr class="tbl-cat"><td colspan="2">Maintenance</td></tr>
-          <tr><td>make update</td><td>Upgrade all packages (topgrade or brew upgrade)</td></tr>
-          <tr><td>make updates</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
-          <tr><td>make pull</td><td>Fast-forward the mrk repo to origin (git pull --ff-only)</td></tr>
-          <tr><td>make maintain</td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
-          <tr><td>make dock</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
-          <tr><td>make uninstall</td><td>Remove symlinks and undo setup</td></tr>
-          <tr><td>make snapshot</td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
-          <tr><td>make tidy</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, bf, mrk-status, mrk-menu)</td></tr>
-          <tr class="tbl-cat"><td colspan="2">Diagnostics</td></tr>
-          <tr><td>make status</td><td>Plain-text installation status report (the TUI dashboard is the <code>status</code> command — Section 2.8)</td></tr>
-          <tr><td>make doctor</td><td>Check ~/bin is on PATH; pass <code>ARGS=--fix</code> to add ~/bin to .zshrc</td></tr>
-          <tr><td>make check</td><td>Run local CI checks (shellcheck, picker descriptions, go test)</td></tr>
-          <tr><td>make ci</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
-          <tr><td>make fix-exec</td><td>Make all scripts and bin files executable</td></tr>
-        </tbody>
-      </table>
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — status Is Not the Same as make status</span>
+        <div class="callout-body">The <code>status</code> command in <code>~/bin</code> is the mrk-status TUI dashboard. The <code>make status</code> target is a different program that prints a plain-text report. The two have the same name, but they are not the same command. This is why <code>status</code> is the only entry in the table with no shortcut. Section&nbsp;2.8 describes both.</div>
+      </div>
 
       <p>The mrk tool includes standalone utilities in its <code>bin/</code> directory. Phase 1 creates a symlink for each executable in <code>~/bin</code>. You can run each command by name from any directory. The <code>mrk-menu</code> utility is a compiled Go TUI. If it is missing, run <code>make build-tools</code> to build it.</p>
 
-      <table class="ref-table">
-        <caption>Table 2.7-3. Standalone Utilities (~/bin)</caption>
+      <div class="table-scroll">
+<table class="ref-table">
+        <caption>Table 2.7-2. Standalone Utilities (~/bin)</caption>
         <thead><tr><th>Command</th><th>What It Does</th></tr></thead>
         <tbody>
           <tr><td>mrk-menu</td><td>TUI launcher: browse mrk's commands by category (Brewfile, Login items, Preferences, System state, Diagnostics, Maintenance, Nuclear options) and run the selected one</td></tr>
           <tr><td>mrk-push "msg"</td><td>Commit, push, and prune all but the current GitHub Pages deployment (requires <code>gh</code>; prompts for the message if omitted)</td></tr>
+          <tr><td>pushall</td><td>Commits and pushes every repo in <code>~/Projects</code>, then syncs <code>~/mrk</code>. Scans staged files for secrets before each commit and stages tracked changes only — never untracked files. <code>--dry-run</code> runs the scan and changes nothing; <code>--no-mrk</code> skips the mrk sweep</td></tr>
+          <tr><td>update-full</td><td>Full update pass: pulls mrk, quits running apps, runs macOS and package updates, rebuilds the Go tools, runs <code>clean-ds</code> and <code>brew doctor</code>, then offers a reboot. <code>update --full</code> is the same command. Refuses to run without a TTY unless given <code>--yes</code>; <code>--no-reboot</code> skips the reboot prompt</td></tr>
+          <tr><td>clean-ds</td><td>Removes <code>.DS_Store</code> files from the local internal volume only — never <code>~/Library</code>, <code>~/Desktop</code>, network shares, or external drives. <code>--dry-run</code> lists what would go</td></tr>
           <tr><td>nuke-mrk</td><td>Remove all mrk artifacts for a fresh test install: moves <code>~/mrk</code> and <code>~/.mrk</code> to Trash, removes <code>~/bin</code> and dotfile symlinks, optionally runs the defaults/hardening rollback scripts first. Does <em>not</em> uninstall Homebrew packages</td></tr>
           <tr><td>clear-app-caches</td><td>Clears cache directories for common apps. Runs daily at 3 AM via an automatically installed LaunchAgent.</td></tr>
           <tr><td>clear-derived-data</td><td>Clears the Xcode DerivedData directory. Runs on Sundays at 3 AM via an automatically installed LaunchAgent.</td></tr>
@@ -983,6 +1021,7 @@ git push</code></pre>
           <tr><td>hide_tm.sh [names]</td><td>Hides Time Machine volumes from the Finder sidebar; volume names come from <code>$TM_VOLUMES</code> or the first argument (comma-separated), defaulting to "TimeMachine"</td></tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1007,7 +1046,8 @@ git push</code></pre>
         <li><strong>Brewfile packages</strong> — The tool shows if each formula and cask is installed or missing.</li>
       </ul>
 
-      <table class="ref-table" style="margin-top: 1.25rem;">
+      <div class="table-scroll">
+<table class="ref-table" style="margin-top: 1.25rem;">
         <caption>Table 2.8-1. State Files (~/.mrk/ — gitignored)</caption>
         <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
         <tbody>
@@ -1020,6 +1060,7 @@ git push</code></pre>
           <tr><td>~/.mrk/sync-ignore</td><td>Optional list of packages <code>sync</code> should never suggest (Section 2.3)</td></tr>
         </tbody>
       </table>
+      </div>
 
       <p>Run this command to undo macOS defaults that mrk applied:</p>
       <pre><code>bash ~/.mrk/defaults-rollback.sh</code></pre>
@@ -1033,7 +1074,8 @@ git push</code></pre>
         <span class="section-sub">common problems</span>
       </div>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 2.9-1. mrk Troubleshooting Reference</caption>
         <thead><tr><th>Problem</th><th>Solution</th></tr></thead>
         <tbody>
@@ -1048,6 +1090,7 @@ git push</code></pre>
           <tr><td>post-install login item already exists</td><td>Safe to ignore — <code>add_login_item</code> checks before adding</td></tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1062,7 +1105,8 @@ git push</code></pre>
 
       <p>The application has a three-pane interface. You can browse entries, view package details (such as man pages, tldr examples, and reverse dependencies), and run Homebrew commands. You do not need to use the terminal.</p>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 3.1-1. Barkeep Feature Overview</caption>
         <thead><tr><th>Feature</th><th>Description</th></tr></thead>
         <tbody>
@@ -1076,6 +1120,7 @@ git push</code></pre>
           <tr><td>Brewfile picker</td><td>The default is <code>~/mrk/Brewfile</code>. You can change it with the toolbar folder button or File → Choose Brewfile (⌘O).</td></tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1172,7 +1217,8 @@ make post-install</code></pre>
 
       <p>This application copies files that mrk does not manage. These files include Logic Pro projects and presets, Audio Unit presets, iZotope RX presets, Audio Hijack sessions, browser profiles, and specific application plists.</p>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 4.1-1. MBM vs mrk — What Each Covers</caption>
         <thead><tr><th>What</th><th>Covered By</th></tr></thead>
         <tbody>
@@ -1193,6 +1239,7 @@ make post-install</code></pre>
           <tr><td>Login items</td><td>mrk</td></tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1309,7 +1356,8 @@ make post-install</code></pre>
 
       <p>The application includes these default source directories. The backup copies each directory completely, unless the table shows filters. The <strong>Default</strong> column shows if the source is enabled. Sources that are marked Off do not operate until you turn them on in Settings.</p>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 4.6-1. Logic Pro</caption>
         <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
@@ -1320,8 +1368,10 @@ make post-install</code></pre>
           <tr><td>Logic Pro Databases</td><td><code>~/Music/Audio Music Apps/Databases</code></td><td>On</td></tr>
         </tbody>
       </table>
+      </div>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 4.6-2. Audio &amp; Apps</caption>
         <thead><tr><th>Label</th><th>Path</th><th>Notes</th><th>Default</th></tr></thead>
         <tbody>
@@ -1342,8 +1392,10 @@ make post-install</code></pre>
           <tr><td>Accusonus Documents</td><td><code>~/Documents/Accusonus</code></td><td></td><td>Off</td></tr>
         </tbody>
       </table>
+      </div>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 4.6-3. MusicBrainz Picard</caption>
         <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
@@ -1351,12 +1403,14 @@ make post-install</code></pre>
           <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td><td>On</td></tr>
         </tbody>
       </table>
+      </div>
       <div class="callout">
         <span class="callout-label">Note — Picard Plugins Path</span>
         <div class="callout-body">The plugins path (<code>~/Library/Preferences/MusicBrainz/Picard/plugins</code>) may not exist on all machines. If the directory is absent, MBM silently skips this source — the backup is a no-op for plugins. Verify: <code>ls ~/Library/Preferences/MusicBrainz/Picard/plugins</code></div>
       </div>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 4.6-4. Browsers</caption>
         <thead><tr><th>Label</th><th>Path</th><th>Notes</th><th>Default</th></tr></thead>
         <tbody>
@@ -1365,16 +1419,20 @@ make post-install</code></pre>
           <tr><td>Brave Data</td><td><code>~/Library/Application Support/BraveSoftware/Brave-Browser</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td><td>Off</td></tr>
         </tbody>
       </table>
+      </div>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 4.6-5. Other</caption>
         <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
         <tbody>
           <tr><td>Chrono Plus Data</td><td><code>~/Library/Containers/com.xwavesoft.timetrackermac/Data/Documents</code></td><td>Off</td></tr>
         </tbody>
       </table>
+      </div>
 
-      <table class="ref-table">
+      <div class="table-scroll">
+<table class="ref-table">
         <caption>Table 4.6-6. App Preferences (Filtered — include patterns only; source ships Off by default)</caption>
         <thead><tr><th>File / Pattern</th><th>Application</th></tr></thead>
         <tbody>
@@ -1400,6 +1458,7 @@ make post-install</code></pre>
           <tr><td>Waves Preferences/**</td><td>Waves Audio preferences</td></tr>
         </tbody>
       </table>
+      </div>
 
       <div class="callout">
         <span class="callout-label">Note — App Preferences Filtering</span>
@@ -1441,6 +1500,7 @@ make post-install</code></pre>
 
   <footer class="doc-footer">
     <span>SMAC-1</span>
+    <span><a href="daily.html">SMAC-2 — Daily Operations</a></span>
     <span>sevmac · Personal Mac Management</span>
   </footer>
 
