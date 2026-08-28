@@ -787,8 +787,8 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
       </div>
 
       <div class="callout callout-warn">
-        <span class="callout-label">Warning — mrk-prefs Contains a Private Key</span>
-        <div class="callout-body">The <code>config/calibre/plugins/DeACSM/account/</code> directory holds real key material. The <code>activation.xml</code> file contains an Adobe <code>&lt;adept:privateLicenseKey&gt;</code>, with <code>device.xml</code> and <code>devicesalt</code> beside it. The system keeps these on purpose, because Adobe limits how many times you can activate an account. The secret scan does not report them: the namespaced <code>&lt;adept:…&gt;</code> tags match none of its patterns. The <code>sevmorris/mrk-prefs</code> repository must stay private for this reason.</div>
+        <span class="callout-label">Warning — mrk-prefs Holds Key Material</span>
+        <div class="callout-body">The <code>config/calibre/plugins/DeACSM/account/</code> directory holds real key material. The system keeps it deliberately: it cannot be regenerated without a re-authorization. The secret scan does not report it, because its XML element names match none of the scanner's patterns — so nothing else will tell you it is there. The <code>sevmorris/mrk-prefs</code> repository must stay private for this reason.</div>
       </div>
 
       <div class="proc">
