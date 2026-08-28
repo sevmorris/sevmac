@@ -1042,7 +1042,7 @@ git push</code></pre>
         <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
         <tbody>
           <tr><td>~/.mrk/preferences/</td><td>Cloned from <code>sevmorris/mrk-prefs</code>; app plists + App Support files</td></tr>
-          <tr><td>~/.mrk/backups/</td><td>The dotfiles that setup displaced, timestamped. Empty on a clean install — see the note below</td></tr>
+          <tr><td>~/.mrk/backups/</td><td>The dotfiles that setup displaced, timestamped. Created on demand, so it is absent on a clean install — see the note below</td></tr>
           <tr><td>~/.mrk/defaults-rollback.sh</td><td>Shell script to undo all <code>defaults write</code> changes</td></tr>
           <tr><td>~/.mrk/hardening-rollback.sh</td><td>Shell script to undo security hardening</td></tr>
           <tr><td>~/.mrk/install.log</td><td>Rotating log written by the setup, brew, and post-install phases</td></tr>
@@ -1056,7 +1056,7 @@ git push</code></pre>
         <span class="callout-label">Note — What the Backups Are, and Why There Is No Fix</span>
         <div class="callout-body">When <code>make setup</code> links a dotfile, it examines the destination first. If a file is there and it is <strong>not</strong> a symlink — a <code>.zshrc</code> you wrote before mrk existed — setup <strong>moves</strong> it into <code>~/.mrk/backups/&lt;timestamp&gt;/</code> instead of deleting it. If the destination is already the correct symlink, setup skips the file and makes no backup.
         <br><br>The directory therefore holds the machine's <em>pre-mrk</em> dotfiles. The repository is the source of truth for mrk's own dotfiles; the backup is the only copy of what they replaced.
-        <br><br>An empty directory is the normal result of a clean installation: setup never found a file to displace. Running <code>make install</code> again does not create one, because setup skips destinations that are already correct symlinks. Nothing restores these files either — <code>make uninstall</code> does not read them, and neither does any other script. They are an inert archive to copy from by hand. This is why the Backups panel offers no fix: nothing is broken.</div>
+        <br><br>On a clean installation the directory does not exist at all. It is created only at the moment setup displaces a file, so its absence means setup never found one. Running <code>make install</code> again does not create it, because setup skips destinations that are already correct symlinks. Nothing restores these files either — <code>make uninstall</code> does not read them, and neither does any other script. They are an inert archive to copy from by hand. This is why the Backups panel offers no fix: nothing is broken.</div>
       </div>
 
       <p>Run this command to undo macOS defaults that mrk applied:</p>
