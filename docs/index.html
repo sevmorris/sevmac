@@ -1022,14 +1022,14 @@ git push</code></pre>
         <span class="section-sub">mrk-status / state files</span>
       </div>
 
-      <p>Run the <code>status</code> command to open the interactive mrk-status health dashboard. Run <code>make status</code> to print a plain-text report. The dashboard shows nine checks with ✓/⚠/✗ indicators. Press <strong>f</strong> to suggest a fix. The <code>mrk-status</code> tool prompts for confirmation before it runs the fix. Press <strong>r</strong> to refresh the dashboard.</p>
+      <p>Run the <code>status</code> command to open the interactive mrk-status health dashboard. Run <code>make status</code> to print a plain-text report. The dashboard shows eight checks with ✓/⚠/✗ indicators, and a ninth Backups panel only when a backup exists. Press <strong>f</strong> to suggest a fix. The <code>mrk-status</code> tool prompts for confirmation before it runs the fix. Press <strong>r</strong> to refresh the dashboard.</p>
 
       <ul>
         <li><strong>Dotfiles</strong> — The tool shows the files symlinked into <code>~/</code> and missing files.</li>
         <li><strong>Tools</strong> — The tool shows live and broken symlinks in <code>~/bin</code>.</li>
         <li><strong>macOS Defaults</strong> — The tool shows if defaults are applied (it looks for the rollback script).</li>
         <li><strong>Security Hardening</strong> — The tool shows if security hardening is applied.</li>
-        <li><strong>Backups</strong> — The tool shows the number of dotfile backups in <code>~/.mrk/backups/</code>. This panel is a report, not a health check. It has no fix, because there is nothing to repair.</li>
+        <li><strong>Backups</strong> — Shown <em>only when backups exist</em>: how many, where, and the most recent. This is a report, not a health check — it can neither fail nor be fixed — so with nothing to report the panel is omitted rather than shown empty.</li>
         <li><strong>Shell</strong> — The tool shows the current login shell. It must be Zsh.</li>
         <li><strong>PATH</strong> — The tool shows if <code>~/bin</code> is on the PATH.</li>
         <li><strong>Homebrew</strong> — The tool shows the installed version.</li>
