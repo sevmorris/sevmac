@@ -421,7 +421,7 @@
         <tbody>
           <tr>
             <td>clear-app-caches</td>
-            <td>Each day at 03:00</td>
+            <td>Each day at 03:00, and at load</td>
             <td>Clears the cache directories of the usual applications. A LaunchAgent starts it.</td>
           </tr>
           <tr>
@@ -502,7 +502,7 @@
 
       <div class="callout callout-rule">
         <span class="callout-label">Rule — The Only Rule That Is Important</span>
-        <div class="callout-body">If you install it with Homebrew, run <code>sync -c</code>. If you configure it in a window, run <code>snapshot-prefs</code>. A change that you do not record does not move to the next machine.</div>
+        <div class="callout-body">If you install it with Homebrew, run <code>sync -c</code>. If you configure it in a window, run <code>snapshot-prefs</code>. A change that you do not record does not move to the next machine.<br><br>Neither command records a key. <code>mrk-prefs</code> never carries private key material, so <code>~/.ssh</code>, <code>~/.gnupg</code> and your signing identities move only through <code>snapshot-keys</code>. That is a migration step, not a daily one — see <a href="index.html#mrk-migration">SMAC-1, Section&nbsp;2.6</a>.</div>
       </div>
 
       <p>Do not run <code>sync</code> after each installation. Once each week is sufficient. But always run it before a migration. See the checklist in <a href="index.html#mrk-migration">SMAC-1, Section 2.6</a>.</p>
@@ -583,7 +583,7 @@ update-full --no-reboot  # Do not offer a reboot</code></pre>
 
       <ol class="steps">
         <li>
-          <p>Open the dashboard. It shows nine checks. Find the check that is not <code>✓</code>. Press <code>f</code> to get a suggested fix. The tool asks for confirmation before it makes the change.</p>
+          <p>Open the dashboard. It shows eight panels, and a ninth when a backup exists. Find the check that is not <code>✓</code>. Press <code>f</code> to get a suggested fix. The tool asks for confirmation before it makes the change.</p>
 <pre><code>status</code></pre>
         </li>
         <li>
@@ -626,7 +626,9 @@ exec zsh</code></pre>
         <tbody>
           <tr><td>Set up a new machine</td><td><a href="index.html#mrk-new-machine">Section 2.2 — New Machine Setup</a></td></tr>
           <tr><td>Move to a new machine</td><td><a href="index.html#mrk-migration">Section 2.6 — Migration Checklist</a></td></tr>
-          <tr><td>See all the flags of a command</td><td><a href="index.html#mrk-commands">Section 2.7 — Command Reference</a></td></tr>
+          <tr><td>Know which command to reach for</td><td><a href="index.html#mrk-commands">Section 2.7 — Command Reference</a></td></tr>
+          <tr><td>See all the flags of a command</td><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html">BIN-1 — ~/bin Command Reference</a></td></tr>
+          <tr><td>Move keys to a new machine</td><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">BIN-1 §2.25 — snapshot-keys</a></td></tr>
           <tr><td>Understand the dashboard checks</td><td><a href="index.html#mrk-status">Section 2.8 — Status &amp; Diagnostics</a></td></tr>
           <tr><td>Correct a known problem</td><td><a href="index.html#mrk-troubleshooting">Section 2.9 — Troubleshooting</a></td></tr>
           <tr><td>Manage the Brewfile in a window</td><td><a href="index.html#barkeep-usage">Section 3.3 — Barkeep Interface &amp; Usage</a></td></tr>

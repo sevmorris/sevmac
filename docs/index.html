@@ -677,7 +677,23 @@ exec zsh</code></pre>
           <h3>Set Up SSH</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">Generate an SSH key and add it to GitHub. You must do this to pull preferences and push mrk changes.</p>
+          <p class="desc">You need a working SSH key to pull preferences and to push mrk changes. There are two ways to get one, and which one you use depends on where this machine comes from.</p>
+
+          <div class="callout callout-caution">
+            <span class="callout-label">Caution — Moving From Another Mac? Do Not Generate a New Key</span>
+            <div class="callout-body">If you made an archive with <code>snapshot-keys</code> on the old machine, restore it instead. A new key leaves your GPG keys and your Developer ID signing identity behind, and the signing key cannot be re-created. Restore first, then continue at Step&nbsp;3.</div>
+          </div>
+
+          <p><strong>Moving from another Mac — restore the archive.</strong></p>
+          <pre><code>make -C ~/mrk restore-keys ARGS=&lt;archive&gt;   # ~/.ssh, ~/.gnupg, signing identities
+ssh-add -l                                 # SSH keys
+gpg --list-secret-keys                     # GPG secret keys
+security find-identity -v -p codesigning   # signing identities
+ssh -T git@github.com
+# Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
+          <p>An existing <code>~/.ssh</code> or <code>~/.gnupg</code> is moved aside with a timestamp before the restore, never overwritten in place. Use <code>ARGS="-l &lt;archive&gt;"</code> to list the contents first.</p>
+
+          <p><strong>Starting fresh — generate a new key.</strong></p>
           <pre><code>ssh-keygen -t ed25519 -C "your-email@example.com"
 cat ~/.ssh/id_ed25519.pub | pbcopy
 # Add to: github.com → Settings → SSH and GPG keys → New SSH key
@@ -701,6 +717,19 @@ make post-install   # Re-run to import plists</code></pre>
       <div class="proc" id="mrk-step4">
         <div class="proc-header">
           <span class="proc-num">Step 4</span>
+          <h3>Restore Repositories</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">Clone the repositories that the manifest names. <code>snapshot-prefs</code> writes the manifest to <code>~/.mrk/preferences/repos.tsv</code>, and Step&nbsp;3 brings it to this machine, so run this after <code>pull-prefs</code>.</p>
+          <pre><code>make -C ~/mrk restore-repos ARGS=-n   # Show what would be cloned
+make -C ~/mrk restore-repos           # Clone them</code></pre>
+          <p>A repository that is already on disk is skipped. A bare repository is listed but never cloned, because it shares a working tree with another repository and a plain clone puts the files in the wrong place. Set one up by hand, then use <code>decloud</code> for it.</p>
+        </div>
+      </div>
+
+      <div class="proc" id="mrk-step5">
+        <div class="proc-header">
+          <span class="proc-num">Step 5</span>
           <h3>Verify the Installation</h3>
         </div>
         <div class="proc-body">
@@ -881,37 +910,48 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
 
       <p>Do these steps on the <strong>old machine</strong> before you transfer data.</p>
 
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — Step 1 Is the One With No Second Chance</span>
+        <div class="callout-body">Your Developer ID signing key is generated once and cannot be re-derived. Apple will issue a new certificate, but the private key that pairs with the old one is gone, and every released app loses its signing continuity. The same applies to your SSH and GPG private keys: <code>mrk-prefs</code> never carries them, and no other step in this checklist captures them. Run <code>snapshot-keys</code> before you wipe anything.</div>
+      </div>
+
       <div class="proc">
         <div class="proc-header">
           <span class="proc-num">Pre-Migration</span>
           <h3>Checklist — Old Machine</h3>
         </div>
         <div class="proc-body">
-          <p><strong>1. Sync the Brewfile</strong></p>
+          <p><strong>1. Bundle the key material</strong></p>
+          <pre><code>make -C ~/mrk snapshot-keys</code></pre>
+          <p>This command writes <code>~/.ssh</code>, <code>~/.gnupg</code> and your code-signing identities to one passphrase-encrypted archive. Write the archive to an encrypted external disk. Store the passphrase in your password manager. Use <code>ARGS=-n</code> first to see what the archive holds.</p>
+          <p>The command asks for two passphrases when you keep the signing identities: one for the archive, and one that macOS sets on the exported <code>.p12</code>. Store both. The second one is necessary to import the identities, even from a good archive.</p>
+
+          <p><strong>2. Sync the Brewfile</strong></p>
           <pre><code>sync -c</code></pre>
           <p>This command captures packages that you installed since the last sync. It commits the updated Brewfile.</p>
 
-          <p><strong>2. Snapshot app preferences</strong></p>
+          <p><strong>3. Snapshot app preferences</strong></p>
           <pre><code>snapshot-prefs</code></pre>
           <p>This command exports and pushes all application preference plists and Application Support files. Make sure that "Pushed to git@github.com:sevmorris/mrk-prefs.git" shows in the output. If the secret scan finds a secret, the push stops for confirmation. You must resolve the problem before you continue.</p>
 
-          <p><strong>3. Push any pending mrk changes</strong></p>
+          <p><strong>4. Push any pending mrk changes</strong></p>
           <pre><code>cd ~/mrk
 git status
 git push</code></pre>
 
-          <p><strong>4. Run a Magic Backup Machine backup</strong></p>
+          <p><strong>5. Run a Magic Backup Machine backup</strong></p>
           <p>Open Magic Backup Machine. Run a full backup to the local and external destinations. This backup copies Logic Pro projects, audio presets, browser profiles, and other data that mrk does not manage.</p>
 
-          <p><strong>5. Verify SSH authentication</strong></p>
+          <p><strong>6. Verify SSH authentication</strong></p>
           <pre><code>ssh -T git@github.com
 # Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
 
-          <p><strong>6. Note anything not covered</strong></p>
+          <p><strong>7. Note anything not covered</strong></p>
           <ul>
             <li>App Store applications — You must manually install these again from your Purchases.</li>
             <li>Software licenses — Export licenses from your license manager.</li>
             <li>VPN configurations, certificates, and system settings that <code>defaults write</code> does not capture.</li>
+            <li><strong>notarytool credentials</strong> — A keychain profile has no export, so no backup can carry one. On the new machine, create each profile again with <code>xcrun notarytool store-credentials &lt;name&gt; --apple-id &lt;id&gt; --team-id &lt;team&gt;</code>. Omit <code>--password</code> and notarytool asks for it, which keeps the app-specific password out of your shell history.</li>
           </ul>
         </div>
       </div>
@@ -930,6 +970,11 @@ git push</code></pre>
         <span class="section-num">2.7</span>
         <h2>Command Reference</h2>
         <span class="section-sub">make targets · standalone utilities</span>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Note — This Table Is a Map, Not a Manual</span>
+        <div class="callout-body">This section says <em>which</em> command to reach for and <em>when</em>. It does not list every flag, and it does not repeat what each command does internally. That is <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html">BIN-1 — ~/bin Command Reference</a>, which mrk publishes from its own repository and updates in the same commit as the code. Follow the link in a row to go straight to that command's entry. Where the two disagree, BIN-1 is correct.</div>
       </div>
 
       <div class="callout">
@@ -966,6 +1011,10 @@ git push</code></pre>
           <tr class="tbl-cat"><td colspan="3">Preferences</td></tr>
           <tr><td>make snapshot-prefs</td><td><code>snapshot-prefs</code></td><td>Export app preferences and push to mrk-prefs</td></tr>
           <tr><td>make pull-prefs</td><td><code>pull-prefs</code></td><td>Clone or pull app preferences from mrk-prefs</td></tr>
+          <tr class="tbl-cat"><td colspan="3">Keys and Repositories</td></tr>
+          <tr><td>make snapshot-keys</td><td><code>snapshot-keys</code></td><td>Bundle <code>~/.ssh</code>, <code>~/.gnupg</code> and the signing identities into one encrypted archive (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">BIN-1 §2.25</a>)</td></tr>
+          <tr><td>make restore-keys</td><td><code>restore-keys</code></td><td>Restore that archive on a new machine (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">BIN-1 §2.26</a>)</td></tr>
+          <tr><td>make restore-repos</td><td><code>restore-repos</code></td><td>Clone the repositories the mrk-prefs manifest records (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-repos">BIN-1 §2.27</a>)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Maintenance</td></tr>
           <tr><td>make update</td><td><code>update</code></td><td>Upgrade all packages. The target falls back to <code>brew upgrade</code> when topgrade is absent; the <code>update</code> shell function runs topgrade only. Use <code>update --full</code> for the full pass (Table 2.7-2)</td></tr>
           <tr><td>make updates</td><td>—</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
@@ -992,25 +1041,36 @@ git push</code></pre>
         <div class="callout-body">The <code>status</code> command in <code>~/bin</code> is the mrk-status TUI dashboard. The <code>make status</code> target is a different program that prints a plain-text report. The two have the same name, but they are not the same command. This is why <code>status</code> is the only entry in the table with no shortcut. Section&nbsp;2.8 describes both.</div>
       </div>
 
-      <p>The mrk tool includes standalone utilities in its <code>bin/</code> directory. Phase 1 creates a symlink for each executable in <code>~/bin</code>. You can run each command by name from any directory. The <code>mrk-menu</code> utility is a compiled Go TUI. If it is missing, run <code>make build-tools</code> to build it.</p>
+      <p>The mrk tool includes standalone utilities in its <code>bin/</code> directory. Phase&nbsp;1 creates a symlink for each executable in <code>~/bin</code>, so you can run each command by name from any directory. The <code>mrk-menu</code> utility is a compiled Go TUI; if it is missing, run <code>make build-tools</code> to build it.</p>
+
+      <p>The table below gives the purpose of each command. Every name links to its full entry in BIN-1, which carries the flags, the exit codes and the cautions. This page does not repeat them, because a copy of a flag list goes out of date the first time a flag changes.</p>
 
       <div class="table-scroll">
 <table class="ref-table">
         <caption>Table 2.7-2. Standalone Utilities (~/bin)</caption>
-        <thead><tr><th>Command</th><th>What It Does</th></tr></thead>
+        <thead><tr><th>Command</th><th>What It Is For</th></tr></thead>
         <tbody>
-          <tr><td>mrk-menu</td><td>TUI launcher: browse mrk's commands by category (Brewfile, Login items, Preferences, System state, Diagnostics, Maintenance, Nuclear options) and run the selected one</td></tr>
-          <tr><td>mrk-push "msg"</td><td>Commit, push, and prune all but the current GitHub Pages deployment (requires <code>gh</code>; prompts for the message if omitted)</td></tr>
-          <tr><td>prune-deployments</td><td>Deletes old GitHub Pages deployments, keeping the newest. Finds the repo from the origin remote, or pass <code>--repo OWNER/NAME</code>. Always protects the deployment currently serving the site, so a failed deploy cannot cause it to delete the live one. <code>--dry-run</code> lists what would go; <code>--keep N</code> retains more</td></tr>
-          <tr><td>pushall</td><td>Commits and pushes every repo in <code>~/Projects</code>, then syncs <code>~/mrk</code>. Scans staged files for secrets before each commit and stages tracked changes only — never untracked files. <code>--dry-run</code> runs the scan and changes nothing; <code>--no-mrk</code> skips the mrk sweep</td></tr>
-          <tr><td>update-full</td><td>Full update pass: pulls mrk, quits running apps, runs macOS and package updates, rebuilds the Go tools, runs <code>clean-ds</code> and <code>brew doctor</code>, then offers a reboot. <code>update --full</code> is the same command. Refuses to run without a TTY unless given <code>--yes</code>; <code>--no-reboot</code> skips the reboot prompt</td></tr>
-          <tr><td>clean-ds</td><td>Removes <code>.DS_Store</code> files from the local internal volume only — never <code>~/Library</code>, <code>~/Desktop</code>, network shares, or external drives. <code>--dry-run</code> lists what would go</td></tr>
-          <tr><td>nuke-mrk</td><td>Remove all mrk artifacts for a fresh test install: moves <code>~/mrk</code> and <code>~/.mrk</code> to Trash, removes <code>~/bin</code> and dotfile symlinks, optionally runs the defaults/hardening rollback scripts first. Does <em>not</em> uninstall Homebrew packages</td></tr>
-          <tr><td>clear-app-caches</td><td>Clears cache directories for common apps. Runs daily at 3 AM via an automatically installed LaunchAgent.</td></tr>
-          <tr><td>clear-derived-data</td><td>Clears the Xcode DerivedData directory. Runs on Sundays at 3 AM via an automatically installed LaunchAgent.</td></tr>
-          <tr><td>hide_tm.sh [names]</td><td>Hides Time Machine volumes from the Finder sidebar; volume names come from <code>$TM_VOLUMES</code> or the first argument (comma-separated), defaulting to "TimeMachine"</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-menu">mrk-menu</a></td><td>TUI launcher. Browse mrk's commands by category and run the selected one. Use it when you do not remember a command.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-push">mrk-push &quot;msg&quot;</a></td><td>Commit, push, and prune the old Pages deployments of the mrk repository.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#prune-deployments">prune-deployments</a></td><td>Delete the old Pages deployments of any repository. It always protects the deployment serving the site.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#pushall">pushall</a></td><td>Commit and push every repository in <code>~/Projects</code>, then sync <code>~/mrk</code>. Every commit passes the secret scan first.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#update-full">update-full</a></td><td>Full update pass. It closes the running applications and can restart the machine.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clean-ds">clean-ds</a></td><td>Delete the <code>.DS_Store</code> files from the local internal volumes only.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">snapshot-keys</a></td><td>Bundle <code>~/.ssh</code>, <code>~/.gnupg</code> and the signing identities into one encrypted archive.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">restore-keys</a></td><td>Restore that archive on a new machine.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-repos">restore-repos</a></td><td>Clone the repositories the mrk-prefs manifest records.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#decloud">decloud</a></td><td>Run git against the private Cloud overlay for DoublEnder.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#nuke-mrk">nuke-mrk</a></td><td>Delete all the mrk files, so that you can install mrk again. It does not uninstall the Homebrew packages.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clear-app-caches">clear-app-caches</a></td><td>Clear the cache directories of the usual applications. A LaunchAgent runs it each day at 03:00 and at load.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clear-derived-data">clear-derived-data</a></td><td>Clear the Xcode DerivedData directory. A LaunchAgent runs it each Sunday at 03:00.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#hide-tm">hide_tm.sh</a></td><td>Hide the Time Machine volumes from the Finder sidebar.</td></tr>
         </tbody>
       </table>
+      </div>
+
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — Three of These Delete Things</span>
+        <div class="callout-body"><code>nuke-mrk</code> removes your mrk installation. <code>update-full</code> closes every running application and can restart the machine. <code>prune-deployments</code> deletes deployments from a live site. Each asks to confirm, and each has a preview or dry-run mode. Read its BIN-1 entry before the first use.</div>
       </div>
     </section>
 
