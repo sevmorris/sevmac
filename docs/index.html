@@ -527,13 +527,7 @@
   <a href="#barkeep-install">3.2 Installation</a>
   <a href="#barkeep-usage">3.3 Interface &amp; Usage</a>
   <a class="section-head">Sect. 4 — Magic Backup Machine</a>
-  <a href="#mbm-overview">4.1 Overview</a>
-  <a href="#mbm-install">4.2 Installation</a>
-  <a href="#mbm-first-launch">4.3 First Launch</a>
-  <a href="#mbm-backup">4.4 Backup Mode</a>
-  <a href="#mbm-restore">4.5 Restore Mode</a>
-  <a href="#mbm-sources">4.6 Default Sources</a>
-  <a href="#mbm-settings">4.7 Settings</a>
+  <a href="#mbm-overview">4.1 Magic Backup Machine</a>
 </nav>
 
 <main>
@@ -1266,290 +1260,53 @@ make post-install</code></pre>
     <section id="mbm-overview">
       <div class="section-heading">
         <span class="section-num">4.1</span>
-        <h2>Magic Backup Machine — Overview</h2>
-        <span class="section-sub">rsync-based backup &amp; restore</span>
+        <h2>Magic Backup Machine</h2>
+        <span class="section-sub">the data mrk cannot hold</span>
       </div>
 
-      <p>The <strong>Magic Backup Machine</strong> application is a native macOS application. It backs up and restores application settings, presets, and configuration files. It uses <code>rsync</code> to mirror source directories to a local backup folder (<code>~/.backups</code> by default) and an optional external drive.</p>
-
-      <p>This application copies files that mrk does not manage. These files include Logic Pro projects and presets, Audio Unit presets, iZotope RX presets, Audio Hijack sessions, browser profiles, and specific application plists.</p>
-
-      <div class="table-scroll">
-<table class="ref-table">
-        <caption>Table 4.1-1. MBM vs mrk — What Each Covers</caption>
-        <thead><tr><th>What</th><th>Covered By</th></tr></thead>
-        <tbody>
-          <tr><td>Shell, dotfiles, macOS defaults</td><td>mrk</td></tr>
-          <tr><td>Homebrew packages</td><td>mrk (Brewfile)</td></tr>
-          <tr><td>App plists (BetterSnapTool, Raycast, Rogue Amoeba, etc.)</td><td>mrk (mrk-prefs) <em>and</em> MBM (App Preferences source — The default is off)</td></tr>
-          <tr><td>Logic Pro templates, presets, channel strips, key commands, databases</td><td>MBM</td></tr>
-          <tr><td>Audio Unit presets (Apple, accentize, Waves, etc.)</td><td>MBM</td></tr>
-          <tr><td>iZotope RX user presets &amp; iZotope app support</td><td>MBM</td></tr>
-          <tr><td>BetterTouchTool app support</td><td>MBM</td></tr>
-          <tr><td>WaxOn app data</td><td>MBM</td></tr>
-          <tr><td>Audio Hijack sessions &amp; presets</td><td>MBM</td></tr>
-          <tr><td>Loopback / SoundSource app config</td><td>mrk (App Support restore) <em>and</em> MBM</td></tr>
-          <tr><td>Browser profiles (Chrome, Brave, Safari)</td><td>MBM (The default is off)</td></tr>
-          <tr><td>Farrago sound sets &amp; metadata</td><td>MBM</td></tr>
-          <tr><td>MusicBrainz Picard config &amp; plugins</td><td>MBM</td></tr>
-          <tr><td>Chrono Plus timekeeping data</td><td>MBM (The default is off)</td></tr>
-          <tr><td>Login items</td><td>mrk</td></tr>
-        </tbody>
-      </table>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section id="mbm-install">
-      <div class="section-heading">
-        <span class="section-num">4.2</span>
-        <h2>Magic Backup Machine — Installation</h2>
-        <span class="section-sub">download and first launch</span>
-      </div>
-
-      <div class="proc">
-        <div class="proc-header">
-          <span class="proc-num">4.2.1</span>
-          <h3>Download and Install</h3>
-        </div>
-        <div class="proc-body">
-          <p class="desc">Download the DMG from the latest release. Drag it to Applications. Then, clear the quarantine flag.</p>
-          <p>Download from: <strong>sevmorris/magic-backup-machine</strong> (private repository) → Releases</p>
-          <div class="callout callout-caution">
-            <span class="callout-label">Caution — Required Before First Launch</span>
-            <div class="callout-body">The macOS blocks the application because it is not notarized with Apple. Drag Magic Backup Machine to Applications, and then run this command in Terminal:
-              <pre style="margin-top: 8px; margin-bottom: 0;">xattr -cr "/Applications/Magic Backup Machine.app"</pre>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <p>After installation, you can update from inside the application. Select <strong>Help → Check for Updates</strong>. This action checks the latest release in the private repository. The application also accepts an <code>--auto-backup</code> launch argument for scheduled backups (Section 4.7).</p>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section id="mbm-first-launch">
-      <div class="section-heading">
-        <span class="section-num">4.3</span>
-        <h2>First Launch</h2>
-        <span class="section-sub">full disk access</span>
-      </div>
-
-      <p>On the first launch, the application checks for Full Disk Access. If it does not have this access, a yellow warning banner shows at the top with three buttons:</p>
-
-      <ul>
-        <li><strong>Test Sources</strong> — This action runs the Full Disk Access check again and refreshes source availability. It does not restart the application.</li>
-        <li><strong>Open System Settings</strong> — This action opens Privacy &amp; Security → Full Disk Access.</li>
-        <li><strong>Quit &amp; Relaunch</strong> — This action restarts the application to apply the new permission.</li>
-      </ul>
-
-      <div class="callout callout-warn">
-        <span class="callout-label">Warning — Full Disk Access Required</span>
-        <div class="callout-body">If you do not have Full Disk Access, <code>rsync</code> fails on protected directories in <code>~/Library</code>. Add the application in System Settings → Privacy &amp; Security → Full Disk Access before you run a backup.</div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section id="mbm-backup">
-      <div class="section-heading">
-        <span class="section-num">4.4</span>
-        <h2>Backup Mode</h2>
-        <span class="section-sub">mirror source → destination</span>
-      </div>
-
-      <p>The backup operation mirrors each source directory to every available destination with this command:</p>
-      <pre><code>rsync -a --delete --ignore-errors --stats &lt;source&gt;/ &lt;destination&gt;/&lt;source_name&gt;/</code></pre>
-
-      <ul>
-        <li><code>--delete</code> — This flag makes the backup an exact mirror. The tool removes files from the backup if they are not in the source.</li>
-        <li><code>--ignore-errors</code> — This flag lets the tool continue if a file has an error.</li>
-        <li><code>--stats</code> — This flag prints a transfer summary at the end.</li>
-        <li>The tool always excludes <code>.DS_Store</code> files.</li>
-        <li>The tool skips source directories that do not exist (it marks them "skipped" in orange).</li>
-        <li>If successful, the tool writes a <code>last_backup.log</code> file to each destination with the timestamp.</li>
-      </ul>
-
-      <p><strong>Destinations:</strong> The backup operation always writes to the local destination. If you configure an external destination and mount its volume, it writes there too. The application creates both destinations automatically if they do not exist.</p>
-
-      <p>The application stores each source directory as a named subdirectory in the destination. For example, <code>~/Library/Audio/Presets</code> backs up to <code>~/.backups/Presets/</code>. If you use the dated-snapshots layout (Section 4.7), the application creates a <code>YYYY-MM-DD</code> folder in each destination for each run.</p>
-
-      <p><strong>Run confirmation:</strong> When you select Run Backup, a confirmation sheet opens. This sheet shows the sources, destinations, and a size estimate. From this sheet, select <strong>Dry Run</strong> to preview the run. This action uses <code>rsync --dry-run --itemize-changes</code> and shows the number of files to transfer and delete. The application shows a notification when a run completes.</p>
-
-      <p><strong>Progress:</strong> The left panel shows the status of each item during a run. The statuses are: pending (empty circle), in progress (spinner), success (green checkmark), partial (yellow ⚠), failed (red ✗), or skipped (orange dash). The console output streams in real time in the right panel. The header shows the date and destination of the last successful backup. Click the folder button to show the backup folder in Finder.</p>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section id="mbm-restore">
-      <div class="section-heading">
-        <span class="section-num">4.5</span>
-        <h2>Restore Mode</h2>
-        <span class="section-sub">copy backup → source</span>
-      </div>
-
-      <p>The restore operation copies files from the backup to their original source locations with this command:</p>
-      <pre><code>rsync -au --stats &lt;destination&gt;/&lt;source_name&gt;/ &lt;source_parent&gt;/</code></pre>
-
-      <ul>
-        <li><code>-u</code> (update) — This flag copies only files that are newer in the backup than on the disk.</li>
-        <li>No <code>--delete</code> flag — The restore operation never removes files from the source.</li>
-        <li>The tool skips items that are not in the backup.</li>
-      </ul>
-
-      <p>The restore operation reads from one destination at a time. A "Restore from" picker (Local/External) shows when both destinations are available. If a destination becomes unavailable, the application switches to an available destination and shows a message. If you use the dated-snapshots layout, a Snapshot picker lets you choose the backup date to restore.</p>
+      <p>Magic Backup Machine copies the files that are too large, too binary, or too
+      numerous for a git repository. It is an rsync mirror to <code>~/.backups</code> and to
+      an external disk. Everything it carries is audio work: Logic Pro templates, channel
+      strips and key commands, Audio Unit presets, iZotope RX presets, Audio Hijack sessions,
+      Farrago sound sets. It also copies the browser profiles.</p>
 
       <div class="callout">
-        <span class="callout-label">Note — Switching Modes</span>
-        <div class="callout-body">Use the mode picker in the header to switch between Backup and Restore. The footer always shows a note about the <code>rsync</code> behavior for the current mode.</div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section id="mbm-sources">
-      <div class="section-heading">
-        <span class="section-num">4.6</span>
-        <h2>Default Sources</h2>
-        <span class="section-sub">what gets backed up</span>
+        <span class="callout-label">Note — This Page No Longer Lists Its Sources</span>
+        <div class="callout-body">Magic Backup Machine has its own settings screen, and that
+        screen is the only accurate record of what it copies. This page carried a copy of the
+        source list and the copy went out of date: it described five sources as enabled that
+        the live configuration does not contain. Read the source list in the application.</div>
       </div>
 
-      <p>The application includes these default source directories. The backup copies each directory completely, unless the table shows filters. The <strong>Default</strong> column shows if the source is enabled. Sources that are marked Off do not operate until you turn them on in Settings.</p>
+      <p><strong>Application preferences moved to mrk on 2026-09-02.</strong> Magic Backup
+      Machine used to copy a filtered set of <code>~/Library/Preferences</code>. Those files
+      are settings, not data: they are small, they belong under version control, and an rsync
+      mirror keeps only the current state. <code>snapshot-prefs</code> now carries them, and
+      they travel to a new machine with <code>make pull-prefs</code> rather than with the
+      backup disk. See Section&nbsp;2.4.</p>
+
+      <p>The division is by <em>kind</em>, and it decides where anything new belongs:</p>
 
       <div class="table-scroll">
 <table class="ref-table">
-        <caption>Table 4.6-1. Logic Pro</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
+        <caption>Table 4.1-1. Which Tool Carries What</caption>
+        <thead><tr><th>Kind</th><th>Tool</th><th>Why</th></tr></thead>
         <tbody>
-          <tr><td>Logic Pro Project Templates</td><td><code>~/Music/Audio Music Apps/Project Templates</code></td><td>On</td></tr>
-          <tr><td>Logic Pro Plug-In Settings</td><td><code>~/Music/Audio Music Apps/Plug-In Settings</code></td><td>On</td></tr>
-          <tr><td>Logic Pro Channel Strips</td><td><code>~/Music/Audio Music Apps/Channel Strip Settings</code></td><td>On</td></tr>
-          <tr><td>Logic Pro Key Commands</td><td><code>~/Music/Audio Music Apps/Key Commands</code></td><td>On</td></tr>
-          <tr><td>Logic Pro Databases</td><td><code>~/Music/Audio Music Apps/Databases</code></td><td>On</td></tr>
+          <tr><td>Settings — plists, INI files, dotfiles</td><td>mrk</td><td>Small, versioned, and they travel with one command</td></tr>
+          <tr><td>Presets, projects, sound sets, sample libraries</td><td>Magic Backup Machine</td><td>Large and binary; git is the wrong shape for them</td></tr>
+          <tr><td>Browser profiles</td><td>Magic Backup Machine</td><td>Large, and they hold live session state</td></tr>
+          <tr><td>Private keys and signing identities</td><td>mrk — <code>snapshot-keys</code></td><td>Neither tool should hold them in the clear; the archive is encrypted</td></tr>
+          <tr><td>Re-fetchable caches and vendored binaries</td><td>neither</td><td>Downloaded again on demand. Backing one up stores a copy of something the internet already has</td></tr>
         </tbody>
       </table>
       </div>
 
-      <div class="table-scroll">
-<table class="ref-table">
-        <caption>Table 4.6-2. Audio &amp; Apps</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Notes</th><th>Default</th></tr></thead>
-        <tbody>
-          <tr><td>Audio Unit Presets</td><td><code>~/Library/Audio/Presets</code></td><td>Presets for AU plugins (Apple, accentize, Waves, etc.)</td><td>On</td></tr>
-          <tr><td>iZotope RX Presets</td><td><code>~/Documents/iZotope/RX Audio Editor/User Presets</code></td><td></td><td>On</td></tr>
-          <tr><td>iZotope App Support</td><td><code>~/Library/Application Support/iZotope</code></td><td></td><td>On</td></tr>
-          <tr><td>Audio Hijack Sessions &amp; Presets</td><td><code>~/Library/Application Support/Audio Hijack 4</code></td><td>Excludes <code>models/</code> (AI enhance models, ~2.9 GB) and <code>Recordings/</code></td><td>On</td></tr>
-          <tr><td>Farrago Sound Sets</td><td><code>~/Library/Application Support/Farrago 2/Sound Sets</code></td><td></td><td>On</td></tr>
-          <tr><td>Farrago Metadata</td><td><code>~/Library/Application Support/Farrago 2/Metadata</code></td><td></td><td>On</td></tr>
-          <tr><td>Loopback App Support</td><td><code>~/Library/Application Support/Loopback</code></td><td>Virtual audio device configs</td><td>On</td></tr>
-          <tr><td>SoundSource App Support</td><td><code>~/Library/Application Support/SoundSource</code></td><td>Presets, sources, custom configs</td><td>On</td></tr>
-          <tr><td>BetterTouchTool</td><td><code>~/Library/Application Support/BetterTouchTool</code></td><td></td><td>On</td></tr>
-          <tr><td>WaxOn App Data</td><td><code>~/Library/Containers/io.github.sevmorris.WaxOn/Data/Library/Application Support/WaxOn</code></td><td></td><td>On</td></tr>
-          <tr><td>Image-Line (FL Studio)</td><td><code>~/Documents/Image-Line</code></td><td></td><td>Off</td></tr>
-          <tr><td>Two notes Audio Engineering</td><td><code>~/Documents/Two notes Audio Engineering</code></td><td></td><td>Off</td></tr>
-          <tr><td>Waves App Support</td><td><code>~/Library/Application Support/Waves Audio</code></td><td></td><td>Off</td></tr>
-          <tr><td>Pulsar App Support</td><td><code>~/Library/Application Support/Pulsar</code></td><td></td><td>Off</td></tr>
-          <tr><td>Accusonus Documents</td><td><code>~/Documents/Accusonus</code></td><td></td><td>Off</td></tr>
-        </tbody>
-      </table>
-      </div>
-
-      <div class="table-scroll">
-<table class="ref-table">
-        <caption>Table 4.6-3. MusicBrainz Picard</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
-        <tbody>
-          <tr><td>Picard Config</td><td><code>~/.config/MusicBrainz</code></td><td>On</td></tr>
-          <tr><td>Picard Plugins</td><td><code>~/Library/Preferences/MusicBrainz/Picard/plugins</code></td><td>On</td></tr>
-        </tbody>
-      </table>
-      </div>
-      <div class="callout">
-        <span class="callout-label">Note — Picard Plugins Path</span>
-        <div class="callout-body">The plugins path (<code>~/Library/Preferences/MusicBrainz/Picard/plugins</code>) may not exist on all machines. If the directory is absent, MBM silently skips this source — the backup is a no-op for plugins. Verify: <code>ls ~/Library/Preferences/MusicBrainz/Picard/plugins</code></div>
-      </div>
-
-      <div class="table-scroll">
-<table class="ref-table">
-        <caption>Table 4.6-4. Browsers</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Notes</th><th>Default</th></tr></thead>
-        <tbody>
-          <tr><td>Safari Data</td><td><code>~/Library/Safari</code></td><td>Bookmarks, history, per-site settings; requires Full Disk Access</td><td>Off</td></tr>
-          <tr><td>Chrome Data</td><td><code>~/Library/Application Support/Google/Chrome</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td><td>Off</td></tr>
-          <tr><td>Brave Data</td><td><code>~/Library/Application Support/BraveSoftware/Brave-Browser</code></td><td>Profiles, bookmarks, extensions; excludes caches, service workers, sessions, crash data</td><td>Off</td></tr>
-        </tbody>
-      </table>
-      </div>
-
-      <div class="table-scroll">
-<table class="ref-table">
-        <caption>Table 4.6-5. Other</caption>
-        <thead><tr><th>Label</th><th>Path</th><th>Default</th></tr></thead>
-        <tbody>
-          <tr><td>Chrono Plus Data</td><td><code>~/Library/Containers/com.xwavesoft.timetrackermac/Data/Documents</code></td><td>Off</td></tr>
-        </tbody>
-      </table>
-      </div>
-
-      <div class="table-scroll">
-<table class="ref-table">
-        <caption>Table 4.6-6. App Preferences (Filtered — include patterns only; source ships Off by default)</caption>
-        <thead><tr><th>File / Pattern</th><th>Application</th></tr></thead>
-        <tbody>
-          <tr><td>com.apple.logic10.plist</td><td>Logic Pro main preferences</td></tr>
-          <tr><td>com.apple.logic.pro.cs/**</td><td>Logic Pro control surface settings</td></tr>
-          <tr><td>com.izotope.*</td><td>All iZotope app preferences</td></tr>
-          <tr><td>com.rogueamoeba.*</td><td>All Rogue Amoeba app preferences</td></tr>
-          <tr><td>io.github.sevmorris.*</td><td>All sevmorris app preferences</td></tr>
-          <tr><td>com.hegenberg.BetterSnapTool.plist</td><td>BetterSnapTool</td></tr>
-          <tr><td>com.hegenberg.BetterTouchTool.plist</td><td>BetterTouchTool</td></tr>
-          <tr><td>com.hegenberg.bettertouchtool-setapp.plist</td><td>BetterTouchTool (Setapp)</td></tr>
-          <tr><td>com.jordanbaird.Ice.plist</td><td>Ice menu bar manager</td></tr>
-          <tr><td>com.raycast.macos.plist</td><td>Raycast</td></tr>
-          <tr><td>com.WavesAudio.central.plist</td><td>Waves Central</td></tr>
-          <tr><td>org.musicbrainz.Picard.plist</td><td>MusicBrainz Picard</td></tr>
-          <tr><td>net.imput.helium.plist</td><td>Helium</td></tr>
-          <tr><td>com.apple.Safari.plist</td><td>Safari</td></tr>
-          <tr><td>com.google.Chrome.plist</td><td>Chrome</td></tr>
-          <tr><td>com.brave.Browser.plist</td><td>Brave</td></tr>
-          <tr><td>com.goodsnooze.MacWhisper.plist</td><td>MacWhisper</td></tr>
-          <tr><td>com.googlecode.iterm2.plist</td><td>iTerm2</td></tr>
-          <tr><td>com.descript.beachcube.plist</td><td>Descript</td></tr>
-          <tr><td>Waves Preferences/**</td><td>Waves Audio preferences</td></tr>
-        </tbody>
-      </table>
-      </div>
-
-      <div class="callout">
-        <span class="callout-label">Note — App Preferences Filtering</span>
-        <div class="callout-body">The App Preferences entry does <strong>not</strong> back up all of <code>~/Library/Preferences</code>. It uses <code>rsync</code> include filters to sync only the listed files. A trailing <code>--exclude *</code> rule excludes everything else. This source is off by default. You must enable it in Settings to use it.</div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section id="mbm-settings">
-      <div class="section-heading">
-        <span class="section-num">4.7</span>
-        <h2>Settings</h2>
-        <span class="section-sub">gear icon → Settings sheet</span>
-      </div>
-
-      <p>Select the gear icon in the header to open Settings. The Settings sheet has these options:</p>
-
-      <ul>
-        <li><strong>Source Directories</strong> — This section lists all configured sources with labels, paths, and filter summaries. Each entry has an enable/disable toggle, a <strong>Filters</strong> editor for its include and exclude patterns, and a remove button. Select <strong>Add Directory</strong> to add a new source.</li>
-        <li><strong>Backup Layout</strong> — The <strong>Mirror</strong> option (default) overwrites backups in place. The <strong>Dated snapshots</strong> option creates a <code>YYYY-MM-DD</code> folder in each destination for each run.</li>
-        <li><strong>Local Backup Destination</strong> — The default is <code>~/.backups</code>. Select <strong>Choose...</strong> to change it.</li>
-        <li><strong>External Backup Destination</strong> — This destination is not configured by default. It is optional. The application uses it only when the volume is mounted. Select <strong>Choose...</strong> to set it. Select <strong>Clear</strong> to remove it.</li>
-        <li><strong>Scheduled Backup</strong> — This is an optional daily backup at a specific hour and minute. It installs as a launch agent that opens the application with <code>--auto-backup</code>. Scheduled runs can skip the confirmation sheet. You must have Full Disk Access and the application must be in <code>/Applications</code>. The logs are in <code>~/Library/Logs/Magic Backup Machine/</code>.</li>
-        <li><strong>Settings File</strong> — Select this to export or import the full configuration as a JSON file.</li>
-        <li><strong>Reset to Defaults</strong> — Select this to revert all settings to the built-in defaults.</li>
-      </ul>
-
-      <p>The application saves settings in UserDefaults under <code>io.github.sevmorris.BackupRestore</code>. Run this command to force a reload of built-in defaults after an application update:</p>
-
-      <pre><code>defaults delete io.github.sevmorris.BackupRestore BackupSettings</code></pre>
-
-      <div class="callout">
-        <span class="callout-label">Note — New Source Directories After an Update</span>
-        <div class="callout-body">When an application update has new default source directories, a settings migration adds them automatically. These new directories are disabled by default. You must enable them in Settings. Or, you can select <strong>Reset to Defaults</strong>, or run the <code>defaults delete</code> command above, to reset to the shipped defaults.</div>
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — Verify the Backup Disk</span>
+        <div class="callout-body">The mirror is only as good as the last run. Before a
+        migration, open the application and run a backup to both destinations, then confirm
+        the external disk actually mounted. A mirror to a disk that was not attached reports
+        success for the local copy alone.</div>
       </div>
     </section>
 
