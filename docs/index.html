@@ -1285,6 +1285,12 @@ make post-install</code></pre>
       they travel to a new machine with <code>make pull-prefs</code> rather than with the
       backup disk. See Section&nbsp;2.4.</p>
 
+      <p>The App Preferences filter was narrowed the same day to what mrk does not carry:
+      Logic Pro, iZotope, the Rogue Amoeba domains beyond the five mrk exports, the browser
+      preference files, and Waves. The Loopback and SoundSource sources stay whole —
+      <code>snapshot-prefs</code> exports a handful of settings plists from each, while the
+      directories hold 131 files and 7 files respectively, so the two are not duplicates.</p>
+
       <p>The division is by <em>kind</em>, and it decides where anything new belongs:</p>
 
       <div class="table-scroll">
@@ -1296,9 +1302,22 @@ make post-install</code></pre>
           <tr><td>Presets, projects, sound sets, sample libraries</td><td>Magic Backup Machine</td><td>Large and binary; git is the wrong shape for them</td></tr>
           <tr><td>Browser profiles</td><td>Magic Backup Machine</td><td>Large, and they hold live session state</td></tr>
           <tr><td>Private keys and signing identities</td><td>mrk — <code>snapshot-keys</code></td><td>Neither tool should hold them in the clear; the archive is encrypted</td></tr>
+          <tr><td>Credentials that mrk refuses</td><td>Magic Backup Machine</td><td>The secret scan blocks them from mrk-prefs, and they still need a copy. Only low-value credentials belong here — see the caution below</td></tr>
           <tr><td>Re-fetchable caches and vendored binaries</td><td>neither</td><td>Downloaded again on demand. Backing one up stores a copy of something the internet already has</td></tr>
         </tbody>
       </table>
+      </div>
+
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — The Backup Is Not Encrypted</span>
+        <div class="callout-body">Magic Backup Machine writes plain files to <code>~/.backups</code>
+        and to the external disk. Anyone who reads either disk reads the contents. That is
+        acceptable for a credential you can replace with a login — Picard writes its
+        <code>oauth_access_token</code> into the same INI as its settings, which is why
+        <code>snapshot-prefs</code> refuses the file and Magic Backup Machine keeps it. It is
+        not acceptable for an SSH key, a GPG key or a signing identity. Those go through
+        <code>make snapshot-keys</code>, which writes one passphrase-encrypted archive, and
+        they must never be added here.</div>
       </div>
 
       <div class="callout callout-caution">
