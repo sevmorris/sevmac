@@ -510,7 +510,7 @@
 
       <div class="callout">
         <span class="callout-label">Note — To Keep a Package but Hide It from sync</span>
-        <div class="callout-body">Put the formula or cask name in <code>~/.mrk/sync-ignore</code>. Use one name for each line. The <code>sync</code> command then does not suggest it. The file does not exist until you make it.</div>
+        <div class="callout-body">Press <code>i</code> on a package in the <code>sync</code> picker, or accept the prompt that follows when you decline one. Either writes it to <code>~/.mrk/sync-ignore</code>, creating the file if it is not there, and <code>sync</code> stops suggesting it. You can still edit the file by hand: one formula or cask name per line, <code>#</code> starts a comment. Quitting the picker with <code>q</code> keeps the marks you made; only <code>ctrl+c</code> discards them.</div>
       </div>
     </section>
 

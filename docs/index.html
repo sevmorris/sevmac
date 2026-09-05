@@ -769,7 +769,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           </div>
           <div class="callout">
             <span class="callout-label">Note — Ignore List</span>
-            <div class="callout-body">To keep a package installed but never have sync suggest it, list it in <code>~/.mrk/sync-ignore</code> — one formula or cask name per line, <code>#</code> comments allowed. The file is not created automatically.</div>
+            <div class="callout-body">To keep a package installed but never have sync suggest it, mark it with <code>i</code> in the picker, or accept the prompt that follows when you decline one — either writes it to <code>~/.mrk/sync-ignore</code> and creates the file if needed. Hand-editing works too: one formula or cask name per line, <code>#</code> comments allowed. Marks survive quitting with <code>q</code>; <code>ctrl+c</code> discards them.</div>
           </div>
         </div>
       </div>
