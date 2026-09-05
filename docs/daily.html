@@ -492,6 +492,21 @@
             <td><code>pushall</code></td>
             <td>Pushes each repository in <code>~/Projects</code>. Then it syncs <code>~/mrk</code>.</td>
           </tr>
+          <tr>
+            <td>You cloned a repository into <code>~/Projects</code>.</td>
+            <td><code>snapshot-prefs</code></td>
+            <td>Records it in the repository manifest. <code>pushall</code> pushes the repositories it finds, but only the manifest says which ones should exist, and <code>restore-repos</code> clones from it. A repository missing from the manifest is one you rebuild from memory.</td>
+          </tr>
+          <tr>
+            <td>You edited a tool in <code>tools/</code>.</td>
+            <td><code>build-tools</code></td>
+            <td>Rebuilds the Go binaries and relinks them into <code>~/bin</code>. Nothing warns you that a binary is older than its source, so until you run this you keep using the previous one.</td>
+          </tr>
+          <tr>
+            <td>You changed a macOS setting in System&nbsp;Settings.</td>
+            <td>No command. Edit <code>scripts/defaults.sh</code>.</td>
+            <td>The only change on this page that nothing records for you. Find the key with <code>defaults read</code>, add a <code>write_default</code> line, then a description in <code>docs/defaults/script.js</code>. <code>make check</code> fails when a key has no description, so it will tell you if you forget.</td>
+          </tr>
         </tbody>
       </table>
       </div>
