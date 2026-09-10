@@ -599,7 +599,7 @@
         <tbody>
           <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell, installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
           <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs</td></tr>
-          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser policies, dev runtimes (openjdk, nvm, pyenv), Barkeep install, preference plist imports, login items</td></tr>
+          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser preferences, dev runtimes (openjdk, nvm, pyenv), Barkeep install, preference plist imports, login items</td></tr>
         </tbody>
       </table>
       </div>
@@ -651,7 +651,7 @@ exec zsh</code></pre>
           <p><strong>What Phase 3 does:</strong></p>
           <ul>
             <li><strong>Topgrade:</strong> The system links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code>.</li>
-            <li><strong>Browsers:</strong> The system applies Safari defaults, managed policies for Chrome and Brave, and Helium defaults. The system asks before it opens browser extension install URLs. Non-interactive runs skip this step.</li>
+            <li><strong>Browsers:</strong> The system applies Safari and Helium defaults. The system asks before it opens browser extension install URLs. Non-interactive runs skip this step.</li>
             <li><strong>Dev runtimes:</strong> The system symlinks the Homebrew openjdk into <code>/Library/Java/JavaVirtualMachines/</code>. The system installs nvm into <code>~/.nvm</code>. The system installs the pyenv Python version specified in <code>.python-version</code>.</li>
             <li><strong>App defaults:</strong> The system applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba applications.</li>
             <li><strong>Barkeep:</strong> The system downloads and installs Barkeep from the latest GitHub release.</li>
