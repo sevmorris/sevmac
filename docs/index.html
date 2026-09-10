@@ -946,7 +946,7 @@ git push</code></pre>
 
           <p><strong>8. Note anything not covered</strong></p>
           <ul>
-            <li>App Store applications — You must manually install these again from your Purchases.</li>
+            <li>App Store applications — The Brewfile tracks these as <code>mas</code> entries, so <code>make brew</code> reinstalls them. One manual step remains and cannot be automated: <code>mas</code> has had no <code>signin</code> command since macOS 12, so sign in to App Store.app by hand once on the new machine before running <code>make brew</code>. <code>mas</code> also needs sudo to install on macOS 13 and later, because Apple made <code>installd</code> root-only.</li>
             <li>Software licenses — Export licenses from your license manager.</li>
             <li>VPN configurations, certificates, and system settings that <code>defaults write</code> does not capture.</li>
             <li><strong>notarytool credentials</strong> — A keychain profile has no export, so no backup can carry one. On the new machine, create each profile again with <code>xcrun notarytool store-credentials &lt;name&gt; --apple-id &lt;id&gt; --team-id &lt;team&gt;</code>. Omit <code>--password</code> and notarytool asks for it, which keeps the app-specific password out of your shell history.</li>
