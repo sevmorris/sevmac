@@ -597,7 +597,7 @@
         <caption>Table 2.1-1. The Three Phases</caption>
         <thead><tr><th>Phase</th><th>Command</th><th>What It Covers</th></tr></thead>
         <tbody>
-          <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell, installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
+          <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell (registering it in <code>/etc/shells</code> first, with sudo, because <code>chsh</code> refuses a shell that is not listed there and Homebrew does not register its own), installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
           <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs</td></tr>
           <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser preferences, dev runtimes (openjdk, nvm, pyenv), Barkeep install, preference plist imports, login items</td></tr>
         </tbody>
