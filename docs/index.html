@@ -1076,7 +1076,7 @@ git push</code></pre>
         <span class="section-sub">mrk-status / state files</span>
       </div>
 
-      <p>Run the <code>status</code> command to open the interactive mrk-status health dashboard. Run <code>make status</code> to print a plain-text report. The dashboard shows eight checks with ✓/⚠/✗ indicators, and a ninth Backups panel only when a backup exists. Press <strong>f</strong> to suggest a fix. The <code>mrk-status</code> tool prompts for confirmation before it runs the fix. Press <strong>r</strong> to refresh the dashboard.</p>
+      <p>Run the <code>status</code> command to open the interactive mrk-status health dashboard. Run <code>make status</code> to print a plain-text report. The dashboard shows eight checks with ✓/⚠/✗ indicators: Dotfiles, Tools, macOS Defaults, Security Hardening, Shell, PATH, Homebrew and Brewfile. A ninth panel, Backups, appears only when a backup exists, and it appears <em>fifth</em> — between Security Hardening and Shell, not at the end of the list. Press <strong>f</strong> to suggest a fix. The <code>mrk-status</code> tool prompts for confirmation before it runs the fix. Press <strong>r</strong> to refresh the dashboard.</p>
 
       <ul>
         <li><strong>Dotfiles</strong> — The tool shows the files symlinked into <code>~/</code> and missing files.</li>
