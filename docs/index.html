@@ -928,19 +928,23 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
           <pre><code>snapshot-prefs</code></pre>
           <p>This command exports and pushes all application preference plists and Application Support files. Make sure that "Pushed to git@github.com:sevmorris/mrk-prefs.git" shows in the output. If the secret scan finds a secret, the push stops for confirmation. You must resolve the problem before you continue.</p>
 
-          <p><strong>4. Push any pending mrk changes</strong></p>
+          <p><strong>4. Capture the login items</strong></p>
+          <pre><code>sync-login-items -c</code></pre>
+          <p>Login items live in the system's LaunchServices database, and <code>scripts/post-install</code> only knows the ones captured the last time this ran. Anything added since is on this machine and nowhere else, and Phase 3 on the new machine would restore the stale list. Unlike the signing key in step 1 this is recoverable — but only if you can remember what was there, which is the thing a checklist exists to spare you.</p>
+
+          <p><strong>5. Push any pending mrk changes</strong></p>
           <pre><code>cd ~/mrk
 git status
 git push</code></pre>
 
-          <p><strong>5. Run a Magic Backup Machine backup</strong></p>
+          <p><strong>6. Run a Magic Backup Machine backup</strong></p>
           <p>Open Magic Backup Machine. Run a full backup to the local and external destinations. This backup copies Logic Pro projects, audio presets, browser profiles, and other data that mrk does not manage.</p>
 
-          <p><strong>6. Verify SSH authentication</strong></p>
+          <p><strong>7. Verify SSH authentication</strong></p>
           <pre><code>ssh -T git@github.com
 # Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
 
-          <p><strong>7. Note anything not covered</strong></p>
+          <p><strong>8. Note anything not covered</strong></p>
           <ul>
             <li>App Store applications — You must manually install these again from your Purchases.</li>
             <li>Software licenses — Export licenses from your license manager.</li>
@@ -985,7 +989,6 @@ git push</code></pre>
         <tbody>
           <tr class="tbl-cat"><td colspan="3">Bootstrap</td></tr>
           <tr><td>make all</td><td>—</td><td>Full install: setup + brew + post-install + TUI binaries</td></tr>
-          <tr><td>make adventure</td><td>—</td><td>Full install in narrative adventure mode</td></tr>
           <tr><td>make setup / make install</td><td>—</td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
           <tr><td>make setup-dry</td><td>—</td><td>Preview Phase 1 changes without applying them</td></tr>
           <tr><td>make brew</td><td>—</td><td>Phase 2: Homebrew packages and casks</td></tr>
@@ -998,6 +1001,7 @@ git push</code></pre>
           <tr><td>make defaults</td><td>—</td><td>Apply macOS defaults only</td></tr>
           <tr><td>make trackpad</td><td>—</td><td>Apply macOS defaults including trackpad settings</td></tr>
           <tr><td>make harden</td><td>—</td><td>Apply macOS security hardening</td></tr>
+          <tr><td>make trim-services</td><td><code>trim-services</code></td><td>Disable background LaunchAgents this Mac does not need. Writes a rollback; SIP refuses some, so verify with <code>launchctl print-disabled</code> rather than trusting the output (BIN-1 §2.34)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Brewfile</td></tr>
           <tr><td>make sync</td><td><code>sync</code></td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Login Items</td></tr>
@@ -1021,7 +1025,7 @@ git push</code></pre>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
-          <tr><td>make check</td><td>—</td><td>Run local CI checks (shellcheck, picker descriptions, go test)</td></tr>
+          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, shellcheck, and go test</td></tr>
           <tr><td>make ci</td><td>—</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td><code>fix-exec</code></td><td>Make all scripts and bin files executable</td></tr>
           <tr class="tbl-cat"><td colspan="3">General</td></tr>
