@@ -654,7 +654,7 @@ exec zsh</code></pre>
             <li><strong>Browsers:</strong> The system applies Safari and Helium defaults. The system asks before it opens browser extension install URLs. Non-interactive runs skip this step.</li>
             <li><strong>Dev runtimes:</strong> The system symlinks the Homebrew openjdk into <code>/Library/Java/JavaVirtualMachines/</code>. The system installs nvm into <code>~/.nvm</code>. The system installs the pyenv Python version specified in <code>.python-version</code>.</li>
             <li><strong>App defaults:</strong> The system applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba applications.</li>
-            <li><strong>Barkeep:</strong> The system downloads and installs Barkeep from the latest GitHub release.</li>
+            <li><strong>Barkeep and KeyVault:</strong> The system downloads each from its latest GitHub release and installs it only if the app is signed by the expected Developer ID and notarized. An app that fails the check is not installed, and Phase&nbsp;3 reports it as a failed step.</li>
             <li><strong>Git remote:</strong> The system changes the mrk origin from HTTPS to SSH after GitHub SSH authentication succeeds.</li>
             <li><strong>Preferences auto-pull:</strong> The system clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated.</li>
             <li><strong>Plist imports:</strong> The system imports preferences for 18 applications. This step is non-destructive. It skips any application with existing preferences.</li>
@@ -1201,7 +1201,7 @@ git push</code></pre>
           <h3>Automatic Install (via mrk)</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">The <code>make post-install</code> command automatically downloads and installs Barkeep from the latest GitHub release. The system skips this step if <code>/Applications/Barkeep.app</code> already exists.</p>
+          <p class="desc">The <code>make post-install</code> command automatically downloads and installs Barkeep from the latest GitHub release, after it checks that the app is signed by the expected Developer ID and notarized. The system skips this step if <code>/Applications/Barkeep.app</code> already exists.</p>
           <p>Remove the application first to force a reinstall:</p>
           <pre><code>rm -rf /Applications/Barkeep.app
 make post-install</code></pre>
