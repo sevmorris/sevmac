@@ -518,7 +518,7 @@
 
       <div class="callout">
         <span class="callout-label">Note — What pushall Leaves Behind</span>
-        <div class="callout-body"><code>pushall</code> pushes the branch each repository is on, and nothing else. It names what it leaves: commits on other branches that are on no remote, stashes, and folders in <code>~/Projects</code> that are not repositories. Day to day that is information. Before a migration it is a to-do list, because mrk brings <code>~/Projects</code> back to a new machine only from GitHub; anything else has to be dug out of a Time Machine backup by hand. A repository kept one folder down, such as <code>JustIn/JustIn</code>, is pushed like any other.</div>
+        <div class="callout-body"><code>pushall</code> pushes the branch each repository is on, and nothing else. It names what it leaves: commits on other branches that are on no remote, stashes, and folders in <code>~/Projects</code> that are not repositories. Day to day that is information. Before a migration it is a to-do list, because mrk brings <code>~/Projects</code> back to a new machine only from GitHub; anything else has to be dug out of a Time Machine backup by hand. A repository kept one folder down, such as <code>JustIn/JustIn</code>, is pushed like any other. DoublEnder's Cloud overlay, <code>~/DoublEnder-cloud.git</code>, is never pushed by <code>pushall</code>, but its unpushed commits and uncommitted changes are named with the rest — push them with <code>decloud push</code>.</div>
       </div>
 
       <div class="callout callout-rule">
