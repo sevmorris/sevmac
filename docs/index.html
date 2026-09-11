@@ -1071,7 +1071,7 @@ git push</code></pre>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">restore-keys</a></td><td>Restore that archive on a new machine.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-repos">restore-repos</a></td><td>Clone the repositories the mrk-prefs manifest records.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#decloud">decloud</a></td><td>Run git against the private Cloud overlay for DoublEnder.</td></tr>
-          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#nuke-mrk">nuke-mrk</a></td><td>Delete all the mrk files, so that you can install mrk again. It does not uninstall the Homebrew packages.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#nuke-mrk">nuke-mrk</a></td><td>Delete all the mrk files, so that you can install mrk again. It does not uninstall the Homebrew packages. It stops first if <code>~/mrk</code> or <code>~/.mrk/preferences</code> holds work that exists only on this machine.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clear-app-caches">clear-app-caches</a></td><td>Clear the cache directories of the usual applications. A LaunchAgent runs it each day at 03:00 and at load.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clear-derived-data">clear-derived-data</a></td><td>Clear the Xcode DerivedData directory. A LaunchAgent runs it each Sunday at 03:00.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#hide-tm">hide_tm.sh</a></td><td>Hide the Time Machine volumes from the Finder sidebar.</td></tr>
