@@ -500,7 +500,7 @@
           <tr>
             <td>You edited a tool in <code>tools/</code>.</td>
             <td><code>build-tools</code></td>
-            <td>Rebuilds the Go binaries and relinks them into <code>~/bin</code>. Nothing warns you that a binary is older than its source, so until you run this you keep using the previous one.</td>
+            <td>Rebuilds the Go binaries and relinks them into <code>~/bin</code>. Nothing warns you on its own that a binary is older than its source — <code>make maintain</code> reports it, but only when you run it — so until you rebuild you keep using the previous one.</td>
           </tr>
           <tr>
             <td>You changed a macOS setting in System&nbsp;Settings.</td>
