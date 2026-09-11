@@ -513,7 +513,7 @@
 
       <div class="callout">
         <span class="callout-label">Note — The pushall Secret Scan</span>
-        <div class="callout-body">The <code>pushall</code> command examines each file before it makes a commit. If it finds a possible secret, it stops for that repository and continues with the others. It leaves the changes staged, so <code>git diff --cached</code> shows you what it stopped. The command stages only the tracked files. It never adds an untracked file. Use <code>pushall --dry-run</code> to run the scan and change nothing.</div>
+        <div class="callout-body">The <code>pushall</code> command examines each file before it makes a commit. If it finds a possible secret, it stops for that repository and continues with the others. It leaves the changes staged, so <code>git diff --cached</code> shows you what it stopped. The command stages only the tracked files. It never adds an untracked file. It also leaves alone a repository with an unfinished merge, rebase or cherry-pick, and reports it as failed: finish or abort that first, then run <code>pushall</code> again. Use <code>pushall --dry-run</code> to run the scan and change nothing.</div>
       </div>
 
       <div class="callout callout-rule">

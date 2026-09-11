@@ -801,7 +801,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
             <li>The tool commits all changes to <code>~/.mrk/preferences/</code> with a timestamped message.</li>
             <li>The tool pushes the commits to <code>sevmorris/mrk-prefs</code> on GitHub.</li>
           </ol>
-          <p>This command is idempotent. It reports "No changes to push" if nothing changed. The tool skips applications if their export fails or times out. It shows a warning and lists skipped applications at the end of the run.</p>
+          <p>This command is idempotent. It reports "No changes to push" if nothing changed. The tool skips applications if their export fails or times out. It shows a warning and lists skipped applications at the end of the run. It refuses to start while a merge or rebase in <code>~/.mrk/preferences</code> is unfinished, and it checks that before it quits any application.</p>
           <div class="callout callout-caution">
             <span class="callout-label">Caution — Secret Scan</span>
             <div class="callout-body">If the scan finds a possible secret in a staged file, the push stops for confirmation. The push aborts immediately in non-interactive runs. You must review the flagged file before you try again.</div>
@@ -1025,7 +1025,7 @@ git push</code></pre>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
-          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, shellcheck, and go test</td></tr>
+          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, a check that the commit gates still refuse a planted secret, shellcheck, and go test</td></tr>
           <tr><td>make ci</td><td>—</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td><code>fix-exec</code></td><td>Make all scripts and bin files executable</td></tr>
           <tr class="tbl-cat"><td colspan="3">General</td></tr>
