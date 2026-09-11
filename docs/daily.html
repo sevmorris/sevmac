@@ -516,6 +516,11 @@
         <div class="callout-body">The <code>pushall</code> command examines each file before it makes a commit. If it finds a possible secret, it stops for that repository and continues with the others. It leaves the changes staged, so <code>git diff --cached</code> shows you what it stopped. The command stages only the tracked files. It never adds an untracked file. It also leaves alone a repository with an unfinished merge, rebase or cherry-pick, and reports it as failed: finish or abort that first, then run <code>pushall</code> again. Use <code>pushall --dry-run</code> to run the scan and change nothing.</div>
       </div>
 
+      <div class="callout">
+        <span class="callout-label">Note — What pushall Leaves Behind</span>
+        <div class="callout-body"><code>pushall</code> pushes the branch each repository is on, and nothing else. It names what it leaves: commits on other branches that are on no remote, stashes, and folders in <code>~/Projects</code> that are not repositories. Day to day that is information. Before a migration it is a to-do list, because the new machine gets <code>~/Projects</code> back only from GitHub.</div>
+      </div>
+
       <div class="callout callout-rule">
         <span class="callout-label">Rule — The Only Rule That Is Important</span>
         <div class="callout-body">If you install it with Homebrew, run <code>sync -c</code>. If you configure it in a window, run <code>snapshot-prefs</code>. A change that you do not record does not move to the next machine.<br><br>Neither command records a key. <code>mrk-prefs</code> never carries private key material, so <code>~/.ssh</code>, <code>~/.gnupg</code> and your signing identities move only through <code>snapshot-keys</code>. That is a migration step, not a daily one — see <a href="index.html#mrk-migration">SMAC-1, Section&nbsp;2.6</a>.</div>

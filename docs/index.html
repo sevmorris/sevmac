@@ -657,7 +657,7 @@ exec zsh</code></pre>
             <li><strong>Barkeep:</strong> The system downloads and installs Barkeep from the latest GitHub release.</li>
             <li><strong>Git remote:</strong> The system changes the mrk origin from HTTPS to SSH after GitHub SSH authentication succeeds.</li>
             <li><strong>Preferences auto-pull:</strong> The system clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated.</li>
-            <li><strong>Plist imports:</strong> The system imports preferences for 14 applications. This step is non-destructive. It skips any application with existing preferences.</li>
+            <li><strong>Plist imports:</strong> The system imports preferences for 18 applications. This step is non-destructive. It skips any application with existing preferences.</li>
             <li><strong>App Support restore:</strong> The system restores Loopback and SoundSource configuration files. This step is non-destructive.</li>
             <li><strong>Config trees:</strong> The system restores the Calibre configuration directory (<code>~/Library/Preferences/calibre</code>) when the application is unconfigured.</li>
             <li><strong>Login items:</strong> The system registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Ice, Raycast, SoundSource, and Stats.</li>
@@ -686,6 +686,7 @@ security find-identity -v -p codesigning   # signing identities
 ssh -T git@github.com
 # Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
           <p>An existing <code>~/.ssh</code> or <code>~/.gnupg</code> is moved aside with a timestamp before the restore, never overwritten in place. Use <code>ARGS="-l &lt;archive&gt;"</code> to list the contents first.</p>
+          <p><strong>Then import the KeyVault archive.</strong> Phase&nbsp;3 installed KeyVault. Start it, import the archive from the transfer disk, and give it the passphrase. KeyVault writes each API key and note back into the login Keychain. <code>restore-keys</code> cannot do this part: the two archives hold different things.</p>
 
           <p><strong>Starting fresh — generate a new key.</strong></p>
           <pre><code>ssh-keygen -t ed25519 -C "your-email@example.com"
@@ -920,31 +921,39 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
           <p>This command writes <code>~/.ssh</code>, <code>~/.gnupg</code> and your code-signing identities to one passphrase-encrypted archive. Write the archive to an encrypted external disk. Store the passphrase in your password manager. Use <code>ARGS=-n</code> first to see what the archive holds.</p>
           <p>The command asks for two passphrases when you keep the signing identities: one for the archive, and one that macOS sets on the exported <code>.p12</code>. Store both. The second one is necessary to import the identities, even from a good archive.</p>
 
-          <p><strong>2. Sync the Brewfile</strong></p>
+          <p><strong>2. Export the KeyVault vault</strong></p>
+          <p><code>snapshot-keys</code> carries the key files. It does not carry the secrets KeyVault owns — its API keys and its notes, which live in the login Keychain. Start KeyVault and export the vault. KeyVault writes its own passphrase-encrypted OpenPGP archive. Put it on the same encrypted disk as the archive from step&nbsp;1. The two archives hold different things, and you need both.</p>
+
+          <p><strong>3. Sync the Brewfile</strong></p>
           <pre><code>sync -c</code></pre>
           <p>This command captures packages that you installed since the last sync. It commits the updated Brewfile.</p>
 
-          <p><strong>3. Snapshot app preferences</strong></p>
+          <p><strong>4. Snapshot app preferences</strong></p>
           <pre><code>snapshot-prefs</code></pre>
-          <p>This command exports and pushes all application preference plists and Application Support files. Make sure that "Pushed to git@github.com:sevmorris/mrk-prefs.git" shows in the output. If the secret scan finds a secret, the push stops for confirmation. You must resolve the problem before you continue.</p>
+          <p>This command exports and pushes all application preference plists and Application Support files. It also records which repositories <code>~/Projects</code> holds, which is the list <code>restore-repos</code> clones from on the new machine. Make sure that "Pushed to git@github.com:sevmorris/mrk-prefs.git" shows in the output. If the secret scan finds a secret, the push stops for confirmation. You must resolve the problem before you continue.</p>
 
-          <p><strong>4. Capture the login items</strong></p>
+          <p><strong>5. Capture the login items</strong></p>
           <pre><code>sync-login-items -c</code></pre>
           <p>Login items live in the system's LaunchServices database, and <code>scripts/post-install</code> only knows the ones captured the last time this ran. Anything added since is on this machine and nowhere else, and Phase 3 on the new machine would restore the stale list. Unlike the signing key in step 1 this is recoverable — but only if you can remember what was there, which is the thing a checklist exists to spare you.</p>
 
-          <p><strong>5. Push any pending mrk changes</strong></p>
+          <p><strong>6. Push any pending mrk changes</strong></p>
           <pre><code>cd ~/mrk
 git status
 git push</code></pre>
 
-          <p><strong>6. Run a Magic Backup Machine backup</strong></p>
-          <p>Open Magic Backup Machine. Run a full backup to the local and external destinations. This backup copies Logic Pro projects, audio presets, browser profiles, and other data that mrk does not manage.</p>
+          <p><strong>7. Push the project repositories</strong></p>
+          <pre><code>pushall</code></pre>
+          <p>The new machine gets <code>~/Projects</code> back from <code>restore-repos</code>, which clones from GitHub, and from nothing else: Magic Backup Machine does not back up <code>~/Projects</code>. So anything that is not on GitHub when you wipe is gone. <code>pushall</code> commits and pushes the branch each repository is on. It then names what it leaves behind: commits on other branches that are on no remote, stashes, and folders in <code>~/Projects</code> that are not repositories at all. Deal with each one — push the branch, apply or drop the stash, copy the folder to the transfer disk.</p>
+          <p>Files a repository ignores are not pushed either. Copy any you need by hand, such as a credential file that <code>.gitignore</code> keeps out of the repository.</p>
 
-          <p><strong>7. Verify SSH authentication</strong></p>
+          <p><strong>8. Run a Magic Backup Machine backup</strong></p>
+          <p>Open Magic Backup Machine. Run a full backup to the local and external destinations. This backup copies Logic Pro projects, audio presets, browser profiles, and other data that mrk does not manage. It does not copy <code>~/Projects</code>; step&nbsp;7 covers that.</p>
+
+          <p><strong>9. Verify SSH authentication</strong></p>
           <pre><code>ssh -T git@github.com
 # Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
 
-          <p><strong>8. Note anything not covered</strong></p>
+          <p><strong>10. Note anything not covered</strong></p>
           <ul>
             <li>App Store applications — The Brewfile tracks these as <code>mas</code> entries, so <code>make brew</code> reinstalls them. One manual step remains and cannot be automated: <code>mas</code> has had no <code>signin</code> command since macOS 12, so sign in to App Store.app by hand once on the new machine before running <code>make brew</code>. <code>mas</code> also needs sudo to install on macOS 13 and later, because Apple made <code>installd</code> root-only.</li>
             <li>Software licenses — Export licenses from your license manager.</li>
@@ -957,7 +966,7 @@ git push</code></pre>
       <div class="callout">
         <span class="callout-label">On the New Machine</span>
         <div class="callout-body">
-          Do the <a href="#mrk-new-machine">New Machine Setup</a> procedure (Section 2.2). Then, restore data from Magic Backup Machine after you install the applications.
+          Do the <a href="#mrk-new-machine">New Machine Setup</a> procedure (Section 2.2), which restores both archives in Step&nbsp;2 and the repositories in Step&nbsp;4. Then, restore data from Magic Backup Machine after you install the applications.
         </div>
       </div>
     </section>
