@@ -598,7 +598,7 @@
         <thead><tr><th>Phase</th><th>Command</th><th>What It Covers</th></tr></thead>
         <tbody>
           <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell (registering it in <code>/etc/shells</code> first, with sudo, because <code>chsh</code> refuses a shell that is not listed there and Homebrew does not register its own), installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
-          <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs. It does not install the Brewfile's App Store apps: it ends by printing the command that does, to run after signing in to App Store.app. Run Phase 3 again after that command</td></tr>
+          <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs. It does not install App Store apps, which are not in the Brewfile: install them from App Store.app by hand (BIN-1 links the list) and run Phase 3 again afterwards</td></tr>
           <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser preferences, dev runtimes (openjdk, nvm, pyenv), Barkeep install, preference plist imports, login items</td></tr>
         </tbody>
       </table>
@@ -634,7 +634,7 @@ exec zsh</code></pre>
           <p>This command runs all three phases. It also builds the TUI binaries. The command <code>exec zsh</code> reloads the shell to load dotfiles and <code>~/bin</code>.</p>
           <div class="callout">
             <span class="callout-label">Note — The App Store Apps</span>
-            <div class="callout-body"><code>make all</code> does not install the Brewfile's App Store apps, and Phase&nbsp;3 has already run when it finishes, so it skipped their preferences and login items. Sign in to App Store.app, run the command <code>make brew</code> printed, and then run <code>make -C ~/mrk post-install</code> again. It then restores BetterSnapTool's preferences and registers the BetterSnapTool and Chrono Plus login items. See <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-brew">BIN-1 §2.13</a>.</div>
+            <div class="callout-body">mrk does not install App Store apps, and Phase&nbsp;3 has already run when <code>make all</code> finishes, so it skipped their preferences and login items. Install them from App Store.app by hand — <a href="https://github.com/sevmorris/mrk/blob/main/docs/app-store-apps.md">docs/app-store-apps.md</a> in the mrk repository lists the 22 that belong on this Mac — then run <code>make -C ~/mrk post-install</code> again. It then restores BetterSnapTool's preferences and registers the BetterSnapTool and Chrono Plus login items. mrk tracked these apps as Brewfile <code>mas</code> entries until 2026-09-11; see BIN-1 §2.13 for why nothing could install one.</div>
           </div>
           <p><strong>What gets linked (Phase 1):</strong></p>
           <div class="table-scroll">
@@ -960,7 +960,7 @@ git push</code></pre>
 
           <p><strong>10. Note anything not covered</strong></p>
           <ul>
-            <li>App Store applications — The Brewfile lists these as <code>mas</code> entries, but <code>make brew</code> does not install them: <code>mas install</code> needs root, and <code>brew bundle</code> never runs as root. On the new machine, sign in to App Store.app by hand (<code>mas</code> has had no <code>signin</code> command since macOS 12), then run the command <code>make brew</code> prints at the end: <code>grep '^mas ' ~/mrk/Brewfile | sed 's/.*id: //' | xargs sudo mas install</code>. Then run <code>make post-install</code> again: it restores preferences and login items only for applications that are installed, and BetterSnapTool and Chrono Plus come from the App Store. See <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-brew">BIN-1 §2.13</a>.</li>
+            <li>App Store applications — mrk does not install them and the Brewfile does not list them. <a href="https://github.com/sevmorris/mrk/blob/main/docs/app-store-apps.md">docs/app-store-apps.md</a> is the list of the 22 that belong on this Mac; on the new machine, sign in to App Store.app and install them by hand. Then run <code>make -C ~/mrk post-install</code> again: it restores preferences and login items only for applications that are installed, and BetterSnapTool and Chrono Plus come from the App Store. See BIN-1 §2.13.</li>
             <li>Software licenses — Export licenses from your license manager.</li>
             <li>VPN configurations, certificates, and system settings that <code>defaults write</code> does not capture.</li>
             <li><strong>notarytool credentials</strong> — A keychain profile has no export, so no backup can carry one. On the new machine, create each profile again with <code>xcrun notarytool store-credentials &lt;name&gt; --apple-id &lt;id&gt; --team-id &lt;team&gt;</code>. Omit <code>--password</code> and notarytool asks for it, which keeps the app-specific password out of your shell history.</li>
