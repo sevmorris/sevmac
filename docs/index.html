@@ -488,7 +488,7 @@
   <div class="doc-infobar">
     <div class="infobar-cell">
       <span class="lbl">SYSTEM:</span>
-      <span class="val">macOS 15</span>
+      <span class="val">macOS 26</span>
     </div>
     <div class="infobar-cell">
       <span class="lbl">TOOLS:</span>
@@ -636,6 +636,10 @@ exec zsh</code></pre>
             <span class="callout-label">Note — The App Store Apps</span>
             <div class="callout-body">mrk does not install App Store apps, and Phase&nbsp;3 has already run when <code>make all</code> finishes, so it skipped their preferences and login items. Install them from App Store.app by hand — <a href="https://github.com/sevmorris/mrk/blob/main/docs/app-store-apps.md">docs/app-store-apps.md</a> in the mrk repository lists the 22 that belong on this Mac — then run <code>make -C ~/mrk post-install</code> again. It then restores BetterSnapTool's preferences and registers the BetterSnapTool and Chrono Plus login items. mrk tracked these apps as Brewfile <code>mas</code> entries until 2026-09-11; see BIN-1 §2.13 for why nothing could install one.</div>
           </div>
+          <div class="callout">
+            <span class="callout-label">Note — Full Disk Access for the Safari Settings</span>
+            <div class="callout-body">Before you run the installation, give your terminal Full Disk Access in System Settings &gt; Privacy &amp; Security &gt; Full Disk Access. Safari keeps its preferences in its sandbox container, and Phase&nbsp;3 cannot write them without that access. Without it, Phase&nbsp;3 skips the Safari settings with one log line and still reports success — on 2026-09-15 that is what happened on this Mac. If you give the access later, run <code>make -C ~/mrk post-install</code> again. See <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-post-install">BIN-1 §2.14</a>.</div>
+          </div>
           <p><strong>What gets linked (Phase 1):</strong></p>
           <div class="table-scroll">
 <table class="ref-table" style="margin-top: 8px;">
@@ -655,7 +659,7 @@ exec zsh</code></pre>
           <p><strong>What Phase 3 does:</strong></p>
           <ul>
             <li><strong>Topgrade:</strong> The system links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code>.</li>
-            <li><strong>Browsers:</strong> The system applies Safari and Helium defaults. The system asks before it opens browser extension install URLs. Non-interactive runs skip this step.</li>
+            <li><strong>Browsers:</strong> The system applies Safari and Helium defaults. The Safari defaults need Full Disk Access (see the note above). The system asks before it opens browser extension install URLs. Non-interactive runs skip this step.</li>
             <li><strong>Dev runtimes:</strong> The system symlinks the Homebrew openjdk into <code>/Library/Java/JavaVirtualMachines/</code>. The system installs nvm into <code>~/.nvm</code>. The system installs the pyenv Python version specified in <code>.python-version</code>.</li>
             <li><strong>App defaults:</strong> The system applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba applications.</li>
             <li><strong>Barkeep and KeyVault:</strong> The system downloads each from its latest GitHub release and installs it only if the app is signed by the expected Developer ID and notarized. An app that fails the check is not installed, and Phase&nbsp;3 reports it as a failed step.</li>
@@ -1015,7 +1019,7 @@ git push</code></pre>
           <tr><td>make defaults</td><td>—</td><td>Apply macOS defaults only</td></tr>
           <tr><td>make trackpad</td><td>—</td><td>Apply macOS defaults including trackpad settings</td></tr>
           <tr><td>make harden</td><td>—</td><td>Apply macOS security hardening</td></tr>
-          <tr><td>make trim-services</td><td><code>trim-services</code></td><td>Disable background LaunchAgents this Mac does not need. Writes a rollback; SIP refuses some, so verify with <code>launchctl print-disabled</code> rather than trusting the output (BIN-1 §2.34)</td></tr>
+          <tr><td>make trim-services</td><td><code>trim-services</code></td><td>Disable background LaunchAgents this Mac does not need. Writes a rollback, and checks each disable against launchd's override list. After the next restart, check again with <code>launchctl print-disabled</code>: on macOS 26.7 the two Photos agents were found enabled again (BIN-1 §2.34)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Brewfile</td></tr>
           <tr><td>make sync</td><td><code>sync</code></td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Login Items</td></tr>
@@ -1029,7 +1033,7 @@ git push</code></pre>
           <tr><td>make restore-repos</td><td><code>restore-repos</code></td><td>Clone the repositories the mrk-prefs manifest records (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-repos">BIN-1 §2.27</a>)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Maintenance</td></tr>
           <tr><td>make update</td><td><code>update</code></td><td>Upgrade all packages. The target falls back to <code>brew upgrade</code> when topgrade is absent; the <code>update</code> shell function runs topgrade only. Use <code>update --full</code> for the full pass (Table 2.7-2)</td></tr>
-          <tr><td>make updates</td><td>—</td><td>Run macOS software updates (softwareupdate -ia)</td></tr>
+          <tr><td>make updates</td><td><code>macos-updates</code></td><td>Install the macOS updates for the installed version. It never installs a major upgrade, such as macOS 26 to macOS 27 (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#macos-updates">BIN-1 §2.37</a>)</td></tr>
           <tr><td>make pull</td><td>—</td><td>Fast-forward the mrk repo to origin (git pull --ff-only)</td></tr>
           <tr><td>make maintain</td><td><code>maintain</code></td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
           <tr><td>make dock</td><td>—</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
@@ -1039,7 +1043,7 @@ git push</code></pre>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
-          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, a check that the commit gates still refuse a planted secret, a test of the <code>ce</code> empty-folder cleaner, round trips through the defaults and harden undo scripts, shellcheck, and go test</td></tr>
+          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, a check that the commit gates still refuse a planted secret, a test of the <code>ce</code> empty-folder cleaner, round trips through the defaults and harden undo scripts, a test that no major macOS upgrade can be installed, shellcheck, and go test</td></tr>
           <tr><td>make ci</td><td>—</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td><code>fix-exec</code></td><td>Make all scripts and bin files executable</td></tr>
           <tr class="tbl-cat"><td colspan="3">General</td></tr>
@@ -1066,7 +1070,8 @@ git push</code></pre>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-push">mrk-push &quot;msg&quot;</a></td><td>Commit, push, and prune the old Pages deployments of the mrk repository.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#prune-deployments">prune-deployments</a></td><td>Delete the old Pages deployments of any repository. It always protects the deployment serving the site.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#pushall">pushall</a></td><td>Commit and push every repository in <code>~/Projects</code>, then sync <code>~/mrk</code>. Every commit passes the secret scan first.</td></tr>
-          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#update-full">update-full</a></td><td>Full update pass. It closes the running applications and can restart the machine.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#update-full">update-full</a></td><td>Full update pass. It closes the running applications and can restart the machine. It never installs a major macOS upgrade.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#macos-updates">macos-updates</a></td><td>Install the macOS updates for the installed version. It never installs a major upgrade, such as macOS 26 to macOS 27. <code>make updates</code> and <code>update-full</code> run it.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clean-ds">clean-ds</a></td><td>Delete the <code>.DS_Store</code> files from the local internal volumes only.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">snapshot-keys</a></td><td>Bundle <code>~/.ssh</code>, <code>~/.gnupg</code> and the signing identities into one encrypted archive.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">restore-keys</a></td><td>Restore that archive on a new machine.</td></tr>
@@ -1075,7 +1080,7 @@ git push</code></pre>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#nuke-mrk">nuke-mrk</a></td><td>Delete all the mrk files, so that you can install mrk again. It does not uninstall the Homebrew packages. It stops first if <code>~/mrk</code> or <code>~/.mrk/preferences</code> holds work that exists only on this machine.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clear-app-caches">clear-app-caches</a></td><td>Clear the cache directories of the usual applications. A LaunchAgent runs it each day at 03:00 and at load.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clear-derived-data">clear-derived-data</a></td><td>Clear the Xcode DerivedData directory. A LaunchAgent runs it each Sunday at 03:00.</td></tr>
-          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#hide-tm">hide_tm.sh</a></td><td>Hide the Time Machine volumes from the Finder sidebar.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#hide-tm">hide_tm.sh</a></td><td>Meant to hide the Time Machine volumes from the Finder sidebar. On macOS 26 it probably hides nothing — read the caution in its BIN-1 entry first.</td></tr>
         </tbody>
       </table>
       </div>
