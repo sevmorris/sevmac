@@ -599,7 +599,7 @@
         <tbody>
           <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, macOS defaults, sets Zsh as login shell (registering it in <code>/etc/shells</code> first, with sudo, because <code>chsh</code> refuses a shell that is not listed there and Homebrew does not register its own), installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
           <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs. It does not install App Store apps, which are not in the Brewfile: install them from App Store.app by hand (BIN-1 links the list) and run Phase 3 again afterwards</td></tr>
-          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser preferences, dev runtimes (openjdk, nvm, pyenv), Barkeep install, preference plist imports, login items</td></tr>
+          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser preferences, dev runtimes (openjdk, nvm and Node, pyenv), my own apps from their GitHub releases, preference plist imports, login items</td></tr>
         </tbody>
       </table>
       </div>
@@ -660,7 +660,7 @@ exec zsh</code></pre>
           <ul>
             <li><strong>Topgrade:</strong> The system links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code>.</li>
             <li><strong>Browsers:</strong> The system applies Safari and Helium defaults. The Safari defaults need Full Disk Access (see the note above). The system asks before it opens browser extension install URLs. Non-interactive runs skip this step.</li>
-            <li><strong>Dev runtimes:</strong> The system symlinks the Homebrew openjdk into <code>/Library/Java/JavaVirtualMachines/</code>. The system installs nvm into <code>~/.nvm</code>. The system installs the pyenv Python version specified in <code>.python-version</code>.</li>
+            <li><strong>Dev runtimes:</strong> The system symlinks the Homebrew openjdk into <code>/Library/Java/JavaVirtualMachines/</code>. The system installs nvm into <code>~/.nvm</code>, and then the current Node LTS as nvm's default — only when nvm has no default yet, so an existing Node is never replaced (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-post-install">BIN-1 §2.14</a>). The system installs the pyenv Python version specified in <code>.python-version</code>.</li>
             <li><strong>App defaults:</strong> The system applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and all Rogue Amoeba applications.</li>
             <li><strong>My own applications:</strong> The system downloads Barkeep, ClipHack, DoublEnder, FilmStrip, KeyVault, Magic Backup Machine and WaxOn/WaxOff, each from its latest GitHub release, and installs it only if the app is signed by the expected Developer ID and notarized. An app that fails the check is not installed, and Phase&nbsp;3 reports it as a failed step. An app already in <code>/Applications</code> is skipped: this installs, it does not update, and each of these apps checks GitHub for its own updates once it is running. <code>make apps</code> runs the same step on its own (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#install-apps">BIN-1 §2.38</a>). Cypher/FL2601 is not in the list — it is sandboxed with no network entitlement, so Homebrew stays its update path and it remains a cask in the Brewfile.</li>
             <li><strong>Claude Code guidance for ~/Projects:</strong> The system links <code>assets/CLAUDE.md</code> to <code>~/Projects/CLAUDE.md</code> and <code>assets/projects-skills/</code> to <code>~/Projects/.claude/skills</code>. Neither sits inside a repository where it lives, so mrk tracks both and links them into place like a dotfile. A real file already at either path is moved aside with a <code>.bak</code> suffix, never overwritten.</li>
@@ -669,7 +669,7 @@ exec zsh</code></pre>
             <li><strong>Plist imports:</strong> The system imports preferences for 17 applications. This step is non-destructive. It skips any application with existing preferences, including a sandboxed application such as Keka, which keeps them in its container. It also skips an application that is not installed yet.</li>
             <li><strong>App Support restore:</strong> The system restores Loopback and SoundSource configuration files. This step is non-destructive.</li>
             <li><strong>Config trees:</strong> The system restores the Calibre configuration directory (<code>~/Library/Preferences/calibre</code>) when the application is unconfigured.</li>
-            <li><strong>Login items:</strong> The system registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Ice, Raycast, SoundSource, and Stats.</li>
+            <li><strong>Login items:</strong> The system registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Raycast, SoundSource, Stats, and Thaw. Thaw replaced Ice on 2026-09-17: Ice 0.11.12 crashes at launch on macOS 26.7.</li>
           </ul>
         </div>
       </div>
@@ -842,7 +842,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
         <thead><tr><th>App</th><th>Notes</th></tr></thead>
         <tbody>
           <tr><td>BetterSnapTool</td><td>Plist imported</td></tr>
-          <tr><td>Ice</td><td>Plist imported</td></tr>
+          <tr><td>Thaw</td><td>Plist imported</td></tr>
           <tr><td>iTerm2</td><td>Plist imported</td></tr>
           <tr><td>Raycast</td><td>Plist imported</td></tr>
           <tr><td>Stats</td><td>Plist imported</td></tr>
@@ -895,10 +895,10 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
           <tr><td>BetterSnapTool</td></tr>
           <tr><td>Chrono Plus</td></tr>
           <tr><td>Dropbox</td></tr>
-          <tr><td>Ice</td></tr>
           <tr><td>Raycast</td></tr>
           <tr><td>SoundSource</td></tr>
           <tr><td>Stats</td></tr>
+          <tr><td>Thaw</td></tr>
         </tbody>
       </table>
       </div>
@@ -1046,7 +1046,7 @@ git push</code></pre>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
-          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, a check that the commit gates still refuse a planted secret, a test of the <code>ce</code> empty-folder cleaner, round trips through the defaults and harden undo scripts, a test that no major macOS upgrade can be installed, shellcheck, and go test</td></tr>
+          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, a check that the commit gates still refuse a planted secret, a test of the <code>ce</code> empty-folder cleaner, round trips through the defaults and harden undo scripts, a test that no major macOS upgrade can be installed, a <code>restore-keys</code> round trip, shellcheck, and go test</td></tr>
           <tr><td>make ci</td><td>—</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td><code>fix-exec</code></td><td>Make all scripts and bin files executable</td></tr>
           <tr class="tbl-cat"><td colspan="3">General</td></tr>
