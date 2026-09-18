@@ -695,7 +695,7 @@ security find-identity -v -p codesigning   # signing identities
 ssh -T git@github.com
 # Expected: Hi sevmorris! You've successfully authenticated...</code></pre>
           <p>An existing <code>~/.ssh</code> or <code>~/.gnupg</code> is moved aside with a timestamp before the restore, never overwritten in place. Use <code>ARGS="-l &lt;archive&gt;"</code> to list the contents first.</p>
-          <p><strong>Then import the KeyVault archive.</strong> Phase&nbsp;3 installed KeyVault. Start it, import the archive from the transfer disk, and give it the passphrase. KeyVault writes each API key and note back into the login Keychain. <code>restore-keys</code> cannot do this part: the two archives hold different things.</p>
+          <p><strong>Then import the KeyVault archive.</strong> Phase&nbsp;3 installed KeyVault. Start it and set a master passphrase in Settings first: KeyVault stores files only under one, and it refuses an archive that holds files until one is set. Then import the archive from the transfer disk, and give it the archive's passphrase. KeyVault writes each API key and note back into the login Keychain, and each stored file back into its own encrypted directory. <code>restore-keys</code> cannot do this part: the two archives hold different things.</p>
 
           <p><strong>Starting fresh — generate a new key.</strong></p>
           <pre><code>ssh-keygen -t ed25519 -C "your-email@example.com"
@@ -931,7 +931,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
           <p>The command asks for two passphrases when you keep the signing identities: one for the archive, and one that macOS sets on the exported <code>.p12</code>. Store both. The second one is necessary to import the identities, even from a good archive.</p>
 
           <p><strong>2. Export the KeyVault vault</strong></p>
-          <p><code>snapshot-keys</code> carries the key files. It does not carry the secrets KeyVault owns — its API keys and its notes, which live in the login Keychain. Start KeyVault and export the vault. KeyVault writes its own passphrase-encrypted OpenPGP archive. Put it on the same encrypted disk as the archive from step&nbsp;1. The two archives hold different things, and you need both.</p>
+          <p><code>snapshot-keys</code> carries the key files. It does not carry the secrets KeyVault owns — its API keys and its notes, which live in the login Keychain, and the files stored in it, which it keeps encrypted on disk. Start KeyVault and export the vault. KeyVault writes its own passphrase-encrypted OpenPGP archive. Put it on the same encrypted disk as the archive from step&nbsp;1. The two archives hold different things, and you need both.</p>
 
           <p><strong>3. Sync the Brewfile</strong></p>
           <pre><code>sync -c</code></pre>
