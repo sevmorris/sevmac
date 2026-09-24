@@ -808,6 +808,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <ol>
             <li>The tool exports the preference plist for each managed application with <code>defaults export</code>. It has a 15-second timeout for each application and converts files to XML. It reads the copy the application uses — <code>~/Library/Preferences</code> when the file is there, the application's sandbox container otherwise — and it skips an application that has no preferences yet, keeping the copy it saved before.</li>
             <li>The tool copies managed Application Support files (Loopback, SoundSource) and configuration trees (Calibre).</li>
+            <li>The tool keeps MusicBrainz Picard's settings with the credentials taken out. Picard writes its OAuth tokens into the same INI as its settings, so the tool keeps only the settings sections and replaces each credential with <code>&lt;redacted&gt;</code>. The copy is a history of the settings, not a backup: the system never restores it, and Magic Backup Machine keeps the real file.</li>
             <li>The tool scans all captured files for secrets (API keys, tokens, and private keys).</li>
             <li>The tool commits all changes to <code>~/.mrk/preferences/</code> with a timestamped message.</li>
             <li>The tool pushes the commits to <code>sevmorris/mrk-prefs</code> on GitHub.</li>
@@ -857,6 +858,9 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
           <tr><td>Keka</td><td>Plist imported</td></tr>
           <tr><td>TimeMachineEditor</td><td>Plist imported</td></tr>
           <tr><td>MacWhisper</td><td>Plist imported</td></tr>
+          <tr><td>Helium</td><td>Plist imported</td></tr>
+          <tr><td>Waves Central</td><td>Plist imported</td></tr>
+          <tr><td>MusicBrainz Picard</td><td>Plist imported. It holds only file-panel state; the settings are in <code>~/.config/MusicBrainz/Picard.ini</code>, which the system keeps as a redacted history in <code>config/picard/settings.ini</code> and never restores. Magic Backup Machine keeps the real file</td></tr>
           <tr><td>Calibre</td><td>Config tree (<code>~/Library/Preferences/calibre</code>) — JSON/plist files and conversion presets. Plugin <em>code</em> is not captured (it reinstalls from Calibre's plugin manager); only <code>plugins/*.json</code> settings and <code>plugins/*/account</code>, the DeACSM Adobe activation</td></tr>
         </tbody>
       </table>
@@ -1046,7 +1050,7 @@ git push</code></pre>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
-          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, a check that the commit gates still refuse a planted secret, a test of the <code>ce</code> empty-folder cleaner, round trips through the defaults and harden undo scripts, a test that no major macOS upgrade can be installed, a <code>restore-keys</code> round trip, a check that <code>mrk-install --all</code> is <code>make all</code>, a test of the pinned clones for nvm and the zsh plugins, a <code>sync-login-items</code> round trip with awkward app names, a check that topgrade's npm steps load nvm from <code>~/.nvm</code>, shellcheck, and go test</td></tr>
+          <tr><td>make check</td><td>—</td><td>Run local CI checks: picker and defaults descriptions, a secret scan over every tracked file, a check that the commit gates still refuse a planted secret, a test of the <code>ce</code> empty-folder cleaner, round trips through the defaults and harden undo scripts, a test that no major macOS upgrade can be installed, a <code>restore-keys</code> round trip, a check that <code>mrk-install --all</code> is <code>make all</code>, a test of the pinned clones for nvm and the zsh plugins, a <code>sync-login-items</code> round trip with awkward app names, a check that topgrade's npm steps load nvm from <code>~/.nvm</code>, a check that no credential survives the filter for Picard's settings, shellcheck, and go test</td></tr>
           <tr><td>make ci</td><td>—</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td><code>fix-exec</code></td><td>Make all scripts and bin files executable</td></tr>
           <tr class="tbl-cat"><td colspan="3">General</td></tr>
@@ -1340,7 +1344,8 @@ make post-install</code></pre>
         and to the external disk. Anyone who reads either disk reads the contents. That is
         acceptable for a credential you can replace with a login — Picard writes its
         <code>oauth_access_token</code> into the same INI as its settings, which is why
-        <code>snapshot-prefs</code> refuses the file and Magic Backup Machine keeps it. It is
+        <code>snapshot-prefs</code> keeps only a redacted copy of the settings and Magic Backup
+        Machine keeps the file itself. It is
         not acceptable for an SSH key, a GPG key or a signing identity. Those go through
         <code>make snapshot-keys</code>, which writes one passphrase-encrypted archive, and
         they must never be added here.</div>
