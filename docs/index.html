@@ -770,9 +770,10 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
             <li>The tool runs <code>brew leaves --installed-on-request</code> and <code>brew list --cask</code> to find installed packages.</li>
             <li>The tool finds packages that are installed but not in the Brewfile.</li>
             <li>The tool opens the <strong>mrk-picker</strong> TUI. Press Space to select, Enter to confirm, or q to quit.</li>
-            <li>The tool prompts you with <code>gum</code> to choose a Brewfile section for each formula.</li>
-            <li>The tool automatically assigns casks to the existing cask section.</li>
+            <li>The tool prompts you with <code>gum</code> to choose a Brewfile section for each formula, and shows Homebrew's description of it.</li>
+            <li>The tool files each cask by the category its app declares in its <code>Info.plist</code>, under <code>## Casks - &lt;Category&gt;</code>: Audio, Communication, Developer Tools, Games, Productivity, Utilities, Video and the other App Store categories. An app that declares none goes to Utilities.</li>
             <li>The tool inserts each entry alphabetically into its section.</li>
+            <li>The tool writes each new package's mrk-picker description, Homebrew's own, into <code>tools/picker/main.go</code>, so <code>check-picker-desc</code> stays green. The category mapping, and what happens when Homebrew has no description, are in <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#sync">BIN-1</a>.</li>
           </ol>
           <div class="callout">
             <span class="callout-label">Note — mrk-picker Binary</span>
