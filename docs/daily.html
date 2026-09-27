@@ -483,6 +483,11 @@
             <td>Removes the Brewfile entry for the package, and its mrk-picker description.</td>
           </tr>
           <tr>
+            <td>You added or removed a package in Barkeep.</td>
+            <td><code>mrk-push "message"</code></td>
+            <td>Commits the Brewfile with the package's mrk-picker description, which Barkeep does not write. mrk-push runs <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-picker-desc"><code>check-picker-desc --fix</code></a> before it commits, and <code>pushall</code> does the same for <code>~/mrk</code>.</td>
+          </tr>
+          <tr>
             <td>You changed a file in <code>~/mrk</code>.</td>
             <td><code>mrk-push "message"</code></td>
             <td>Commits and pushes the change. It also prunes the old Pages deployments.</td>
