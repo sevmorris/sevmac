@@ -1270,6 +1270,10 @@ make post-install</code></pre>
             <li><strong>Multi-select</strong> — Select multiple packages for a batch upgrade, uninstall, or add-to-Brewfile.</li>
           </ul>
           <p>The console output streams in real time in the right column.</p>
+          <div class="callout">
+            <span class="callout-label">Note — Barkeep and the mrk-picker Descriptions</span>
+            <div class="callout-body">mrk keeps a description of every Brewfile package for its package picker, and CI fails when one is missing or left behind. Barkeep's Add, Adopt and Remove change the Brewfile only. When you commit <code>~/mrk</code> with <code>mrk-push</code> or <code>pushall</code>, they first write each missing description from Homebrew and delete each orphaned one — see <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-picker-desc">BIN-1 §2.23 — check-picker-desc</a>. A package Homebrew has no description for is named, and you write that one in <code>tools/picker/main.go</code>. Barkeep also adds a line without <code>greedy: true</code>, under a section named for your choice rather than a <code>## Casks -</code> category; move it to its category when you tidy the Brewfile.</div>
+          </div>
         </div>
       </div>
 
