@@ -1090,7 +1090,7 @@ git push</code></pre>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">restore-keys</a></td><td>Restore that archive on a new machine. After <code>restore-repos</code>, <code>--projects</code> places the project credentials.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-repos">restore-repos</a></td><td>Clone the repositories the mrk-prefs manifest records.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#decloud">decloud</a></td><td>Run git against the private Cloud overlay for DoublEnder.</td></tr>
-          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#nuke-mrk">nuke-mrk</a></td><td>Delete all the mrk files, so that you can install mrk again. It does not uninstall the Homebrew packages. It stops first if <code>~/mrk</code> or <code>~/.mrk/preferences</code> holds work that exists only on this machine.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#nuke-mrk">nuke-mrk</a></td><td>Delete all the mrk files, so that you can install mrk again. It does not uninstall the Homebrew packages. It stops first if <code>~/mrk</code> or <code>~/.mrk/preferences</code> holds work that exists only on this machine. It offers the defaults, hardening and services rollbacks, asks separately before deleting the preferences of the apps post-install imported, and keeps all three when you decline.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clear-app-caches">clear-app-caches</a></td><td>Clear the cache directories of the usual applications. A LaunchAgent runs it each day at 03:00 and at load.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clear-derived-data">clear-derived-data</a></td><td>Clear the Xcode DerivedData directory. A LaunchAgent runs it each Sunday at 03:00.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#hide-tm">hide_tm.sh</a></td><td>Meant to hide the Time Machine volumes from the Finder sidebar. On macOS 26 it probably hides nothing — read the caution in its BIN-1 entry first.</td></tr>
@@ -1133,8 +1133,9 @@ git push</code></pre>
         <tbody>
           <tr><td>~/.mrk/preferences/</td><td>Cloned from <code>sevmorris/mrk-prefs</code>; app plists + App Support files</td></tr>
           <tr><td>~/.mrk/backups/</td><td>The dotfiles that setup displaced, timestamped. Created on demand, so it is absent on a clean install — see the note below</td></tr>
-          <tr><td>~/.mrk/defaults-rollback.sh</td><td>Shell script to undo all <code>defaults write</code> changes</td></tr>
+          <tr><td>~/.mrk/defaults-rollback.sh</td><td>Shell script to undo the <code>defaults write</code> changes. It also deletes the whole preferences of each app whose plist post-install imported; <code>make uninstall</code> and <code>nuke-mrk</code> name those apps and ask about them separately</td></tr>
           <tr><td>~/.mrk/hardening-rollback.sh</td><td>Shell script to undo security hardening</td></tr>
+          <tr><td>~/.mrk/services-rollback.sh</td><td>Shell script to turn back on the background services <code>trim-services</code> disabled. <code>make uninstall</code> and <code>nuke-mrk</code> offer it</td></tr>
           <tr><td>~/.mrk/install.log</td><td>Rotating log written by the setup, brew, and post-install phases</td></tr>
           <tr><td>~/.mrk/plist-backups/</td><td>Pre-import snapshots of preference domains, used by the rollback script</td></tr>
           <tr><td>~/.mrk/sync-ignore</td><td>Optional list of packages <code>sync</code> should never suggest (Section 2.3)</td></tr>
@@ -1149,8 +1150,9 @@ git push</code></pre>
         <br><br>On a clean installation the directory does not exist at all. It is created only at the moment setup displaces a file, so its absence means setup never found one. Running <code>make install</code> again does not create it, because setup skips destinations that are already correct symlinks. Nothing restores these files either — <code>make uninstall</code> does not read them, and neither does any other script. They are an inert archive to copy from by hand. This is why the Backups panel offers no fix: nothing is broken.</div>
       </div>
 
-      <p>Run this command to undo macOS defaults that mrk applied:</p>
-      <pre><code>bash ~/.mrk/defaults-rollback.sh</code></pre>
+      <p>Run this command to undo the macOS defaults that mrk applied, and nothing else:</p>
+      <pre><code>grep -vE '^defaults delete [^ ]+ &gt;/dev/null 2&gt;&amp;1 \|\| true$' ~/.mrk/defaults-rollback.sh | bash</code></pre>
+      <p>Running the file itself, <code>bash ~/.mrk/defaults-rollback.sh</code>, also deletes the whole preferences of every app whose settings post-install imported, with every setting made in them since. <code>make uninstall</code> asks about that part separately and names the apps (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-uninstall">BIN-1 §2.16</a>).</p>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
