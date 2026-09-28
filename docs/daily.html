@@ -636,7 +636,7 @@ exec zsh</code></pre>
 
       <div class="callout callout-caution">
         <span class="callout-label">Caution — To Undo the macOS Defaults</span>
-        <div class="callout-body">The rollback script removes all the <code>defaults write</code> changes that mrk applied. Read the script before you run it.<pre style="margin-top:0.5rem;"><code>bash ~/.mrk/defaults-rollback.sh</code></pre></div>
+        <div class="callout-body">The rollback script puts back the macOS settings mrk changed, and it also deletes the whole preferences of each app whose settings post-install imported, with every setting made in them since. To undo only the macOS settings, leave those lines out:<pre style="margin-top:0.5rem;"><code>grep -vE '^defaults delete [^ ]+ &gt;/dev/null 2&gt;&amp;1 \|\| true$' ~/.mrk/defaults-rollback.sh | bash</code></pre><code>make uninstall</code> asks about the apps separately. Read the script before you run it.</div>
       </div>
     </section>
 
