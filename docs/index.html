@@ -647,6 +647,7 @@ exec zsh</code></pre>
             <tbody>
               <tr><td>.aliases</td><td>Shell aliases</td></tr>
               <tr><td>.gitconfig</td><td>Git configuration</td></tr>
+              <tr><td>.gitignore_global</td><td>Git's global ignore rules</td></tr>
               <tr><td>.hushlogin</td><td>Suppresses "Last login" terminal message</td></tr>
               <tr><td>.zprofile</td><td>Zsh login shell profile</td></tr>
               <tr><td>.zshenv</td><td>Zsh environment variables</td></tr>
@@ -655,10 +656,11 @@ exec zsh</code></pre>
             </tbody>
           </table>
       </div>
+          <p>The system links files only: never a directory, the README, an example or <code>.DS_Store</code>. It links them only from <code>~/mrk</code>, or from the checkout <code>MRK_ROOT</code> names. From any other checkout, a worktree say, Phase&nbsp;1 links nothing into <code>~</code>, and says so. Until 2026-09-27 it linked from any checkout, and linked whatever was in <code>dotfiles/</code>, including the <code>.claude</code> folder Claude Code creates there. Removing a worktree then broke every link, and the <code>.claude</code> folder moved your real <code>~/.claude</code> into the backups (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-setup">BIN-1 §2.12</a>).</p>
           <p>The system copies replaced files to <code>~/.mrk/backups/</code> as backups. The system creates a rollback script for macOS defaults at <code>~/.mrk/defaults-rollback.sh</code>.</p>
           <p><strong>What Phase 3 does:</strong></p>
           <ul>
-            <li><strong>Topgrade:</strong> The system links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code>.</li>
+            <li><strong>Topgrade:</strong> The system links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code>, replacing a link that points nowhere and keeping a real file as <code>.bak</code>. Like Phase&nbsp;1, Phase&nbsp;3 makes this link and the Claude Code links below only from <code>~/mrk</code>, or the checkout <code>MRK_ROOT</code> names.</li>
             <li><strong>Browsers:</strong> The system applies Safari and Helium defaults. The Safari defaults need Full Disk Access (see the note above). The system asks before it opens browser extension install URLs. Non-interactive runs skip this step.</li>
             <li><strong>Dev runtimes:</strong> The system symlinks the Homebrew openjdk into <code>/Library/Java/JavaVirtualMachines/</code>. The system installs nvm into <code>~/.nvm</code>, and then the current Node LTS as nvm's default — only when nvm has no default yet, so an existing Node is never replaced (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-post-install">BIN-1 §2.14</a>). The system installs the pyenv Python version specified in <code>.python-version</code>.</li>
             <li><strong>App defaults:</strong> The system applies <code>defaults write</code> settings for Audio Hijack, Fission, AlDente, and the update settings of each Rogue Amoeba application that is installed. It applies them after the plist imports below, so they land on top of the restored preferences.</li>
@@ -1113,7 +1115,7 @@ git push</code></pre>
       <p>Run the <code>status</code> command to open the interactive mrk-status health dashboard. Run <code>make status</code> to print a plain-text report. The dashboard shows eight checks with ✓/⚠/✗ indicators: Dotfiles, Tools, macOS Defaults, Security Hardening, Shell, PATH, Homebrew and Brewfile. A ninth panel, Backups, appears only when a backup exists, and it appears <em>fifth</em> — between Security Hardening and Shell, not at the end of the list. Press <strong>f</strong> to suggest a fix. The <code>mrk-status</code> tool prompts for confirmation before it runs the fix. Press <strong>r</strong> to refresh the dashboard.</p>
 
       <ul>
-        <li><strong>Dotfiles</strong> — The tool shows the files symlinked into <code>~/</code> and missing files.</li>
+        <li><strong>Dotfiles</strong> — The tool shows the files symlinked into <code>~/</code> and missing files. It counts what setup links: the files in <code>dotfiles/</code>, and no directory or <code>.DS_Store</code>.</li>
         <li><strong>Tools</strong> — The tool shows live and broken symlinks in <code>~/bin</code>.</li>
         <li><strong>macOS Defaults</strong> — The tool shows if defaults are applied (it looks for the rollback script).</li>
         <li><strong>Security Hardening</strong> — The tool shows if security hardening is applied.</li>
