@@ -1032,7 +1032,7 @@ git push</code></pre>
           <tr><td>make defaults</td><td>—</td><td>Apply macOS defaults only</td></tr>
           <tr><td>make trackpad</td><td>—</td><td>Apply macOS defaults including trackpad settings</td></tr>
           <tr><td>make harden</td><td>—</td><td>Apply macOS security hardening</td></tr>
-          <tr><td>make trim-services</td><td><code>trim-services</code></td><td>Disable background LaunchAgents this Mac does not need. Writes a rollback, and checks each disable against launchd's override list. After the next restart, check again with <code>launchctl print-disabled</code>: on macOS 26.7 the two Photos agents were found enabled again (BIN-1 §2.33)</td></tr>
+          <tr><td>make trim-services</td><td><code>trim-services</code></td><td>Disable background LaunchAgents this Mac does not need: Samsung Magician's two and Google's Chrome updater. Writes a rollback, and checks each disable against launchd's override list. It no longer touches the two Photos agents: on macOS 26.7 launchd starts them on request even when they are disabled (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#trim-services">BIN-1 §2.33</a>)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Brewfile</td></tr>
           <tr><td>make sync</td><td><code>sync</code></td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Login Items</td></tr>
