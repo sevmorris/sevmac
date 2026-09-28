@@ -957,12 +957,12 @@ git push</code></pre>
 
           <p><strong>7. Push the project repositories</strong></p>
           <pre><code>pushall</code></pre>
-          <p>mrk brings <code>~/Projects</code> back to the new machine only from GitHub: <code>restore-repos</code> clones what the manifest records, and Magic Backup Machine does not back up <code>~/Projects</code>. Time Machine may hold a copy, but nothing in mrk restores from it — anything that is not on GitHub when you wipe comes back only if you dig it out of a Time Machine backup by hand, and only as it was at the last backup. <code>pushall</code> commits and pushes the branch each repository is on, including a repository kept one folder down, such as <code>FloppyLetters/FloppyLetter2601</code>. It then names what it leaves behind: commits on other branches that are on no remote, stashes, and folders in <code>~/Projects</code> that are not repositories at all. Deal with each one — push the branch, apply or drop the stash, copy the folder to the transfer disk.</p>
+          <p><code>restore-repos</code> brings <code>~/Projects</code> back to the new machine from GitHub: it clones what the manifest records, and nothing more. Since 2026-09-27 Magic Backup Machine also backs up <code>~/Projects</code>, so what is not on GitHub comes back from its copy instead, but only as it was at the last backup. That is why step&nbsp;8 comes after this one. <code>pushall</code> commits and pushes the branch each repository is on, including a repository kept one folder down, such as <code>FloppyLetters/FloppyLetter2601</code>. It then names what it leaves behind: commits on other branches that are on no remote, stashes, and folders in <code>~/Projects</code> that are not repositories at all. Deal with each one — push the branch, and apply or drop the stash. A folder that is not a repository comes back only from the Magic Backup Machine copy.</p>
           <p>It also names unpushed commits and uncommitted changes in DoublEnder's Cloud overlay, <code>~/Projects/DoublEnder-cloud.git</code>, which it never pushes: the overlay's files sit beside the public repository, which ignores them. Commit and push those with <code>decloud commit</code> and <code>decloud push</code>.</p>
-          <p>Files a repository ignores are not pushed either. Copy any you need by hand, such as a credential file that <code>.gitignore</code> keeps out of the repository.</p>
+          <p>Files a repository ignores are not pushed either; Magic Backup Machine's copy carries them. That copy is not encrypted, so a credential file among them, such as DoublEnder's Cloud service-account key, is safer restored from the password manager than from the backup disk.</p>
 
           <p><strong>8. Run a Magic Backup Machine backup</strong></p>
-          <p>Open Magic Backup Machine. Run a full backup to the local and external destinations. This backup copies Logic Pro projects, audio presets, browser profiles, and other data that mrk does not manage. It does not copy <code>~/Projects</code>; step&nbsp;7 covers that.</p>
+          <p>Open Magic Backup Machine. Run a full backup to the local and external destinations. This backup copies Logic Pro projects, audio presets, browser profiles, and other data that mrk does not manage, and <code>~/Projects</code>. Run it after step&nbsp;7: its copy of <code>~/Projects</code> is the only one of what <code>pushall</code> leaves off GitHub.</p>
 
           <p><strong>9. Verify SSH authentication</strong></p>
           <pre><code>ssh -T git@github.com
@@ -982,7 +982,7 @@ git push</code></pre>
       <div class="callout">
         <span class="callout-label">On the New Machine</span>
         <div class="callout-body">
-          Do the <a href="#mrk-new-machine">New Machine Setup</a> procedure (Section 2.2), which restores both archives in Step&nbsp;2 and the repositories in Step&nbsp;4. Then, restore data from Magic Backup Machine after you install the applications.
+          Do the <a href="#mrk-new-machine">New Machine Setup</a> procedure (Section 2.2), which restores both archives in Step&nbsp;2 and the repositories in Step&nbsp;4. Then, restore data from Magic Backup Machine after you install the applications. That restore also lays the step&nbsp;8 copy of <code>~/Projects</code> over the repositories Step&nbsp;4 cloned; a restore never deletes, so nothing Step&nbsp;4 brought back is removed.
         </div>
       </div>
     </section>
@@ -1302,9 +1302,12 @@ make post-install</code></pre>
 
       <p>Magic Backup Machine copies the files that are too large, too binary, or too
       numerous for a git repository. It is an rsync mirror to <code>~/.backups</code> and to
-      an external disk. Everything it carries is audio work: Logic Pro templates, channel
+      an external disk. Most of what it carries is audio work: Logic Pro templates, channel
       strips and key commands, Audio Unit presets, iZotope RX presets, Audio Hijack sessions,
-      Farrago sound sets. It also copies the browser profiles.</p>
+      Farrago sound sets. It also copies the browser profiles, and since 2026-09-27
+      <code>~/Projects</code>: a second copy beside GitHub, holding what <code>pushall</code>
+      cannot push — other branches, stashes, folders that are not repositories, and ignored
+      files.</p>
 
       <div class="callout">
         <span class="callout-label">Note — This Page No Longer Lists Its Sources</span>
@@ -1337,6 +1340,7 @@ make post-install</code></pre>
           <tr><td>Settings — plists, INI files, dotfiles</td><td>mrk</td><td>Small, versioned, and they travel with one command</td></tr>
           <tr><td>Presets, projects, sound sets, sample libraries</td><td>Magic Backup Machine</td><td>Large and binary; git is the wrong shape for them</td></tr>
           <tr><td>Browser profiles</td><td>Magic Backup Machine</td><td>Large, and they hold live session state</td></tr>
+          <tr><td>Code in <code>~/Projects</code></td><td>GitHub, then Magic Backup Machine</td><td>Repositories travel through <code>pushall</code> and <code>restore-repos</code>; the backup carries what is not on GitHub, as of its last run</td></tr>
           <tr><td>Private keys and signing identities</td><td>mrk — <code>snapshot-keys</code></td><td>Neither tool should hold them in the clear; the archive is encrypted</td></tr>
           <tr><td>Credentials that mrk refuses</td><td>Magic Backup Machine</td><td>The secret scan blocks them from mrk-prefs, and they still need a copy. Only low-value credentials belong here — see the caution below</td></tr>
           <tr><td>Re-fetchable caches and vendored binaries</td><td>neither</td><td>Downloaded again on demand. Backing one up stores a copy of something the internet already has</td></tr>
