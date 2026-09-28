@@ -689,7 +689,7 @@ exec zsh</code></pre>
           </div>
 
           <p><strong>Moving from another Mac — restore the archive.</strong></p>
-          <pre><code>make -C ~/mrk restore-keys ARGS=&lt;archive&gt;   # ~/.ssh, ~/.gnupg, signing identities
+          <pre><code>make -C ~/mrk restore-keys ARGS=&lt;archive&gt;   # ~/.ssh, ~/.gnupg, signing identities; DoublEnder's Cloud credentials wait for Step 4
 ssh-add -l                                 # SSH keys
 gpg --list-secret-keys                     # GPG secret keys
 security find-identity -v -p codesigning   # signing identities
@@ -729,6 +729,9 @@ make post-install   # Re-run to import plists</code></pre>
           <pre><code>make -C ~/mrk restore-repos ARGS=-n   # Show what would be cloned
 make -C ~/mrk restore-repos           # Clone them</code></pre>
           <p>A repository that is already on disk is skipped. A bare repository is listed but never cloned, because it shares a working tree with another repository and a plain clone puts the files in the wrong place. Set one up by hand, then use <code>decloud</code> for it.</p>
+          <p>Then put back the credentials that live inside the projects: DoublEnder's Cloud edition keeps its GCS service-account key and <code>ingest.env</code> in its working tree, out of git. <code>restore-keys</code> left them in the archive in Step&nbsp;2, because writing them into <code>~/Projects/DoublEnder</code> before the clone would have stopped <code>restore-repos</code> from cloning it.</p>
+          <pre><code>make -C ~/mrk restore-keys ARGS="--projects &lt;archive&gt;"</code></pre>
+          <p><code>--projects</code> restores only those, and only into a project that is cloned (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">BIN-1 §2.26</a>).</p>
         </div>
       </div>
 
@@ -932,7 +935,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
         <div class="proc-body">
           <p><strong>1. Bundle the key material</strong></p>
           <pre><code>make -C ~/mrk snapshot-keys</code></pre>
-          <p>This command writes <code>~/.ssh</code>, <code>~/.gnupg</code> and your code-signing identities to one passphrase-encrypted archive. Write the archive to an encrypted external disk. Store the passphrase in your password manager. Use <code>ARGS=-n</code> first to see what the archive holds.</p>
+          <p>This command writes <code>~/.ssh</code>, <code>~/.gnupg</code>, your code-signing identities and DoublEnder's Cloud credentials — its GCS service-account key and <code>ingest.env</code>, which git never carries — to one passphrase-encrypted archive. Write the archive straight to an encrypted external disk with <code>ARGS="-o /Volumes/&lt;disk&gt;/mrk-keys.asc"</code>. Store the passphrase in your password manager. Use <code>ARGS=-n</code> first to see what the archive holds.</p>
           <p>The command asks for two passphrases when you keep the signing identities: one for the archive, and one that macOS sets on the exported <code>.p12</code>. Store both. The second one is necessary to import the identities, even from a good archive.</p>
 
           <p><strong>2. Export the KeyVault vault</strong></p>
@@ -959,7 +962,7 @@ git push</code></pre>
           <pre><code>pushall</code></pre>
           <p><code>restore-repos</code> brings <code>~/Projects</code> back to the new machine from GitHub: it clones what the manifest records, and nothing more. Since 2026-09-27 Magic Backup Machine also backs up <code>~/Projects</code>, so what is not on GitHub comes back from its copy instead, but only as it was at the last backup. That is why step&nbsp;8 comes after this one. <code>pushall</code> commits and pushes the branch each repository is on, including a repository kept one folder down, such as <code>FloppyLetters/FloppyLetter2601</code>. It then names what it leaves behind: commits on other branches that are on no remote, stashes, and folders in <code>~/Projects</code> that are not repositories at all. Deal with each one — push the branch, and apply or drop the stash. A folder that is not a repository comes back only from the Magic Backup Machine copy.</p>
           <p>It also names unpushed commits and uncommitted changes in DoublEnder's Cloud overlay, <code>~/Projects/DoublEnder-cloud.git</code>, which it never pushes: the overlay's files sit beside the public repository, which ignores them. Commit and push those with <code>decloud commit</code> and <code>decloud push</code>.</p>
-          <p>Files a repository ignores are not pushed either; Magic Backup Machine's copy carries them. That copy is not encrypted, so a credential file among them, such as DoublEnder's Cloud service-account key, is safer restored from the password manager than from the backup disk.</p>
+          <p>Files a repository ignores are not pushed either; Magic Backup Machine's copy carries them. That copy is not encrypted. DoublEnder's Cloud credentials travel encrypted in the <code>snapshot-keys</code> archive instead (step&nbsp;1), so exclude them from Magic Backup Machine's <code>~/Projects</code> source and no plain copy reaches the backup disk.</p>
 
           <p><strong>8. Run a Magic Backup Machine backup</strong></p>
           <p>Open Magic Backup Machine. Run a full backup to the local and external destinations. This backup copies Logic Pro projects, audio presets, browser profiles, and other data that mrk does not manage, and <code>~/Projects</code>. Run it after step&nbsp;7: its copy of <code>~/Projects</code> is the only one of what <code>pushall</code> leaves off GitHub.</p>
@@ -1036,8 +1039,8 @@ git push</code></pre>
           <tr><td>make snapshot-prefs</td><td><code>snapshot-prefs</code></td><td>Export app preferences and push to mrk-prefs</td></tr>
           <tr><td>make pull-prefs</td><td><code>pull-prefs</code></td><td>Clone or pull app preferences from mrk-prefs</td></tr>
           <tr class="tbl-cat"><td colspan="3">Keys and Repositories</td></tr>
-          <tr><td>make snapshot-keys</td><td><code>snapshot-keys</code></td><td>Bundle <code>~/.ssh</code>, <code>~/.gnupg</code> and the signing identities into one encrypted archive (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">BIN-1 §2.25</a>)</td></tr>
-          <tr><td>make restore-keys</td><td><code>restore-keys</code></td><td>Restore that archive on a new machine (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">BIN-1 §2.26</a>)</td></tr>
+          <tr><td>make snapshot-keys</td><td><code>snapshot-keys</code></td><td>Bundle <code>~/.ssh</code>, <code>~/.gnupg</code>, the signing identities and DoublEnder's Cloud credentials into one encrypted archive (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">BIN-1 §2.25</a>)</td></tr>
+          <tr><td>make restore-keys</td><td><code>restore-keys</code></td><td>Restore that archive on a new machine; <code>ARGS="--projects &lt;archive&gt;"</code> after <code>restore-repos</code> places the project credentials (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">BIN-1 §2.26</a>)</td></tr>
           <tr><td>make restore-repos</td><td><code>restore-repos</code></td><td>Clone the repositories the mrk-prefs manifest records (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-repos">BIN-1 §2.27</a>)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Maintenance</td></tr>
           <tr><td>make update</td><td><code>update</code></td><td>Upgrade all packages. The target falls back to <code>brew upgrade</code> when topgrade is absent; the <code>update</code> shell function runs topgrade only. Use <code>update --full</code> for the full pass (Table 2.7-2)</td></tr>
@@ -1081,8 +1084,8 @@ git push</code></pre>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#update-full">update-full</a></td><td>Full update pass. It closes the running applications and can restart the machine. It never installs a major macOS upgrade.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#macos-updates">macos-updates</a></td><td>Install the macOS updates for the installed version. It never installs a major upgrade, such as macOS 26 to macOS 27. <code>make updates</code> and <code>update-full</code> run it.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#clean-ds">clean-ds</a></td><td>Delete the <code>.DS_Store</code> files from the local internal volumes only.</td></tr>
-          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">snapshot-keys</a></td><td>Bundle <code>~/.ssh</code>, <code>~/.gnupg</code> and the signing identities into one encrypted archive.</td></tr>
-          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">restore-keys</a></td><td>Restore that archive on a new machine.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">snapshot-keys</a></td><td>Bundle <code>~/.ssh</code>, <code>~/.gnupg</code>, the signing identities and DoublEnder's Cloud credentials into one encrypted archive.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">restore-keys</a></td><td>Restore that archive on a new machine. After <code>restore-repos</code>, <code>--projects</code> places the project credentials.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-repos">restore-repos</a></td><td>Clone the repositories the mrk-prefs manifest records.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#decloud">decloud</a></td><td>Run git against the private Cloud overlay for DoublEnder.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#nuke-mrk">nuke-mrk</a></td><td>Delete all the mrk files, so that you can install mrk again. It does not uninstall the Homebrew packages. It stops first if <code>~/mrk</code> or <code>~/.mrk/preferences</code> holds work that exists only on this machine.</td></tr>
@@ -1341,7 +1344,7 @@ make post-install</code></pre>
           <tr><td>Presets, projects, sound sets, sample libraries</td><td>Magic Backup Machine</td><td>Large and binary; git is the wrong shape for them</td></tr>
           <tr><td>Browser profiles</td><td>Magic Backup Machine</td><td>Large, and they hold live session state</td></tr>
           <tr><td>Code in <code>~/Projects</code></td><td>GitHub, then Magic Backup Machine</td><td>Repositories travel through <code>pushall</code> and <code>restore-repos</code>; the backup carries what is not on GitHub, as of its last run</td></tr>
-          <tr><td>Private keys and signing identities</td><td>mrk — <code>snapshot-keys</code></td><td>Neither tool should hold them in the clear; the archive is encrypted</td></tr>
+          <tr><td>Private keys, signing identities, and service credentials kept inside a project</td><td>mrk — <code>snapshot-keys</code></td><td>Neither tool should hold them in the clear; the archive is encrypted</td></tr>
           <tr><td>Credentials that mrk refuses</td><td>Magic Backup Machine</td><td>The secret scan blocks them from mrk-prefs, and they still need a copy. Only low-value credentials belong here — see the caution below</td></tr>
           <tr><td>Re-fetchable caches and vendored binaries</td><td>neither</td><td>Downloaded again on demand. Backing one up stores a copy of something the internet already has</td></tr>
         </tbody>
@@ -1356,9 +1359,11 @@ make post-install</code></pre>
         <code>oauth_access_token</code> into the same INI as its settings, which is why
         <code>snapshot-prefs</code> keeps only a redacted copy of the settings and Magic Backup
         Machine keeps the file itself. It is
-        not acceptable for an SSH key, a GPG key or a signing identity. Those go through
-        <code>make snapshot-keys</code>, which writes one passphrase-encrypted archive, and
-        they must never be added here.</div>
+        not acceptable for an SSH key, a GPG key, a signing identity, or DoublEnder's Cloud
+        credentials. Those go through <code>make snapshot-keys</code>, which writes one
+        passphrase-encrypted archive, and they must never be added here. The Cloud credentials
+        sit inside <code>~/Projects</code>, so keeping them out takes an exclude on that
+        source.</div>
       </div>
 
       <div class="callout callout-caution">
