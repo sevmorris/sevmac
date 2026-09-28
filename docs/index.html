@@ -1052,7 +1052,7 @@ git push</code></pre>
           <tr><td>make dock</td><td>—</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
           <tr><td>make uninstall</td><td>—</td><td>Remove symlinks and undo setup</td></tr>
           <tr><td>make snapshot</td><td><code>snapshot</code></td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
-          <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in all Go tool directories (picker, mrk-status, mrk-menu)</td></tr>
+          <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in every Go module under <code>tools/</code>: picker, mrk-status, mrk-menu and theme</td></tr>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
@@ -1172,7 +1172,7 @@ git push</code></pre>
           <tr><td>Dotfile conflict ("file exists")</td><td>Backup auto-created in <code>~/.mrk/backups/</code>; resolve manually then re-run</td></tr>
           <tr><td>post-install skips plist imports</td><td>SSH key not authenticated; run <code>pull-prefs</code> after adding key to GitHub</td></tr>
           <tr><td>mrk-picker not rendering</td><td>Rebuild the binary: <code>make picker</code></td></tr>
-          <tr><td>~/bin not on PATH</td><td>Run <code>make doctor ARGS=--fix</code></td></tr>
+          <tr><td>~/bin not on PATH</td><td>If <code>~/.zshrc</code> already adds it, as mrk's does, open a new terminal or run <code>exec zsh</code>. Otherwise run <code>make doctor ARGS=--fix</code>. The mrk-status PATH check says which</td></tr>
           <tr><td>Brewfile entry shows ✗ (missing)</td><td>Package name may differ from formula name; check with <code>brew info &lt;pkg&gt;</code></td></tr>
           <tr><td>sync exits with "nothing to add"</td><td>All installed packages are already in the Brewfile</td></tr>
           <tr><td>snapshot-prefs skips an app</td><td>Non-fatal — the export failed or hit its 15-second timeout; skipped apps are listed at the end of the run. Re-run <code>snapshot-prefs</code> to retry</td></tr>
