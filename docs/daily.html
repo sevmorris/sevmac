@@ -505,7 +505,7 @@
           <tr>
             <td>You edited a tool in <code>tools/</code>.</td>
             <td><code>build-tools</code></td>
-            <td>Rebuilds the Go binaries and relinks them into <code>~/bin</code>. Nothing warns you on its own that a binary is older than its source — <code>make maintain</code> reports it, but only when you run it — so until you rebuild you keep using the previous one.</td>
+            <td>Rebuilds the Go binaries and relinks them into <code>~/bin</code>. Until you rebuild, you keep using the previous binary. The Upkeep panel of <code>status</code> shows a binary that is older than its source, and <code>make maintain</code> reports it too. <code>make pull</code> rebuilds the binaries when a pull changes their source.</td>
           </tr>
           <tr>
             <td>You changed a macOS setting in System&nbsp;Settings.</td>
