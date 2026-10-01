@@ -746,8 +746,8 @@ make -C ~/mrk restore-repos           # Clone them</code></pre>
           <h3>Verify the Installation</h3>
         </div>
         <div class="proc-body">
-          <pre><code>status          # Open the mrk-status TUI health dashboard (in ~/bin after exec zsh)
-make status     # Plain-text installation status report
+          <pre><code>status          # Open the mrk-status daily dashboard (in ~/bin after exec zsh)
+make status     # The same panels, printed as text
 make doctor     # Check ~/bin is on PATH; pass ARGS=--fix to add ~/bin to .zshrc</code></pre>
         </div>
       </div>
@@ -1058,7 +1058,7 @@ git push</code></pre>
           <tr><td>make snapshot</td><td><code>snapshot</code></td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
           <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in every Go module under <code>tools/</code>: picker, mrk-status, mrk-menu and theme</td></tr>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
-          <tr><td>make status</td><td><strong>none</strong></td><td>Plain-text installation status report. The <code>status</code> command is a different program — see the caution below</td></tr>
+          <tr><td>make status</td><td><strong>none</strong></td><td>Print the dashboard's panels as text. The <code>status</code> command opens them in the dashboard instead — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
           <tr><td>make check</td><td>—</td><td>Run every gate in <code>scripts/ci-check</code>: the picker and defaults descriptions, a secret scan over every tracked file, the commit gates, each test in <code>tests/</code>, shellcheck over every tracked bash script, and <code>go test</code>. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#ci-check">BIN-1 §2.21</a> names each test and what it guards</td></tr>
           <tr><td>make ci</td><td>—</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
@@ -1071,7 +1071,7 @@ git push</code></pre>
 
       <div class="callout callout-caution">
         <span class="callout-label">Caution — status Is Not the Same as make status</span>
-        <div class="callout-body">The <code>status</code> command in <code>~/bin</code> is the mrk-status TUI dashboard. The <code>make status</code> target is a different program that prints a plain-text report. The two have the same name, but they are not the same command. This is why <code>status</code> is the only entry in the table with no shortcut. Section&nbsp;2.8 describes both.</div>
+        <div class="callout-body">The <code>status</code> command in <code>~/bin</code> opens the mrk-status dashboard. The <code>make status</code> target prints the same panels as text and exits. They run the same checks — until 2026-09-30 <code>make status</code> was a separate program — but one opens a TUI and the other prints, which is why <code>status</code> is the only entry in the table with no shortcut. Section&nbsp;2.8 describes the panels.</div>
       </div>
 
       <p>The mrk tool includes standalone utilities in its <code>bin/</code> directory. Phase&nbsp;1 creates a symlink for each executable in <code>~/bin</code>, so you can run each command by name from any directory. The <code>mrk-menu</code> utility is a compiled Go TUI; if it is missing, run <code>make build-tools</code> to build it.</p>
@@ -1115,18 +1115,24 @@ git push</code></pre>
         <span class="section-sub">mrk-status / state files</span>
       </div>
 
-      <p>Run the <code>status</code> command to open the interactive mrk-status health dashboard. Run <code>make status</code> to print a plain-text report. The dashboard shows eight checks with ✓/⚠/✗ indicators: Dotfiles, Tools, macOS Defaults, Security Hardening, Shell, PATH, Homebrew and Brewfile. A ninth panel, Backups, appears only when a backup exists, and it appears <em>fifth</em> — between Security Hardening and Shell, not at the end of the list. Press <strong>f</strong> to suggest a fix. The <code>mrk-status</code> tool prompts for confirmation before it runs the fix. Press <strong>r</strong> to refresh the dashboard.</p>
+      <p>Run the <code>status</code> command to open the mrk-status dashboard. Run <code>make status</code> to print the same panels as text. The dashboard shows four panels with ✓/⚠/✗ indicators, the day's work first. Each line shows its fix. Press <strong>f</strong> to run the selected panel's fix; the tool asks for confirmation first. Press <strong>r</strong> to refresh. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#status">BIN-1</a> has every check and fix.</p>
 
       <ul>
-        <li><strong>Dotfiles</strong> — The tool shows the files symlinked into <code>~/</code> and missing files. It counts what setup links: the files in <code>dotfiles/</code>, and no directory or <code>.DS_Store</code>.</li>
-        <li><strong>Tools</strong> — The tool shows live and broken symlinks in <code>~/bin</code>.</li>
-        <li><strong>macOS Defaults</strong> — The tool shows if defaults are applied (it looks for the rollback script).</li>
-        <li><strong>Security Hardening</strong> — The tool shows if security hardening is applied.</li>
-        <li><strong>Backups</strong> — Shown <em>only when backups exist</em>: how many, where, and the most recent. This is a report, not a health check — it can neither fail nor be fixed — so with nothing to report the panel is omitted rather than shown empty.</li>
-        <li><strong>Shell</strong> — The tool shows the current login shell. It must be Zsh.</li>
-        <li><strong>PATH</strong> — The tool shows if <code>~/bin</code> is on the PATH.</li>
-        <li><strong>Homebrew</strong> — The tool shows the installed version.</li>
-        <li><strong>Brewfile packages</strong> — The tool shows if each formula and cask is installed or missing.</li>
+        <li><strong>Unrecorded</strong> — What the next Mac would not get: Homebrew packages missing from the Brewfile, or in it and not installed; uncommitted or unpushed work in <code>~/mrk</code> and in the repositories in <code>~/Projects</code>; repositories the manifest does not record.</li>
+        <li><strong>Upkeep</strong> — <code>~/mrk</code> behind the remote, Go tools older than their source, outdated Homebrew packages, and macOS updates for the installed version. A major upgrade is named and never counted.</li>
+        <li><strong>Time Machine Backups</strong> — Whether Time Machine has a destination, and how old the last backup is: a warning after one day, an error after seven.</li>
+        <li><strong>Installation</strong> — The installation checks, in one panel:
+          <ul>
+            <li><strong>Dotfiles</strong> — The files symlinked into <code>~/</code>, and the missing ones. It counts what setup links: the files in <code>dotfiles/</code>, and no directory or <code>.DS_Store</code>.</li>
+            <li><strong>Tools</strong> — The live and broken symlinks in <code>~/bin</code>.</li>
+            <li><strong>Shell</strong> — The current login shell. It must be Zsh.</li>
+            <li><strong>PATH</strong> — Whether <code>~/bin</code> is on the PATH.</li>
+            <li><strong>Homebrew</strong> — The installed version.</li>
+            <li><strong>Brewfile</strong> — How many formulae and casks it tracks. What is installed against it is under Unrecorded.</li>
+            <li><strong>macOS Defaults</strong> and <strong>Security Hardening</strong> — Whether each is applied; the rollback scripts are the evidence.</li>
+            <li><strong>Displaced files</strong> — Shown <em>only when backups exist</em>: the files setup moved aside. A report, not a health check.</li>
+          </ul>
+        </li>
       </ul>
 
       <div class="table-scroll">
