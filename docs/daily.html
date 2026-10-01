@@ -443,7 +443,7 @@
 
       <div class="callout">
         <span class="callout-label">Note — After check-updates Reports an Update</span>
-        <div class="callout-body">Answer yes, or run <code>make -C ~/mrk pull</code>, to get the update. If you answer no, check-updates does not ask again until more commits arrive. <code>make pull</code> is a fast-forward pull. It does not change your local work. After the pull, it rebuilds the Go tools and relinks the commands and dotfiles, but only the ones the update changed. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-updates">BIN-1</a> has the details.</div>
+        <div class="callout-body">Answer yes, or run <code>make -C ~/mrk pull</code>, to get the update. If you answer no, check-updates does not ask again until more commits arrive. If you answer yes and the pull fails, it asks again at the next shell start. <code>make pull</code> is a fast-forward pull. It does not change your local work. After the pull, it rebuilds the Go tools and relinks the commands and dotfiles, but only the ones the update changed. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-updates">BIN-1</a> has the details.</div>
       </div>
     </section>
 
