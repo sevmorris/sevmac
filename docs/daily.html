@@ -432,8 +432,8 @@
           </tr>
           <tr>
             <td>check-updates</td>
-            <td>Each 7 days, at shell start</td>
-            <td>Compares <code>~/mrk</code> to the remote. It is silent if there are no updates.</td>
+            <td>At each shell start. It fetches at most once a day.</td>
+            <td>Compares <code>~/mrk</code> to the remote, and asks once about each update. It is silent if there are no updates.</td>
           </tr>
         </tbody>
       </table>
@@ -443,7 +443,7 @@
 
       <div class="callout">
         <span class="callout-label">Note — After check-updates Reports an Update</span>
-        <div class="callout-body">Answer yes, or run <code>make -C ~/mrk pull</code>, to get the update. This command is a fast-forward pull. It does not change your local work. After the pull, it rebuilds the Go tools and relinks the commands and dotfiles, but only the ones the update changed. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-updates">BIN-1</a> has the details.</div>
+        <div class="callout-body">Answer yes, or run <code>make -C ~/mrk pull</code>, to get the update. If you answer no, check-updates does not ask again until more commits arrive. <code>make pull</code> is a fast-forward pull. It does not change your local work. After the pull, it rebuilds the Go tools and relinks the commands and dotfiles, but only the ones the update changed. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-updates">BIN-1</a> has the details.</div>
       </div>
     </section>
 
