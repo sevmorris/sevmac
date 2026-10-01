@@ -509,8 +509,8 @@
           </tr>
           <tr>
             <td>You changed a macOS setting in System&nbsp;Settings.</td>
-            <td>No command. Edit <code>scripts/defaults.sh</code>.</td>
-            <td>The only change on this page that nothing records for you. Find the key with <code>defaults read</code>, add a <code>write_default</code> line, then a description in <code>docs/defaults/script.js</code>. <code>make check</code> fails when a key has no description, so it will tell you if you forget.</td>
+            <td><code>defaults-watch</code>, then edit <code>scripts/defaults.sh</code>.</td>
+            <td>The only change on this page that nothing records for you. Run <code>defaults-watch</code>, change the setting, and press Return: it names the key and prints the <code>write_default</code> line to add. Add that line, then a description in <code>docs/defaults/script.js</code>. <code>make check</code> fails when a key has no description, so it will tell you if you forget.</td>
           </tr>
         </tbody>
       </table>
@@ -528,7 +528,7 @@
 
       <div class="callout callout-rule">
         <span class="callout-label">Rule — The Only Rule That Is Important</span>
-        <div class="callout-body">If you install it with Homebrew, run <code>sync -c</code>. If you configure it in a window, run <code>snapshot-prefs</code>. A change that you do not record does not move to the next machine.<br><br>Neither command records a key. <code>mrk-prefs</code> never carries private key material, so <code>~/.ssh</code>, <code>~/.gnupg</code> and your signing identities move only through <code>snapshot-keys</code>. That is a migration step, not a daily one — see <a href="index.html#mrk-migration">SMAC-1, Section&nbsp;2.6</a>.</div>
+        <div class="callout-body">If you install it with Homebrew, run <code>sync -c</code>. If you configure it in a window, run <code>snapshot-prefs</code>. If you change it in System Settings, run <code>defaults-watch</code> and add the key it names to <code>scripts/defaults.sh</code>. A change that you do not record does not move to the next machine.<br><br>Neither command records a key. <code>mrk-prefs</code> never carries private key material, so <code>~/.ssh</code>, <code>~/.gnupg</code> and your signing identities move only through <code>snapshot-keys</code>. That is a migration step, not a daily one — see <a href="index.html#mrk-migration">SMAC-1, Section&nbsp;2.6</a>.</div>
       </div>
 
       <p>Do not run <code>sync</code> after each installation. Once each week is sufficient. But always run it before a migration. See the checklist in <a href="index.html#mrk-migration">SMAC-1, Section 2.6</a>.</p>
