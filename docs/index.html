@@ -823,7 +823,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
             <li>The tool commits the other changes to <code>~/.mrk/preferences/</code> with a timestamped message, and lists each file with the keys that changed.</li>
             <li>The tool pushes the commits to <code>sevmorris/mrk-prefs</code> on GitHub.</li>
           </ol>
-          <p>This command is idempotent. It reports "No changes to push" if nothing changed, or if nothing but those keys changed. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-prefs">BIN-1</a> lists the keys and the options. The tool skips applications if their export fails or times out. It shows a warning and lists skipped applications at the end of the run. It refuses to start while a merge or rebase in <code>~/.mrk/preferences</code> is unfinished, and it checks that before it exports anything. It does not quit any application: <code>defaults export</code> already sees an open application's changes.</p>
+          <p>This command is idempotent. It reports "No changes to push" if nothing changed, or if nothing but those keys changed. If the push of an earlier run failed, the next run pushes that commit, and its output ends with "Pushed to". So "No changes to push" means that mrk-prefs has the last commit. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-prefs">BIN-1</a> lists the keys and the options. The tool skips applications if their export fails or times out. It shows a warning and lists skipped applications at the end of the run. It refuses to start while a merge or rebase in <code>~/.mrk/preferences</code> is unfinished, and it checks that before it exports anything. It does not quit any application: <code>defaults export</code> already sees an open application's changes.</p>
           <div class="callout callout-caution">
             <span class="callout-label">Caution — Secret Scan</span>
             <div class="callout-body">If the scan finds a possible secret in a staged file, the push stops for confirmation. The push aborts immediately in non-interactive runs. You must review the flagged file before you try again.</div>
@@ -953,7 +953,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
 
           <p><strong>4. Snapshot app preferences</strong></p>
           <pre><code>snapshot-prefs</code></pre>
-          <p>This command exports and pushes all application preference plists and Application Support files. It also records which repositories <code>~/Projects</code> holds, which is the list <code>restore-repos</code> clones from on the new machine. Make sure that "Pushed to git@github.com:sevmorris/mrk-prefs.git" shows in the output. If the secret scan finds a secret, the push stops for confirmation. You must resolve the problem before you continue.</p>
+          <p>This command exports and pushes all application preference plists and Application Support files. It also records which repositories <code>~/Projects</code> holds, which is the list <code>restore-repos</code> clones from on the new machine. Make sure that "Pushed to git@github.com:sevmorris/mrk-prefs.git" shows in the output. If nothing changed since the last snapshot, the output ends with "No changes to push" instead, and mrk-prefs is current. Any other last line is a failure. Correct the cause, then run the command again. If the secret scan finds a secret, the push stops for confirmation. You must resolve the problem before you continue.</p>
 
           <p><strong>5. Capture the login items</strong></p>
           <pre><code>sync-login-items -c</code></pre>
@@ -1120,7 +1120,7 @@ git push</code></pre>
 
       <ul>
         <li><strong>Unrecorded</strong> — What the next Mac would not get: Homebrew packages missing from the Brewfile, or in it and not installed; uncommitted or unpushed work in <code>~/mrk</code> and in the repositories in <code>~/Projects</code>; repositories the manifest does not record.</li>
-        <li><strong>Upkeep</strong> — <code>~/mrk</code> behind the remote, Go tools older than their source, outdated Homebrew packages, and macOS updates for the installed version. A major upgrade is named and never counted.</li>
+        <li><strong>Upkeep</strong> — <code>~/mrk</code> behind the remote, Go tools older than their source, outdated Homebrew packages, and macOS updates for the installed version. A major upgrade is named and never counted. Only macOS itself can be one: Safari and the Command Line Tools count as updates.</li>
         <li><strong>Time Machine Backups</strong> — Whether Time Machine has a destination, and how old the last backup is: a warning after one day, an error after seven.</li>
         <li><strong>Installation</strong> — The installation checks, in one panel:
           <ul>
