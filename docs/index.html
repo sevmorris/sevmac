@@ -675,7 +675,7 @@ exec zsh</code></pre>
             <li><strong>Plist imports:</strong> The system imports preferences for 17 applications. This step is non-destructive. It skips any application with existing preferences, including a sandboxed application such as Keka, which keeps them in its container. It also skips an application that is not installed yet. The imports run before any step that writes app defaults, because one key is enough to make an application look configured. Until 2026-09-27 they ran after, and the 2026-09-15 migration never imported Loopback, SoundSource, Audio Hijack, Farrago, Piezo or Helium (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-post-install">BIN-1 §2.13</a>).</li>
             <li><strong>App Support restore:</strong> The system restores Loopback and SoundSource configuration files. This step is non-destructive.</li>
             <li><strong>Config trees:</strong> The system restores the Calibre configuration directory (<code>~/Library/Preferences/calibre</code>) when the application is unconfigured.</li>
-            <li><strong>Login items:</strong> The system registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Raycast, Stats, and Thaw. Thaw replaced Ice on 2026-09-17: Ice 0.11.12 crashes at launch on macOS 26.7.</li>
+            <li><strong>Login items:</strong> The system registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Raycast, and Thaw. Thaw replaced Ice on 2026-09-17: Ice 0.11.12 crashes at launch on macOS 26.7.</li>
           </ul>
         </div>
       </div>
@@ -911,7 +911,6 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
           <tr><td>Chrono Plus</td></tr>
           <tr><td>Dropbox</td></tr>
           <tr><td>Raycast</td></tr>
-          <tr><td>Stats</td></tr>
           <tr><td>Thaw</td></tr>
         </tbody>
       </table>
@@ -1055,7 +1054,6 @@ git push</code></pre>
           <tr><td>make maintain</td><td><code>maintain</code></td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
           <tr><td>make dock</td><td>—</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
           <tr><td>make uninstall</td><td>—</td><td>Remove symlinks and undo setup</td></tr>
-          <tr><td>make snapshot</td><td><code>snapshot</code></td><td>Export selected app prefs to <code>assets/preferences/</code> in repo (seed data for fresh installs — distinct from snapshot-prefs)</td></tr>
           <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in every Go module under <code>tools/</code>: picker, mrk-status, mrk-menu and theme</td></tr>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Print the dashboard's panels as text. The <code>status</code> command opens them in the dashboard instead — see the caution below</td></tr>
