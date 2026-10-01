@@ -395,7 +395,7 @@
         </div>
         <div class="cmd">
           <span class="name">update</span>
-          <span class="what">Runs topgrade. It upgrades the packages. It does not close the applications.</span>
+          <span class="what">Runs topgrade. It upgrades the packages. It does not close the applications. Its last lines say which steps failed, if any, and that the others ran.</span>
         </div>
       </div>
 
@@ -553,7 +553,7 @@
 sync -c       # Add new packages to the Brewfile, then commit
 pushall       # Push all the project repos, then sync ~/mrk</code></pre>
 
-      <p>The <code>update</code> command is a shell function in <code>~/.aliases</code>. It runs topgrade and nothing more. It does not close the applications. It does not offer a reboot.</p>
+      <p>The <code>update</code> command is a shell function in <code>~/.aliases</code>. It runs topgrade and nothing more. It does not close the applications. It does not offer a reboot. topgrade does every step even when one fails, so read the last lines: they say which steps failed and that the others ran. If they say the run stopped before its summary, not every step ran.</p>
 
       <p><strong>Each month.</strong> Start with <code>update-full</code>. Then do three more steps.</p>
 
