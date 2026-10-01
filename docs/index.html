@@ -1011,7 +1011,7 @@ git push</code></pre>
 
       <div class="callout">
         <span class="callout-label">Note — Where to Run These</span>
-        <div class="callout-body">Each target in Table 2.7-1 runs from any directory as <code>make -C ~/mrk &lt;target&gt;</code>. From inside <code>~/mrk</code>, the shorter <code>make &lt;target&gt;</code> is the same thing. The <code>make setup</code> command also deploys <code>~/Makefile</code>, which gives you <code>make help</code>, <code>make sync</code>, <code>make snapshot-prefs</code>, <code>make pull-prefs</code>, and <code>make picker</code> from your home directory.</div>
+        <div class="callout-body">Each target in Table 2.7-1 runs from any directory as <code>make -C ~/mrk &lt;target&gt;</code>. From inside <code>~/mrk</code>, the shorter <code>make &lt;target&gt;</code> is the same thing. The <code>make setup</code> command also deploys <code>~/Makefile</code>, so from your home directory the shorter <code>make &lt;target&gt;</code> works too, for every target in the table: <code>make update</code>, <code>make status</code>, <code>make sync ARGS=-c</code>. Until 2026-09-30 it covered only a few, such as <code>make sync</code> and <code>make snapshot-prefs</code>.</div>
       </div>
 
       <p>Many targets have a shorter equivalent in <code>~/bin</code>. Where the Shortcut column gives a command, that command and the make target run the same script. Use either one. Read the caution below the table before you use <code>status</code>.</p>
