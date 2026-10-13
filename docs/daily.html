@@ -555,7 +555,7 @@ pushall       # Push all the project repos, then sync ~/mrk</code></pre>
 
       <p>The <code>update</code> command is a shell function in <code>~/.aliases</code>. It runs topgrade and nothing more. It does not close the applications. It does not offer a reboot. topgrade does every step even when one fails, so read the last lines: they say which steps failed and that the others ran. If they say the run stopped before its summary, not every step ran.</p>
 
-      <p><strong>Each month.</strong> Start with <code>update-full</code>. Then do three more steps.</p>
+      <p><strong>Each month.</strong> Start with <code>update-full</code>. Then do four more steps.</p>
 
       <div class="callout callout-caution">
         <span class="callout-label">Caution — update-full Closes Your Applications</span>
@@ -579,11 +579,21 @@ update-full --no-reboot  # Do not offer a reboot</code></pre>
           <p>Open the dashboard. Look for a <code>⚠</code> or an <code>✗</code> indicator, Unrecorded above all. Press <code>f</code> to get a suggested fix.</p>
 <pre><code>status</code></pre>
         </li>
+        <li>
+          <p>Tidy the project repositories. <code>tidy-projects</code> reports what has piled up in <code>~/Projects</code> and <code>~/mrk</code>: merged branches, finished worktrees, stale refs, Pages deployments past ten, and build output. Read the report, then delete the categories you agree to. It deletes only what it can prove is merged or can be rebuilt (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#tidy-projects">BIN-1 §2.39</a>).</p>
+<pre><code>tidy-projects                          # Report only
+tidy-projects --apply branches,refs    # Delete what the report offers, by category</code></pre>
+        </li>
       </ol>
 
       <div class="callout callout-caution">
         <span class="callout-label">Caution — update-full Never Installs a Major macOS Upgrade</span>
         <div class="callout-body">Step&nbsp;1 installs the updates for the installed version of macOS only, for example macOS 26.7 to 26.7.1. It does not install macOS 27. It names each major upgrade that it finds and leaves it alone. To install a major upgrade, use System Settings &gt; General &gt; Software Update when you choose to. <code>make updates</code> does the same as step&nbsp;1, and <code>make updates ARGS=-n</code> shows the updates but installs nothing. Until 2026-09-16, step&nbsp;1 installed every update in the list, and on macOS 26.7 it started a download of macOS 27. If <code>softwareupdate</code> starts a download, to stop the command does not stop the download: cancel it in System Settings.</div>
+      </div>
+
+      <div class="callout callout-caution">
+        <span class="callout-label">Caution — tidy-projects --apply deploys Cannot Be Undone</span>
+        <div class="callout-body">In step&nbsp;5, <code>--apply deploys</code> deletes Pages deployments, and a deleted deployment does not come back. It always keeps the newest ten and the one that serves the site. Everything else step&nbsp;5 deletes is already merged, or goes to the Trash.</div>
       </div>
 
       <div class="callout">
@@ -660,6 +670,7 @@ exec zsh</code></pre>
           <tr><td>Know which command to reach for</td><td><a href="index.html#mrk-commands">Section 2.7 — Command Reference</a></td></tr>
           <tr><td>See all the flags of a command</td><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html">BIN-1 — ~/bin Command Reference</a></td></tr>
           <tr><td>Move keys to a new machine</td><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">BIN-1 §2.24 — snapshot-keys</a></td></tr>
+          <tr><td>Tidy the project repositories</td><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#tidy-projects">BIN-1 §2.39 — tidy-projects</a></td></tr>
           <tr><td>Understand the dashboard checks</td><td><a href="index.html#mrk-status">Section 2.8 — Status &amp; Diagnostics</a></td></tr>
           <tr><td>Correct a known problem</td><td><a href="index.html#mrk-troubleshooting">Section 2.9 — Troubleshooting</a></td></tr>
           <tr><td>Manage the Brewfile in a window</td><td><a href="index.html#barkeep-usage">Section 3.3 — Barkeep Interface &amp; Usage</a></td></tr>
