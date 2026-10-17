@@ -1084,7 +1084,7 @@ git push</code></pre>
         <tbody>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-menu">mrk-menu</a></td><td>TUI launcher. Browse mrk's commands by category and run the selected one. Use it when you do not remember a command.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-push">mrk-push &quot;msg&quot;</a></td><td>Commit, push, and prune the old Pages deployments of the mrk repository.</td></tr>
-          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#prune-deployments">prune-deployments</a></td><td>Delete the old Pages deployments of any repository. It always protects the deployment serving the site.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#prune-deployments">prune-deployments</a></td><td>Delete the old Pages deployments of any repository, or, run outside a repository, of every Pages site you own. It always protects the deployment serving each site.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#pushall">pushall</a></td><td>Commit and push every repository in <code>~/Projects</code>, then sync <code>~/mrk</code>. Every commit passes the secret scan first.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#tidy-projects">tidy-projects</a></td><td>Survey every clone in <code>~/Projects</code> and <code>~/mrk</code> for merged branches, finished worktrees, stale refs, Pages deployments past ten and build output, and for repositories with no backup. <code>--apply</code> deletes only what it can prove is safe.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#update-full">update-full</a></td><td>Full update pass. It closes the running applications and can restart the machine. It never installs a major macOS upgrade.</td></tr>
@@ -1104,7 +1104,7 @@ git push</code></pre>
 
       <div class="callout callout-caution">
         <span class="callout-label">Caution — Four of These Delete Things</span>
-        <div class="callout-body"><code>nuke-mrk</code> removes your mrk installation. <code>update-full</code> closes every running application and can restart the machine. <code>prune-deployments</code> deletes deployments from a live site. <code>tidy-projects --apply</code> deletes merged branches, finished worktrees and Pages deployments; without <code>--apply</code> it only reports, so run that first. The other three ask to confirm, and each has a preview or dry-run mode. Read its BIN-1 entry before the first use.</div>
+        <div class="callout-body"><code>nuke-mrk</code> removes your mrk installation. <code>update-full</code> closes every running application and can restart the machine. <code>prune-deployments</code> deletes deployments from a live site, and run outside a repository it does so on every Pages site you own. It does not ask first, so run it with <code>--dry-run</code> before. <code>tidy-projects --apply</code> deletes merged branches, finished worktrees and Pages deployments; without <code>--apply</code> it only reports, so run that first. The other two ask to confirm, and each has a preview or dry-run mode. Read its BIN-1 entry before the first use.</div>
       </div>
     </section>
 
