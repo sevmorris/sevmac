@@ -395,7 +395,7 @@
         </div>
         <div class="cmd">
           <span class="name">update</span>
-          <span class="what">Runs topgrade. It upgrades the packages. It does not close the applications. Its last lines say which steps failed, if any, and that the others ran.</span>
+          <span class="what">Runs topgrade. It upgrades the packages, then deletes the login items of Google Drive and NordVPN. It does not close the applications. Its last lines say which steps failed, if any, and that the others ran.</span>
         </div>
       </div>
 
@@ -553,7 +553,7 @@
 sync -c       # Add new packages to the Brewfile, then commit
 pushall       # Push all the project repos, then sync ~/mrk</code></pre>
 
-      <p>The <code>update</code> command is a shell function in <code>~/.aliases</code>. It runs topgrade and nothing more. It does not close the applications. It does not offer a reboot. topgrade does every step even when one fails, so read the last lines: they say which steps failed and that the others ran. If they say the run stopped before its summary, not every step ran.</p>
+      <p>The <code>update</code> command is a shell function in <code>~/.aliases</code>. It runs topgrade. Then it deletes the login items of Google Drive and NordVPN, because a cask upgrade can add them again, and it shows each one it deletes. It does not close the applications. It does not offer a reboot. topgrade does every step even when one fails, so read the last lines: they say which steps failed and that the others ran. If they say the run stopped before its summary, not every step ran.</p>
 
       <p><strong>Each month.</strong> Start with <code>update-full</code>. Then do four more steps.</p>
 
@@ -564,7 +564,7 @@ pushall       # Push all the project repos, then sync ~/mrk</code></pre>
 
       <ol class="steps">
         <li>
-          <p>Run the full update. This one command does all of these steps in sequence: it pulls <code>~/mrk</code>, closes the applications, installs the macOS updates for the installed version, runs topgrade, builds the mrk Go tools again, removes the <code>.DS_Store</code> files, and runs <code>brew doctor</code>. Then it offers a reboot.</p>
+          <p>Run the full update. This one command does all of these steps in sequence: it pulls <code>~/mrk</code>, closes the applications, installs the macOS updates for the installed version, runs topgrade, deletes the login items of Google Drive and NordVPN, builds the mrk Go tools again, removes the <code>.DS_Store</code> files, and runs <code>brew doctor</code>. Then it offers a reboot.</p>
 <pre><code>update-full              # Ask before the start, offer a reboot at the end
 update-full --no-reboot  # Do not offer a reboot</code></pre>
         </li>
