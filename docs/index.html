@@ -1293,7 +1293,7 @@ make post-install</code></pre>
           <p>The console output streams in real time in the right column.</p>
           <div class="callout">
             <span class="callout-label">Note — Barkeep and the mrk-picker Descriptions</span>
-            <div class="callout-body">mrk keeps a description of every Brewfile package for its package picker, and CI fails when one is missing or left behind. Barkeep's Add, Adopt and Remove change the Brewfile only. When you commit <code>~/mrk</code> with <code>mrk-push</code> or <code>pushall</code>, they first write each missing description from Homebrew and delete each orphaned one — see <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-picker-desc">BIN-1 §2.22 — check-picker-desc</a>. A package Homebrew has no description for is named, and you write that one in <code>tools/picker/descriptions.tsv</code>: one line, with the name, a tab and the description, in name order. From 1.13.0 a cask Barkeep adds gets <code>greedy: true</code>, because most of the Brewfile's casks carry it. Barkeep 1.12.5 and earlier add a bare line. A line added under a new section, such as <code># Adopted</code>, sits outside the <code>## Casks -</code> categories; move it to its category when you tidy the Brewfile.</div>
+            <div class="callout-body">mrk keeps a description of every Brewfile package for its package picker, and CI fails when one is missing or left behind. Outside mrk mode (Section&nbsp;3.3.3), and in Barkeep 1.14.0 and earlier, Barkeep's Add, Adopt and Remove change the Brewfile only. When you commit <code>~/mrk</code> with <code>mrk-push</code> or <code>pushall</code>, they first write each missing description from Homebrew and delete each orphaned one — see <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-picker-desc">BIN-1 §2.22 — check-picker-desc</a>. A package Homebrew has no description for is named, and you write that one in <code>tools/picker/descriptions.tsv</code>: one line, with the name, a tab and the description, in name order. From 1.13.0 a cask Barkeep adds gets <code>greedy: true</code>, because most of the Brewfile's casks carry it. Barkeep 1.12.5 and earlier add a bare line. A line added under a new section, such as <code># Adopted</code>, sits outside the <code>## Casks -</code> categories; move it to its category when you tidy the Brewfile.</div>
           </div>
         </div>
       </div>
@@ -1308,6 +1308,25 @@ make post-install</code></pre>
           <ul>
             <li><strong>Brewfile path</strong> — The default is <code>~/mrk/Brewfile</code>. Change the path with the folder button in the toolbar, or select File → Choose Brewfile (⌘O).</li>
           </ul>
+        </div>
+      </div>
+
+      <div class="proc" id="barkeep-mrk-mode">
+        <div class="proc-header">
+          <span class="proc-num">3.3.3</span>
+          <h3>mrk Mode</h3>
+        </div>
+        <div class="proc-body">
+          <p class="desc">From Barkeep 1.15.0, Barkeep uses mrk's own scripts when the Brewfile it opens is in an mrk checkout: <code>scripts/sync</code> and <code>tools/picker/descriptions.tsv</code> are beside it, as in <code>~/mrk</code>. mrk then decides each change, with the checks that <code>sync</code> does on the command line. Any other Brewfile works as before.</p>
+          <ul>
+            <li><strong>Untracked</strong> — The list is the one that <code>sync</code> offers: the packages you installed that the Brewfile does not have, without the names in <code>~/.mrk/sync-ignore</code>. It is the same list that the mrk-status Unrecorded panel and Dipstick count.</li>
+            <li><strong>Add to Brewfile / Adopt</strong> — <code>sync</code> adds the package. A cask goes under the <code>## Casks -</code> section of its app's category, and Barkeep shows that section before you add it. A formula goes in the section you select, because <code>sync</code> does not guess the section of a formula. Each entry goes in name order, with its picker description.</li>
+            <li><strong>Ignore</strong> — <code>sync</code> adds the name to <code>~/.mrk/sync-ignore</code>, so neither <code>sync</code> nor Barkeep offers it again.</li>
+            <li><strong>Not installed</strong> — The Brewfile entries of the packages that are not installed. <strong>Remove</strong> deletes the entry and its picker description, as <code>sync --prune</code> does.</li>
+            <li><strong>Other edits</strong> — After a move, a section rename or delete, or a Remove from Brewfile, Barkeep runs <code>check-picker-desc --fix</code>, so no picker description is missing or left behind.</li>
+            <li><strong>Commits</strong> — Barkeep does not commit. Commit <code>~/mrk</code> with <code>mrk-push</code> or <code>pushall</code>, as before.</li>
+          </ul>
+          <p>Barkeep runs each mrk script with the environment of a new Terminal window, and the console shows its output. For the options Barkeep passes and what <code>sync</code> refuses, see <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#sync">BIN-1 §2.8 — sync</a>.</p>
         </div>
       </div>
     </section>
