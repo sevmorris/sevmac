@@ -675,7 +675,7 @@ exec zsh</code></pre>
             <li><strong>Plist imports:</strong> The system imports preferences for 17 applications. This step is non-destructive. It skips any application with existing preferences, including a sandboxed application such as Keka, which keeps them in its container. It also skips an application that is not installed yet. The imports run before any step that writes app defaults, because one key is enough to make an application look configured. Until 2026-09-27 they ran after, and the 2026-09-15 migration never imported Loopback, SoundSource, Audio Hijack, Farrago, Piezo or Helium (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-post-install">BIN-1 §2.13</a>).</li>
             <li><strong>App Support restore:</strong> The system restores Loopback and SoundSource configuration files. This step is non-destructive.</li>
             <li><strong>Config trees:</strong> The system restores the Calibre configuration directory (<code>~/Library/Preferences/calibre</code>) when the application is unconfigured.</li>
-            <li><strong>Login items:</strong> The system registers AlDente, BetterSnapTool, Chrono Plus, Dropbox, Raycast, and Thaw. Thaw replaced Ice on 2026-09-17: Ice 0.11.12 crashes at launch on macOS 26.7.</li>
+            <li><strong>Login items:</strong> The system registers the login item of each app in <code>config/login-items.txt</code> that is installed (<a href="#mrk-login-items">Section&nbsp;2.5</a>). Thaw replaced Ice in that list on 2026-09-17: Ice 0.11.12 crashes at launch on macOS 26.7.</li>
             <li><strong>Apps kept from login:</strong> The system deletes the login items of Google Drive and NordVPN, which add themselves, and turns off Google Drive's <code>AutoStartOnLogin</code> setting so that it stops adding itself.</li>
           </ul>
         </div>
@@ -898,25 +898,11 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
         <li>The tool reads the tracked apps from <code>config/login-items.txt</code>.</li>
         <li>The tool finds the differences between the system and the tracked list.</li>
         <li>The tool opens an interactive selector (<code>gum</code>) for you to choose items to add or remove.</li>
-        <li>The tool updates <code>config/login-items.txt</code> with the new items.</li>
-        <li>The tool also updates <code>docs/manual.md</code> with the new list.</li>
+        <li>The tool adds the items you chose to <code>config/login-items.txt</code>, and deletes the ones you chose to remove.</li>
+        <li>The tool also updates the sentence in <code>docs/manual.md</code> that names the tracked apps.</li>
       </ol>
 
-      <div class="table-scroll">
-<table class="ref-table">
-        <caption>Table 2.5-1. Registered Login Items (<code>config/login-items.txt</code>)</caption>
-        <thead><tr><th>App</th></tr></thead>
-        <tbody>
-          <tr><td>AlDente</td></tr>
-          <tr><td>BetterSnapTool</td></tr>
-          <tr><td>Chrono Plus</td></tr>
-          <tr><td>Dipstick</td></tr>
-          <tr><td>Dropbox</td></tr>
-          <tr><td>Raycast</td></tr>
-          <tr><td>Thaw</td></tr>
-        </tbody>
-      </table>
-      </div>
+      <p><strong>Which apps.</strong> The tracked apps are listed in <a href="https://github.com/sevmorris/mrk/blob/main/config/login-items.txt"><code>config/login-items.txt</code></a> in mrk. This guide does not copy them, because a copy goes out of date each time an app is added or removed. The <a href="https://github.com/sevmorris/mrk/blob/main/docs/manual.md#phase-3--post-install-make-post-install">Phase&nbsp;3 section of the mrk manual</a> names the same apps in one sentence, which <code>sync-login-items</code> keeps in step with the file.</p>
 
       <p>A program with no terminal, such as a Settings app, can ask <code>sync-login-items</code> for the same comparison and make the same decisions, one item per run. The options are in <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#sync-login-items">BIN-1</a>.</p>
 
