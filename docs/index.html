@@ -886,7 +886,7 @@ sync -p               # Prune — remove Brewfile entries for packages no longer
         <span class="section-sub">sync-login-items</span>
       </div>
 
-      <p>The <code>sync-login-items</code> tool compares current system login items to the list in <code>scripts/post-install</code> and synchronizes them.</p>
+      <p>The <code>sync-login-items</code> tool compares current system login items to the list in <code>config/login-items.txt</code> and synchronizes them. The list holds the full path of each app, one per line, and Phase&nbsp;3 adds the login item of each app in it that is installed.</p>
 
       <pre><code>sync-login-items          # Interactive — select items to add or remove
 sync-login-items -n       # Dry run — show what would change, make no changes
@@ -895,27 +895,30 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
       <p><strong>How it works:</strong></p>
       <ol>
         <li>The tool reads the current system login items with AppleScript.</li>
-        <li>The tool parses <code>add_login_item</code> calls from <code>scripts/post-install</code>.</li>
+        <li>The tool reads the tracked apps from <code>config/login-items.txt</code>.</li>
         <li>The tool finds the differences between the system and the tracked list.</li>
         <li>The tool opens an interactive selector (<code>gum</code>) for you to choose items to add or remove.</li>
-        <li>The tool updates <code>scripts/post-install</code> with the new items.</li>
+        <li>The tool updates <code>config/login-items.txt</code> with the new items.</li>
         <li>The tool also updates <code>docs/manual.md</code> with the new list.</li>
       </ol>
 
       <div class="table-scroll">
 <table class="ref-table">
-        <caption>Table 2.5-1. Registered Login Items</caption>
+        <caption>Table 2.5-1. Registered Login Items (<code>config/login-items.txt</code>)</caption>
         <thead><tr><th>App</th></tr></thead>
         <tbody>
           <tr><td>AlDente</td></tr>
           <tr><td>BetterSnapTool</td></tr>
           <tr><td>Chrono Plus</td></tr>
+          <tr><td>Dipstick</td></tr>
           <tr><td>Dropbox</td></tr>
           <tr><td>Raycast</td></tr>
           <tr><td>Thaw</td></tr>
         </tbody>
       </table>
       </div>
+
+      <p>A program with no terminal, such as a Settings app, can ask <code>sync-login-items</code> for the same comparison and make the same decisions, one item per run. The options are in <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#sync-login-items">BIN-1</a>.</p>
 
       <p><strong>Apps that must not start at login.</strong> Google Drive and NordVPN add themselves to the login items. NordVPN does it after each upgrade, because its installer starts the app. Google Drive does it each time it starts, unless its <code>AutoStartOnLogin</code> setting is off. <code>make update</code>, <code>update-full</code> and Phase&nbsp;3 delete their login items, and <code>sync-login-items</code> never offers them. The list is <code>MRK_NOT_AT_LOGIN</code> in <code>scripts/lib.sh</code> (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#sync-login-items">BIN-1</a>).</p>
     </section>
@@ -959,7 +962,7 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
 
           <p><strong>5. Capture the login items</strong></p>
           <pre><code>sync-login-items -c</code></pre>
-          <p>Login items live in the system's LaunchServices database, and <code>scripts/post-install</code> only knows the ones captured the last time this ran. Anything added since is on this machine and nowhere else, and Phase 3 on the new machine would restore the stale list. Unlike the signing key in step 1 this is recoverable — but only if you can remember what was there, which is the thing a checklist exists to spare you.</p>
+          <p>Login items live in the system's LaunchServices database, and <code>config/login-items.txt</code> only knows the ones captured the last time this ran. Anything added since is on this machine and nowhere else, and Phase 3 on the new machine would restore the stale list. Unlike the signing key in step 1 this is recoverable — but only if you can remember what was there, which is the thing a checklist exists to spare you.</p>
 
           <p><strong>6. Push any pending mrk changes</strong></p>
           <pre><code>cd ~/mrk
@@ -1056,7 +1059,7 @@ git push</code></pre>
           <tr><td>make updates</td><td><code>macos-updates</code></td><td>Install the macOS updates for the installed version. It never installs a major upgrade, such as macOS 26 to macOS 27 (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#macos-updates">BIN-1 §2.36</a>)</td></tr>
           <tr><td>make pull</td><td>—</td><td>Fast-forward the mrk repo to origin, then rebuild the Go tools and relink the commands and dotfiles the pulled commits changed</td></tr>
           <tr><td>make maintain</td><td><code>maintain</code></td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
-          <tr><td>make dock</td><td>—</td><td>Populate the Dock with preferred apps (requires dockutil)</td></tr>
+          <tr><td>make dock</td><td>—</td><td>Populate the Dock from <code>config/dock.txt</code> (requires dockutil)</td></tr>
           <tr><td>make uninstall</td><td>—</td><td>Remove symlinks and undo setup</td></tr>
           <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in every Go module under <code>tools/</code>: picker, mrk-status, mrk-menu and theme</td></tr>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
