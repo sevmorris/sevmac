@@ -1090,7 +1090,7 @@ git push</code></pre>
       <p>Run the <code>status</code> command to open the mrk-status dashboard. Run <code>make status</code> to print the same panels as text. The dashboard shows four panels with ✓/⚠/✗ indicators, the day's work first. Each line shows its fix. Press <strong>f</strong> to run the selected panel's fix; the tool asks for confirmation first. Press <strong>r</strong> to refresh. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#status">BIN-1</a> has every check and fix.</p>
 
       <ul>
-        <li><strong>Unrecorded</strong> — What the next Mac would not get: Homebrew packages missing from the Brewfile, or in it and not installed; uncommitted or unpushed work in <code>~/mrk</code> and in the repositories in <code>~/Projects</code>; repositories the manifest does not record.</li>
+        <li><strong>Unrecorded</strong> — What the next Mac would not get: Homebrew packages missing from the Brewfile, or in it and not installed; login items <code>config/login-items.txt</code> does not track, or tracks and this Mac does not have; uncommitted or unpushed work in <code>~/mrk</code> and in the repositories in <code>~/Projects</code>; repositories the manifest does not record; app preferences changed since the last <code>snapshot-prefs</code>. Each list is the answer of the command that records it — <code>sync --check</code>, <code>sync-login-items --check</code>, <code>snapshot-prefs --check</code> — so the dashboard and that command cannot disagree. The login items are checked only from a terminal: they come from System Events, which would ask Dipstick for Automation access.</li>
         <li><strong>Upkeep</strong> — <code>~/mrk</code> behind the remote, Go tools older than their source, outdated Homebrew packages, and macOS updates for the installed version. A major upgrade is named and never counted. Only macOS itself can be one: Safari and the Command Line Tools count as updates.</li>
         <li><strong>Time Machine Backups</strong> — Whether Time Machine has a destination, and how old the last backup is: a warning after one day, an error after seven.</li>
         <li><strong>Installation</strong> — The installation checks, in one panel:
@@ -1101,7 +1101,8 @@ git push</code></pre>
             <li><strong>PATH</strong> — Whether <code>~/bin</code> is on the PATH.</li>
             <li><strong>Homebrew</strong> — The installed version.</li>
             <li><strong>Brewfile</strong> — How many formulae and casks it tracks. What is installed against it is under Unrecorded.</li>
-            <li><strong>macOS Defaults</strong> and <strong>Security Hardening</strong> — Whether each is applied; the rollback scripts are the evidence.</li>
+            <li><strong>macOS Defaults</strong> — How many keys of <code>config/defaults.tsv</code> hold mrk's value, as <code>defaults.sh --check</code> counts them (&ldquo;148 of 150 set&rdquo;), and which ones do not: a setting changed in System Settings since <code>make defaults</code> shows here. The trackpad keys count only after <code>make trackpad</code>. A Mail or TextEdit key waits, uncounted as drift, until the app has made its preferences.</li>
+            <li><strong>Security Hardening</strong> — Whether it is applied; the rollback script is the evidence.</li>
             <li><strong>Displaced files</strong> — Shown <em>only when backups exist</em>: the files setup moved aside. A report, not a health check.</li>
           </ul>
         </li>
