@@ -661,6 +661,10 @@ exec zsh</code></pre>
       </div>
           <p>The system links files only: never a directory, the README, an example or <code>.DS_Store</code>. It links them only from <code>~/mrk</code>, or from the checkout <code>MRK_ROOT</code> names. From any other checkout, a worktree say, Phase&nbsp;1 links nothing into <code>~</code>, and says so. Until 2026-09-27 it linked from any checkout, and linked whatever was in <code>dotfiles/</code>, including the <code>.claude</code> folder Claude Code creates there. Removing a worktree then broke every link, and the <code>.claude</code> folder moved your real <code>~/.claude</code> into the backups (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-setup">BIN-1 §2.11</a>).</p>
           <p>Setup moves whatever a dotfile replaces, whether a file, a folder or a symlink, into <code>~/.mrk/backups/</code>. The system creates a rollback script for macOS defaults at <code>~/.mrk/defaults-rollback.sh</code>.</p>
+          <div class="callout">
+            <span class="callout-label">Note — Mail and TextEdit Wait for a Second Run</span>
+            <div class="callout-body">Phase&nbsp;1 skips two of the macOS defaults, one for Mail and one for TextEdit, and says so. Both apps keep their preferences in their sandbox container, which the app makes when you set it up or first use it, so a key written before then would fail or land where the app never reads it. After you set up Mail and use TextEdit, run <code>make defaults</code> again.</div>
+          </div>
           <p><strong>What Phase 3 does:</strong></p>
           <ul>
             <li><strong>Topgrade:</strong> The system links <code>assets/topgrade.toml</code> to <code>~/.config/topgrade.toml</code>, replacing a link that points nowhere and keeping a real file as <code>.bak</code>. Like Phase&nbsp;1, Phase&nbsp;3 makes this link and the Claude Code links below only from <code>~/mrk</code>, or the checkout <code>MRK_ROOT</code> names.</li>
