@@ -470,12 +470,12 @@
           <tr>
             <td>You changed the settings of an application.</td>
             <td><code>snapshot-prefs</code></td>
-            <td>Exports the plist and pushes it to mrk-prefs. mrk's <code>config/app-prefs.tsv</code> lists the managed applications; see Section&nbsp;2.4 of <a href="index.html#mrk-prefs">SMAC-1</a>.</td>
+            <td>Exports the plist and pushes it to mrk-prefs. mrk's <code>config/app-prefs.tsv</code> lists the managed applications; see Section&nbsp;2.4 of <a href="index.html#mrk-prefs">SMAC-1</a>. The Unrecorded panel of <code>status</code> names each changed setting until you do.</td>
           </tr>
           <tr>
             <td>You added or removed a login item.</td>
             <td><code>sync-login-items -c</code></td>
-            <td>Updates the tracked list in <code>config/login-items.txt</code>.</td>
+            <td>Updates the tracked list in <code>config/login-items.txt</code>. The Unrecorded panel of <code>status</code> names an item the list lacks, when you run it in a terminal.</td>
           </tr>
           <tr>
             <td>You removed a package with Homebrew.</td>
@@ -510,7 +510,7 @@
           <tr>
             <td>You changed a macOS setting in System&nbsp;Settings.</td>
             <td><code>defaults-watch</code>, then edit <code>config/defaults.tsv</code>.</td>
-            <td>The only change on this page that nothing records for you. Run <code>defaults-watch</code>, change the setting, and press Return: it names the key and shows the line to add to <code>config/defaults.tsv</code>, one key a line with a tab between the fields. Add that line, then a line for the key in <code>docs/defaults/descriptions.tsv</code>. <code>make check</code> fails when a key has no description, so it will tell you if you forget.</td>
+            <td>The only change on this page that nothing records for you. If the key is already in <code>config/defaults.tsv</code>, the Installation panel of <code>status</code> shows it as not set: run <code>make defaults</code> to put mrk's value back, or change the line to keep yours. For a new key, run <code>defaults-watch</code>, change the setting, and press Return: it names the key and shows the line to add to <code>config/defaults.tsv</code>, one key a line with a tab between the fields. Add that line, then a line for the key in <code>docs/defaults/descriptions.tsv</code>. <code>make check</code> fails when a key has no description, so it will tell you if you forget.</td>
           </tr>
         </tbody>
       </table>
