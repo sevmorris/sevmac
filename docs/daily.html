@@ -510,7 +510,7 @@
           <tr>
             <td>You changed a macOS setting in System&nbsp;Settings.</td>
             <td><code>defaults-watch</code>, then edit <code>config/defaults.tsv</code>.</td>
-            <td>The only change on this page that nothing records for you. Run <code>defaults-watch</code>, change the setting, and press Return: it names the key and shows the line to add to <code>config/defaults.tsv</code>, one key a line with a tab between the fields. Add that line, then a description in <code>docs/defaults/script.js</code>. <code>make check</code> fails when a key has no description, so it will tell you if you forget.</td>
+            <td>The only change on this page that nothing records for you. Run <code>defaults-watch</code>, change the setting, and press Return: it names the key and shows the line to add to <code>config/defaults.tsv</code>, one key a line with a tab between the fields. Add that line, then a line for the key in <code>docs/defaults/descriptions.tsv</code>. <code>make check</code> fails when a key has no description, so it will tell you if you forget.</td>
           </tr>
         </tbody>
       </table>
