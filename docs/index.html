@@ -1101,7 +1101,7 @@ git push</code></pre>
             <li><strong>PATH</strong> — Whether <code>~/bin</code> is on the PATH.</li>
             <li><strong>Homebrew</strong> — The installed version.</li>
             <li><strong>Brewfile</strong> — How many formulae and casks it tracks. What is installed against it is under Unrecorded.</li>
-            <li><strong>macOS Defaults</strong> — How many keys of <code>config/defaults.tsv</code> hold mrk's value, as <code>defaults.sh --check</code> counts them (&ldquo;148 of 150 set&rdquo;), and which ones do not: a setting changed in System Settings since <code>make defaults</code> shows here. The trackpad keys count only after <code>make trackpad</code>. A Mail or TextEdit key waits, uncounted as drift, until the app has made its preferences.</li>
+            <li><strong>macOS Defaults</strong> — How many keys of <code>config/defaults.tsv</code> hold mrk's value, as <code>defaults.sh --check</code> counts them (&ldquo;148 of 150 set&rdquo;), and which ones do not: a setting changed in System Settings since <code>make defaults</code> shows here. The trackpad keys count only after <code>make trackpad</code>. A Mail or TextEdit key waits, uncounted as drift, until the app has made its preferences. A key that <code>config/defaults-skip.tsv</code> lists (off in Gearbox) is left out of the count, and the line says how many keys are skipped.</li>
             <li><strong>Security Hardening</strong> — Whether it is applied; the rollback script is the evidence.</li>
             <li><strong>Displaced files</strong> — Shown <em>only when backups exist</em>: the files setup moved aside. A report, not a health check.</li>
           </ul>
