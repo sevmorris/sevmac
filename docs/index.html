@@ -775,7 +775,8 @@ make doctor     # Check ~/bin is on PATH; pass ARGS=--fix to add ~/bin to .zshrc
           <p class="desc">Scan installed packages, compare them to the Brewfile, and add missing packages.</p>
           <pre><code>sync                  # Interactive — opens mrk-picker TUI to select packages
 sync -n               # Dry run — show what would be added, make no changes
-sync -c               # Auto-commit the Brewfile after updating
+sync -c               # Commit the Brewfile and the picker descriptions after updating
+sync --push           # Commit them, then push that commit
 sync -p               # Prune — remove Brewfile entries for packages no longer installed</code></pre>
           <p><strong>How sync works:</strong></p>
           <ol>
@@ -918,8 +919,8 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
           <p><code>snapshot-keys</code> carries the key files. It does not carry the secrets KeyVault owns — its API keys and its notes, which live in the login Keychain, and the files stored in it, which it keeps encrypted on disk. Start KeyVault and export the vault. KeyVault writes its own passphrase-encrypted OpenPGP archive. Put it on the same encrypted disk as the archive from step&nbsp;1. The two archives hold different things, and you need both.</p>
 
           <p><strong>3. Sync the Brewfile</strong></p>
-          <pre><code>sync -c</code></pre>
-          <p>This command captures packages that you installed since the last sync. It commits the updated Brewfile.</p>
+          <pre><code>sync --push</code></pre>
+          <p>This command captures packages that you installed since the last sync. It commits the updated Brewfile and its picker descriptions, and pushes the commit. If it keeps the commit, it says why: run <code>mrk-push</code>.</p>
 
           <p><strong>4. Snapshot app preferences</strong></p>
           <pre><code>snapshot-prefs</code></pre>
@@ -1294,7 +1295,7 @@ make post-install</code></pre>
             <li><strong>Ignore</strong> — <code>sync</code> adds the name to <code>~/.mrk/sync-ignore</code>, so neither <code>sync</code> nor Barkeep offers it again.</li>
             <li><strong>Not installed</strong> — The Brewfile entries of the packages that are not installed. <strong>Remove</strong> deletes the entry and its picker description, as <code>sync --prune</code> does.</li>
             <li><strong>Other edits</strong> — After a move, a section rename or delete, or a Remove from Brewfile, Barkeep runs <code>check-picker-desc --fix</code>, so no picker description is missing or left behind.</li>
-            <li><strong>Commits</strong> — Barkeep does not commit. Commit <code>~/mrk</code> with <code>mrk-push</code> or <code>pushall</code>, as before.</li>
+            <li><strong>Commits</strong> — From Barkeep 1.16.0, <strong>Commit and Push Brewfile Changes</strong> in the File menu is on at first. With it, an add and a prune run <code>sync --push</code>, which commits the Brewfile and the picker descriptions and pushes that commit to GitHub. When an earlier commit is not pushed, or the push fails, <code>sync</code> keeps the commit and the console says why. Barkeep does not commit its other edits, and earlier versions commit nothing: commit <code>~/mrk</code> with <code>mrk-push</code> or <code>pushall</code>.</li>
           </ul>
           <p>Barkeep runs each mrk script with the environment of a new Terminal window, and the console shows its output. For the options Barkeep passes and what <code>sync</code> refuses, see <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#sync">BIN-1 §2.8 — sync</a>.</p>
         </div>
