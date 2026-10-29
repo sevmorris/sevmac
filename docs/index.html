@@ -1010,7 +1010,7 @@ git push</code></pre>
           <tr><td>make harden</td><td>—</td><td>Apply macOS security hardening</td></tr>
           <tr><td>make trim-services</td><td><code>trim-services</code></td><td>Disable background LaunchAgents this Mac does not need: Samsung Magician's two and Google's Chrome updater. Writes a rollback, and checks each disable against launchd's override list. It no longer touches the two Photos agents: on macOS 26.7 launchd starts them on request even when they are disabled (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#trim-services">BIN-1 §2.33</a>)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Brewfile</td></tr>
-          <tr><td>make sync</td><td><code>sync</code></td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
+          <tr><td>make sync</td><td><code>sync</code></td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>--push</code> commit and push · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Login Items</td></tr>
           <tr><td>make sync-login-items</td><td><code>sync-login-items</code></td><td>Compare the system login items to the tracked list and sync them (<code>-c</code> commit · <code>-n</code> dry run)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Preferences</td></tr>
@@ -1288,9 +1288,9 @@ make post-install</code></pre>
           <h3>mrk Mode</h3>
         </div>
         <div class="proc-body">
-          <p class="desc">From Barkeep 1.15.0, Barkeep uses mrk's own scripts when the Brewfile it opens is in an mrk checkout: <code>scripts/sync</code> and <code>tools/picker/descriptions.tsv</code> are beside it, as in <code>~/mrk</code>. mrk then decides each change, with the checks that <code>sync</code> does on the command line. Any other Brewfile works as before.</p>
+          <p class="desc">From Barkeep 1.15.0, Barkeep uses mrk's own scripts when the Brewfile it opens is in an mrk checkout: <code>scripts/sync</code>, <code>scripts/check-picker-desc</code> and <code>tools/picker/descriptions.tsv</code> are beside it, as in <code>~/mrk</code>. mrk then decides each change, with the checks that <code>sync</code> does on the command line. Any other Brewfile works as before.</p>
           <ul>
-            <li><strong>Untracked</strong> — The list is the one that <code>sync</code> offers: the packages you installed that the Brewfile does not have, without the names in <code>~/.mrk/sync-ignore</code>. It is the same list that the mrk-status Unrecorded panel and Dipstick count.</li>
+            <li><strong>Untracked</strong> — The list is the one that <code>sync</code> offers: the packages you installed that the Brewfile does not have, without the names in <code>~/.mrk/sync-ignore</code>. It is the same list that the mrk-status Unrecorded panel and Dipstick count. From Barkeep 1.17.0, the link <code>barkeep://untracked</code> opens this list, and Dipstick 0.7's fix for a package the Brewfile does not have opens it.</li>
             <li><strong>Add to Brewfile / Adopt</strong> — <code>sync</code> adds the package. A cask goes under the <code>## Casks -</code> section of its app's category, and Barkeep shows that section before you add it. A formula goes in the section you select, because <code>sync</code> does not guess the section of a formula. Each entry goes in name order, with its picker description.</li>
             <li><strong>Ignore</strong> — <code>sync</code> adds the name to <code>~/.mrk/sync-ignore</code>, so neither <code>sync</code> nor Barkeep offers it again.</li>
             <li><strong>Not installed</strong> — The Brewfile entries of the packages that are not installed. <strong>Remove</strong> deletes the entry and its picker description, as <code>sync --prune</code> does.</li>

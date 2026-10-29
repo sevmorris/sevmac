@@ -580,7 +580,7 @@ update-full --no-reboot  # Do not offer a reboot</code></pre>
 <pre><code>status</code></pre>
         </li>
         <li>
-          <p>Tidy the project repositories. <code>tidy-projects</code> reports what has piled up in <code>~/Projects</code> and <code>~/mrk</code>: merged branches, finished worktrees, stale refs, Pages deployments past ten, and build output. Read the report, then delete the categories you agree to. It deletes only what it can prove is merged or can be rebuilt (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#tidy-projects">BIN-1 §2.39</a>).</p>
+          <p>Tidy the project repositories. <code>tidy-projects</code> reports what has piled up in <code>~/Projects</code> and <code>~/mrk</code>: merged branches, finished worktrees, stale refs, Pages deployments past ten, and build output. Read the report, then delete the categories you agree to. It deletes only what it can prove is merged or can be rebuilt (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#tidy-projects">BIN-1 §2.39</a>). The Maintenance group of <code>mrk-menu</code> has the report, and the four cleanups that lose no work: <code>--apply ff,refs,worktrees,branches</code>.</p>
 <pre><code>tidy-projects                          # Report only
 tidy-projects --apply branches,refs    # Delete what the report offers, by category</code></pre>
         </li>
