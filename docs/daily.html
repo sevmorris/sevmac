@@ -382,8 +382,8 @@
           <span class="what">Opens the command launcher. Its first group, Daily, holds the commands that record a change. Use it when you do not remember a command.</span>
         </div>
         <div class="cmd">
-          <span class="name">sync -c</span>
-          <span class="what">Adds new installed packages to the Brewfile. Then it commits the change.</span>
+          <span class="name">sync --push</span>
+          <span class="what">Adds new installed packages to the Brewfile. Then it commits the Brewfile and the picker descriptions, and pushes that commit. When an earlier commit is not pushed, or the push fails, it keeps the commit and says so: run <code>mrk-push</code>. <code>sync -c</code> commits and does not push.</span>
         </div>
         <div class="cmd">
           <span class="name">snapshot-prefs</span>
@@ -464,7 +464,7 @@
         <tbody>
           <tr>
             <td>You installed a package with Homebrew.</td>
-            <td><code>sync -c</code></td>
+            <td><code>sync --push</code></td>
             <td>Adds the package to the Brewfile, filed by the kind of app it is, and writes its mrk-picker description. A package that is not in the Brewfile is not installed on a new machine.</td>
           </tr>
           <tr>
@@ -484,8 +484,8 @@
           </tr>
           <tr>
             <td>You added or removed a package in Barkeep.</td>
-            <td><code>mrk-push "message"</code></td>
-            <td>Commits the Brewfile with the package's mrk-picker description, which Barkeep does not write. mrk-push runs <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-picker-desc"><code>check-picker-desc --fix</code></a> before it commits, and <code>pushall</code> does the same for <code>~/mrk</code>.</td>
+            <td>Nothing, with Barkeep 1.16.0 or later and <strong>Commit and Push Brewfile Changes</strong> on, which it is at first. Otherwise, and for Barkeep's other edits, <code>mrk-push "message"</code>.</td>
+            <td>Barkeep 1.16.0 runs <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#sync"><code>sync --push</code></a> for an add or a prune, which commits and pushes it. <code>mrk-push</code> commits the Brewfile with the package's mrk-picker description, which Barkeep's own edits do not write. mrk-push runs <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-picker-desc"><code>check-picker-desc --fix</code></a> before it commits, and <code>pushall</code> does the same for <code>~/mrk</code>.</td>
           </tr>
           <tr>
             <td>You changed a file in <code>~/mrk</code>.</td>
@@ -528,7 +528,7 @@
 
       <div class="callout callout-rule">
         <span class="callout-label">Rule — The Only Rule That Is Important</span>
-        <div class="callout-body">If you install it with Homebrew, run <code>sync -c</code>. If you configure it in a window, run <code>snapshot-prefs</code>. If you change it in System Settings, run <code>defaults-watch</code> and add the key it names to <code>config/defaults.tsv</code>. A change that you do not record does not move to the next machine.<br><br>Neither command records a key. <code>mrk-prefs</code> never carries private key material, so <code>~/.ssh</code>, <code>~/.gnupg</code> and your signing identities move only through <code>snapshot-keys</code>. That is a migration step, not a daily one — see <a href="index.html#mrk-migration">SMAC-1, Section&nbsp;2.6</a>.</div>
+        <div class="callout-body">If you install it with Homebrew, run <code>sync --push</code>. If you configure it in a window, run <code>snapshot-prefs</code>. If you change it in System Settings, run <code>defaults-watch</code> and add the key it names to <code>config/defaults.tsv</code>. A change that you do not record does not move to the next machine.<br><br>Neither command records a key. <code>mrk-prefs</code> never carries private key material, so <code>~/.ssh</code>, <code>~/.gnupg</code> and your signing identities move only through <code>snapshot-keys</code>. That is a migration step, not a daily one — see <a href="index.html#mrk-migration">SMAC-1, Section&nbsp;2.6</a>.</div>
       </div>
 
       <p>Do not run <code>sync</code> after each installation. Once each week is sufficient. But always run it before a migration. See the checklist in <a href="index.html#mrk-migration">SMAC-1, Section 2.6</a>.</p>
@@ -550,7 +550,7 @@
       <p><strong>Each week.</strong> These three commands take a few minutes.</p>
 
 <pre><code>update        # Upgrade all the packages with topgrade
-sync -c       # Add new packages to the Brewfile, then commit
+sync --push   # Add new packages to the Brewfile, then commit and push
 pushall       # Push all the project repos, then sync ~/mrk</code></pre>
 
       <p>The <code>update</code> command is a shell function in <code>~/.aliases</code>. It runs topgrade. Then it deletes the login items of Google Drive and NordVPN, because a cask upgrade can add them again, and it shows each one it deletes. It does not close the applications. It does not offer a reboot. topgrade does every step even when one fails, so read the last lines: they say which steps failed and that the others ran. If they say the run stopped before its summary, not every step ran.</p>
