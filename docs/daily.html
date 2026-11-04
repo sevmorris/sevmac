@@ -431,6 +431,11 @@
             <td>Clears the Xcode DerivedData directory. A LaunchAgent starts it.</td>
           </tr>
           <tr>
+            <td>brew update</td>
+            <td>Each day at 06:00, and at load</td>
+            <td>Fetches Homebrew's list of new versions, so <code>status</code> shows the outdated packages. It upgrades nothing: <code>make update</code> does that. A LaunchAgent starts it.</td>
+          </tr>
+          <tr>
             <td>check-updates</td>
             <td>At each shell start. It fetches at most once a day.</td>
             <td>Compares <code>~/mrk</code> to the remote, and asks once about each update. It is silent if there are no updates.</td>
