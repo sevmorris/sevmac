@@ -391,7 +391,7 @@
         </div>
         <div class="cmd">
           <span class="name">pushall</span>
-          <span class="what">Pushes each repository in <code>~/Projects</code>. Then it syncs <code>~/mrk</code>.</span>
+          <span class="what">Commits and pushes each repository in <code>~/Projects</code>. Then it commits and pushes <code>~/mrk</code>.</span>
         </div>
         <div class="cmd">
           <span class="name">update</span>
@@ -500,7 +500,7 @@
           <tr>
             <td>You made commits in a project.</td>
             <td><code>pushall</code></td>
-            <td>Pushes each repository in <code>~/Projects</code>. Then it syncs <code>~/mrk</code>.</td>
+            <td>Commits and pushes each repository in <code>~/Projects</code>. Then it commits and pushes <code>~/mrk</code>.</td>
           </tr>
           <tr>
             <td>You cloned a repository into <code>~/Projects</code>.</td>
@@ -556,7 +556,7 @@
 
 <pre><code>update        # Upgrade all the packages with topgrade
 sync --push   # Add new packages to the Brewfile, then commit and push
-pushall       # Push all the project repos, then sync ~/mrk</code></pre>
+pushall       # Commit and push the project repos, then ~/mrk</code></pre>
 
       <p>The <code>update</code> command is a shell function in <code>~/.aliases</code>. It runs topgrade. Then it deletes the login items of Google Drive and NordVPN, because a cask upgrade can add them again, and it shows each one it deletes. It does not close the applications. It does not offer a reboot. topgrade does every step even when one fails, so read the last lines: they say which steps failed and that the others ran. If they say the run stopped before its summary, not every step ran.</p>
 
@@ -667,7 +667,7 @@ exec zsh</code></pre>
 
       <div class="table-scroll">
 <table class="ref-table wrap-first">
-        <caption>Table G-1. Where to Look</caption>
+        <caption>Table F-1. Where to Look</caption>
         <thead><tr><th>You want to</th><th>Read</th></tr></thead>
         <tbody>
           <tr><td>Set up a new machine</td><td><a href="index.html#mrk-new-machine">Section 2.2 — New Machine Setup</a></td></tr>
