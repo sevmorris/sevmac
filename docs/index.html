@@ -599,7 +599,7 @@
         <tbody>
           <tr><td>Phase 1 — Setup</td><td><code>make setup</code></td><td>Xcode CLT, dotfiles, scripts/bin in <code>~/bin</code>, the macOS defaults in <code>config/defaults.tsv</code>, sets Zsh as login shell (registering it in <code>/etc/shells</code> first, with sudo, because <code>chsh</code> refuses a shell that is not listed there and Homebrew does not register its own), installs oh-my-zsh and the configured zsh plugins (zsh-autosuggestions, zsh-syntax-highlighting)</td></tr>
           <tr><td>Phase 2 — Homebrew</td><td><code>make brew</code></td><td>Installs Homebrew, runs all packages from the Brewfile with interactive selection for new installs. It does not install App Store apps, which are not in the Brewfile: install them from App Store.app by hand (BIN-1 links the list) and run Phase 3 again afterwards</td></tr>
-          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser preferences, dev runtimes (openjdk, nvm and Node, pyenv), my own apps from their GitHub releases, preference plist imports, login items</td></tr>
+          <tr><td>Phase 3 — Post-Install</td><td><code>make post-install</code></td><td>App configs, browser preferences, dev runtimes (openjdk, nvm and Node, pyenv), my own apps from their GitHub releases, preference plist imports, login items, and three LaunchAgents: the cache clearing at 03:00 and <code>brew update</code> at 06:00</td></tr>
         </tbody>
       </table>
       </div>
@@ -674,13 +674,14 @@ exec zsh</code></pre>
             <li><strong>My own applications:</strong> The system downloads each app that <a href="https://github.com/sevmorris/mrk/blob/main/config/companion-apps.txt"><code>config/companion-apps.txt</code></a> in mrk lists, each from its latest GitHub release, and installs it only if the app is signed by the expected Developer ID and notarized. An app that fails the check is not installed, and Phase&nbsp;3 reports it as a failed step. Magic Backup Machine's repository is private: without <code>gh</code> logged in, Phase&nbsp;3 skips it with a note instead, and <code>make apps</code> installs it after <code>gh auth login</code>. An app already in <code>/Applications</code> is skipped: this installs, it does not update, and each of these apps checks GitHub for its own updates once it is running. <code>make apps</code> runs the same step on its own (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#install-apps">BIN-1 §2.37</a>). Cypher/FL2601 is not in the list: it was retired on 2026-09-23, and it was never installed this way, having been a Homebrew cask while it lived.</li>
             <li><strong>Claude Code guidance for ~/Projects:</strong> The system links <code>assets/CLAUDE.md</code> to <code>~/Projects/CLAUDE.md</code> and <code>assets/projects-skills/</code> to <code>~/Projects/.claude/skills</code>. Neither sits inside a repository where it lives, so mrk tracks both and links them into place like a dotfile. A real file already at either path is moved aside with a <code>.bak</code> suffix, never overwritten.</li>
             <li><strong>Claude Code, every session:</strong> The system links each skill in <code>assets/projects-skills/</code> into <code>~/.claude/skills</code>, which Claude Code reads in every session. That is what loads <code>release-standards</code> and <code>repo-standards</code> in a session started inside an app repository: Claude Code reads a project's <code>.claude/skills</code> only when the session starts in that folder, never a parent's, so the <code>~/Projects</code> link alone does not reach them. A link left behind by a skill mrk no longer has is removed. It also adds the <code>dependency-updates</code> skill's SessionStart hook to <code>~/.claude/settings.json</code>. Every session then opens with a note of any bundled binary — yt-dlp, FFmpeg, LAME — that is behind upstream, and any open Dependabot alert. The hook is added once and nothing else in the file is touched.</li>
-              <li><strong>Git remote:</strong> The system changes the mrk origin from HTTPS to SSH after GitHub SSH authentication succeeds.</li>
+            <li><strong>Git remote:</strong> The system changes the mrk origin from HTTPS to SSH after GitHub SSH authentication succeeds.</li>
             <li><strong>Preferences auto-pull:</strong> The system clones <code>mrk-prefs</code> into <code>~/.mrk/preferences/</code> if SSH is authenticated.</li>
             <li><strong>Plist imports:</strong> The system imports the preferences of each application that <code>config/app-prefs.tsv</code> lists (<a href="#mrk-prefs">Section&nbsp;2.4</a>). This step is non-destructive. It skips any application with existing preferences, including a sandboxed application such as Keka, which keeps them in its container. It also skips an application that is not installed yet. The imports run before any step that writes app defaults, because one key is enough to make an application look configured. Until 2026-09-27 they ran after, and the 2026-09-15 migration never imported Loopback, SoundSource, Audio Hijack, Farrago, Piezo or Helium (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-post-install">BIN-1 §2.13</a>).</li>
             <li><strong>App Support restore:</strong> The system restores Loopback and SoundSource configuration files. This step is non-destructive.</li>
             <li><strong>Config trees:</strong> The system restores the Calibre configuration directory (<code>~/Library/Preferences/calibre</code>) when the application is unconfigured.</li>
             <li><strong>Login items:</strong> The system registers the login item of each app in <code>config/login-items.txt</code> that is installed (<a href="#mrk-login-items">Section&nbsp;2.5</a>). Thaw replaced Ice in that list on 2026-09-17: Ice 0.11.12 crashes at launch on macOS 26.7.</li>
             <li><strong>Apps kept from login:</strong> The system deletes the login items of Google Drive and NordVPN, which add themselves, and turns off Google Drive's <code>AutoStartOnLogin</code> setting so that it stops adding itself.</li>
+            <li><strong>LaunchAgents:</strong> The system copies three LaunchAgents into <code>~/Library/LaunchAgents/</code> and loads them: <code>com.user.clear_app_caches</code> runs <code>clear-app-caches</code> each day at 03:00 and at load, <code>com.user.clear_derived_data</code> runs <code>clear-derived-data</code> each Sunday at 03:00, and <code>com.user.brew_update</code> runs <code>brew update</code> each day at 06:00 and at load, for the Upkeep panel (<a href="#mrk-status">Section&nbsp;2.8</a>). It skips an agent whose file has not changed. <code>make uninstall</code> and <code>nuke-mrk</code> unload all three and delete them (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-post-install">BIN-1 §2.13</a>).</li>
           </ul>
         </div>
       </div>
@@ -879,7 +880,6 @@ sync-login-items -c       # Auto-commit changes after updating</code></pre>
         <li>The tool finds the differences between the system and the tracked list.</li>
         <li>The tool opens an interactive selector (<code>gum</code>) for you to choose items to add or remove.</li>
         <li>The tool adds the items you chose to <code>config/login-items.txt</code>, and deletes the ones you chose to remove.</li>
-        <li>The tool also updates the sentence in <code>docs/manual.md</code> that names the tracked apps.</li>
       </ol>
 
       <p><strong>Which apps.</strong> The tracked apps are listed in <a href="https://github.com/sevmorris/mrk/blob/main/config/login-items.txt"><code>config/login-items.txt</code></a> in mrk. This guide does not copy them, and neither does the mrk manual, because a copy goes out of date each time an app is added or removed.</p>
@@ -986,7 +986,7 @@ git push</code></pre>
         <div class="callout-body">Each target in Table 2.7-1 runs from any directory as <code>make -C ~/mrk &lt;target&gt;</code>. From inside <code>~/mrk</code>, the shorter <code>make &lt;target&gt;</code> is the same thing. The <code>make setup</code> command also deploys <code>~/Makefile</code>, so from your home directory the shorter <code>make &lt;target&gt;</code> works too, for every target in the table: <code>make update</code>, <code>make status</code>, <code>make sync ARGS=-c</code>. Until 2026-09-30 it covered only a few, such as <code>make sync</code> and <code>make snapshot-prefs</code>.</div>
       </div>
 
-      <p>Many targets have a shorter equivalent in <code>~/bin</code>. Where the Shortcut column gives a command, that command and the make target run the same script. Use either one. Read the caution below the table before you use <code>status</code>.</p>
+      <p>Many targets have a shorter equivalent in <code>~/bin</code>. Where the Shortcut column gives a command, that command and the make target run the same script. Use either one. A dash means the target has no command of its own in <code>~/bin</code>. Read the caution below the table before you use <code>status</code>.</p>
 
       <div class="table-scroll">
 <table class="ref-table">
@@ -994,20 +994,20 @@ git push</code></pre>
         <thead><tr><th>Make Target</th><th>Shortcut</th><th>Description</th></tr></thead>
         <tbody>
           <tr class="tbl-cat"><td colspan="3">Bootstrap</td></tr>
-          <tr><td>make all</td><td>—</td><td>Full install: setup + brew + post-install + TUI binaries</td></tr>
-          <tr><td>make setup / make install</td><td>—</td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
-          <tr><td>make setup-dry</td><td>—</td><td>Preview Phase 1 changes without applying them</td></tr>
-          <tr><td>make brew</td><td>—</td><td>Phase 2: Homebrew packages and casks</td></tr>
-          <tr><td>make post-install</td><td>—</td><td>Phase 3: app configs and login items</td></tr>
-          <tr><td>make build-tools</td><td>—</td><td>Build all Go TUI binaries (picker + mrk-status + mrk-menu)</td></tr>
+          <tr><td>make all</td><td><code>mrk-install --all</code></td><td>Full install: setup + brew + post-install + TUI binaries</td></tr>
+          <tr><td>make setup / make install</td><td><code>mrk-setup</code></td><td>Phase 1: shell, dotfiles, macOS defaults</td></tr>
+          <tr><td>make setup-dry</td><td><code>mrk-setup --dry-run</code></td><td>Preview Phase 1 changes without applying them</td></tr>
+          <tr><td>make brew</td><td><code>mrk-brew</code></td><td>Phase 2: Homebrew packages and casks</td></tr>
+          <tr><td>make post-install</td><td><code>mrk-post-install</code></td><td>Phase 3: app configs and login items</td></tr>
+          <tr><td>make build-tools</td><td><code>build-tools</code></td><td>Build all Go TUI binaries (picker + mrk-status + mrk-menu)</td></tr>
           <tr><td>make picker / mrk-status / mrk-menu</td><td>—</td><td>Build one TUI binary and link it into ~/bin</td></tr>
           <tr class="tbl-cat"><td colspan="3">Partial Phases</td></tr>
-          <tr><td>make dotfiles</td><td>—</td><td>Link dotfiles only</td></tr>
-          <tr><td>make apps</td><td>—</td><td>Install my own applications from their GitHub releases. Skips an app already in <code>/Applications</code> — it installs, it does not update (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#install-apps">BIN-1 §2.37</a>)</td></tr>
-          <tr><td>make tools</td><td>—</td><td>Link scripts and bin into ~/bin only</td></tr>
-          <tr><td>make defaults</td><td>—</td><td>Apply the macOS defaults in <code>config/defaults.tsv</code> only. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-defaults">mrk-defaults</a> can also compare them with this Mac and change nothing, for a program with no terminal, such as Dipstick.</td></tr>
-          <tr><td>make trackpad</td><td>—</td><td>Apply the macOS defaults in <code>config/defaults.tsv</code>, including the trackpad settings</td></tr>
-          <tr><td>make harden</td><td>—</td><td>Apply macOS security hardening</td></tr>
+          <tr><td>make dotfiles</td><td><code>mrk-setup --only dotfiles</code></td><td>Link dotfiles only</td></tr>
+          <tr><td>make apps</td><td><code>install-apps</code></td><td>Install my own applications from their GitHub releases. Skips an app already in <code>/Applications</code> — it installs, it does not update (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#install-apps">BIN-1 §2.37</a>)</td></tr>
+          <tr><td>make tools</td><td><code>mrk-setup --only tools</code></td><td>Link scripts and bin into ~/bin only</td></tr>
+          <tr><td>make defaults</td><td><code>mrk-defaults</code></td><td>Apply the macOS defaults in <code>config/defaults.tsv</code> only. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-defaults">mrk-defaults</a> can also compare them with this Mac and change nothing, for a program with no terminal, such as Dipstick.</td></tr>
+          <tr><td>make trackpad</td><td><code>mrk-defaults --with-trackpad</code></td><td>Apply the macOS defaults in <code>config/defaults.tsv</code>, including the trackpad settings</td></tr>
+          <tr><td>make harden</td><td><code>harden</code></td><td>Apply macOS security hardening</td></tr>
           <tr><td>make trim-services</td><td><code>trim-services</code></td><td>Disable background LaunchAgents this Mac does not need: Samsung Magician's two and Google's Chrome updater. Writes a rollback, and checks each disable against launchd's override list. It no longer touches the two Photos agents: on macOS 26.7 launchd starts them on request even when they are disabled (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#trim-services">BIN-1 §2.33</a>)</td></tr>
           <tr class="tbl-cat"><td colspan="3">Brewfile</td></tr>
           <tr><td>make sync</td><td><code>sync</code></td><td>Sync installed packages into Brewfile (<code>-c</code> commit · <code>--push</code> commit and push · <code>-n</code> dry run · <code>-p</code> prune)</td></tr>
@@ -1025,13 +1025,13 @@ git push</code></pre>
           <tr><td>make updates</td><td><code>macos-updates</code></td><td>Install the macOS updates for the installed version. It never installs a major upgrade, such as macOS 26 to macOS 27 (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#macos-updates">BIN-1 §2.36</a>)</td></tr>
           <tr><td>make pull</td><td>—</td><td>Fast-forward the mrk repo to origin, then rebuild the Go tools and relink the commands and dotfiles the pulled commits changed</td></tr>
           <tr><td>make maintain</td><td><code>maintain</code></td><td>Housekeeping: prune Pages deployments, fetch --prune, validate, check builds</td></tr>
-          <tr><td>make dock</td><td>—</td><td>Populate the Dock from <code>config/dock.txt</code> (requires dockutil)</td></tr>
-          <tr><td>make uninstall</td><td>—</td><td>Remove symlinks and undo setup</td></tr>
+          <tr><td>make dock</td><td><code>dock-setup</code></td><td>Populate the Dock from <code>config/dock.txt</code> (requires dockutil)</td></tr>
+          <tr><td>make uninstall</td><td><code>mrk-uninstall</code></td><td>Remove the <code>~/bin</code> symlinks and the three LaunchAgents, and offer the rollbacks (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-uninstall">BIN-1 §2.15</a>)</td></tr>
           <tr><td>make tidy</td><td>—</td><td>Run <code>go mod tidy</code> in every Go module under <code>tools/</code>: picker, mrk-status, mrk-menu and theme</td></tr>
           <tr class="tbl-cat"><td colspan="3">Diagnostics</td></tr>
           <tr><td>make status</td><td><strong>none</strong></td><td>Print the dashboard's panels as text. The <code>status</code> command opens them in the dashboard instead — see the caution below</td></tr>
           <tr><td>make doctor</td><td><code>doctor</code></td><td>Check ~/bin is on PATH. Pass <code>ARGS=--fix</code> to the target, or <code>--fix</code> to the shortcut</td></tr>
-          <tr><td>make check</td><td>—</td><td>Run every gate in <code>scripts/ci-check</code>: the picker and defaults descriptions, a secret scan over every tracked file, the commit gates, each test in <code>tests/</code>, shellcheck over every tracked bash script, and <code>go test</code>. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#ci-check">BIN-1 §2.21</a> names each test and what it guards</td></tr>
+          <tr><td>make check</td><td><code>ci-check</code></td><td>Run every gate in <code>scripts/ci-check</code>: the picker and defaults descriptions, a secret scan over every tracked file, the commit gates, each test in <code>tests/</code>, shellcheck over every tracked bash script, and <code>go test</code>. <a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#ci-check">BIN-1 §2.21</a> names each test and what it guards</td></tr>
           <tr><td>make ci</td><td>—</td><td>Full CI pipeline locally (check + build all TUIs)</td></tr>
           <tr><td>make fix-exec</td><td><code>fix-exec</code></td><td>Make all scripts and bin files executable</td></tr>
           <tr class="tbl-cat"><td colspan="3">General</td></tr>
@@ -1042,7 +1042,7 @@ git push</code></pre>
 
       <div class="callout callout-caution">
         <span class="callout-label">Caution — status Is Not the Same as make status</span>
-        <div class="callout-body">The <code>status</code> command in <code>~/bin</code> opens the mrk-status dashboard. The <code>make status</code> target prints the same panels as text and exits. They run the same checks — until 2026-09-30 <code>make status</code> was a separate program — but one opens a TUI and the other prints, which is why <code>status</code> is the only entry in the table with no shortcut. Section&nbsp;2.8 describes the panels.</div>
+        <div class="callout-body">The <code>status</code> command in <code>~/bin</code> opens the mrk-status dashboard. The <code>make status</code> target prints the same panels as text and exits. They run the same checks — until 2026-09-30 <code>make status</code> was a separate program — but one opens a TUI and the other prints, which is why <code>make status</code> is the only target whose command of the same name does something else. Section&nbsp;2.8 describes the panels.</div>
       </div>
 
       <p>The mrk tool includes standalone utilities in its <code>bin/</code> directory. Phase&nbsp;1 creates a symlink for each executable in <code>~/bin</code>, so you can run each command by name from any directory. The <code>mrk-menu</code> utility is a compiled Go TUI; if it is missing, run <code>make build-tools</code> to build it.</p>
@@ -1057,7 +1057,7 @@ git push</code></pre>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-menu">mrk-menu</a></td><td>TUI launcher. Browse mrk's commands by category and run the selected one. Use it when you do not remember a command.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-push">mrk-push &quot;msg&quot;</a></td><td>Commit, push, and prune the old Pages deployments of the mrk repository.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#prune-deployments">prune-deployments</a></td><td>Delete the old Pages deployments of any repository, or, run outside a repository, of every Pages site you own. It always protects the deployment serving each site.</td></tr>
-          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#pushall">pushall</a></td><td>Commit and push every repository in <code>~/Projects</code>, then sync <code>~/mrk</code>. Every commit passes the secret scan first.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#pushall">pushall</a></td><td>Commit and push every repository in <code>~/Projects</code>, then commit and push <code>~/mrk</code>. Every commit passes the secret scan first.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#tidy-projects">tidy-projects</a></td><td>Survey every clone in <code>~/Projects</code> and <code>~/mrk</code> for merged branches, finished worktrees, stale refs, Pages deployments past ten and build output, and for repositories with no backup. <code>--apply</code> deletes only what it can prove is safe.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#update-full">update-full</a></td><td>Full update pass. It closes the running applications and can restart the machine. It never installs a major macOS upgrade.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#macos-updates">macos-updates</a></td><td>Install the macOS updates for the installed version. It never installs a major upgrade, such as macOS 26 to macOS 27. <code>make updates</code> and <code>update-full</code> run it.</td></tr>
@@ -1065,6 +1065,8 @@ git push</code></pre>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#snapshot-keys">snapshot-keys</a></td><td>Bundle <code>~/.ssh</code>, <code>~/.gnupg</code>, the signing identities and DoublEnder's Cloud credentials into one encrypted archive.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-keys">restore-keys</a></td><td>Restore that archive on a new machine. After <code>restore-repos</code>, <code>--projects</code> places the project credentials.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#restore-repos">restore-repos</a></td><td>Clone the repositories the mrk-prefs manifest records.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#check-picker-desc">check-picker-desc</a></td><td>Check that every Brewfile package has a picker description. <code>--fix</code> writes the missing ones from Homebrew. <code>mrk-push</code> and <code>pushall</code> run it with <code>--fix</code> when it fails.</td></tr>
+          <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#dock-setup">dock-setup</a></td><td>Replace the Dock contents with the apps in <code>config/dock.txt</code>. <code>--check</code> compares the Dock with the file and changes nothing.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#defaults-watch">defaults-watch</a></td><td>Name the preference key a change in System Settings writes, and say what <code>config/defaults.tsv</code> needs to keep it. It changes nothing.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-contract">mrk-contract</a></td><td>Show, as JSON, the options of each mrk script that Dipstick and Barkeep run, the words of its <code>--check</code> lines, and the Make targets that need a terminal. An app reads it before it gives a script an option. Dipstick also reads it to find the fixes that it must run in Terminal. It changes nothing.</td></tr>
           <tr><td><a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#decloud">decloud</a></td><td>Run git against the private Cloud overlay for DoublEnder.</td></tr>
@@ -1093,7 +1095,7 @@ git push</code></pre>
 
       <ul>
         <li><strong>Unrecorded</strong> — What the next Mac would not get: Homebrew packages missing from the Brewfile, or in it and not installed; login items <code>config/login-items.txt</code> does not track, or tracks and this Mac does not have; uncommitted or unpushed work in <code>~/mrk</code> and in the repositories in <code>~/Projects</code>; repositories the manifest does not record; app preferences changed since the last <code>snapshot-prefs</code>, which are information and turn to a warning only once that snapshot is more than a week old; app preferences that <code>snapshot-prefs</code> cannot read, because an export failed or macOS refused the container, which are a warning, since their changes are not known; snapshots committed in <code>~/.mrk/preferences</code> whose push failed, which mrk-prefs does not have until the next <code>snapshot-prefs</code> pushes them. Each list is the answer of the command that records it — <code>sync --check</code>, <code>sync-login-items --check</code>, <code>snapshot-prefs --check</code> — so the dashboard and that command cannot disagree. The unpushed snapshots are counted from git, as <code>snapshot-prefs</code> counts them. The login items are checked only from a terminal: they come from System Events, which would ask Dipstick for Automation access.</li>
-        <li><strong>Upkeep</strong> — <code>~/mrk</code> behind the remote, Go tools older than their source, outdated Homebrew packages as of the morning's <code>brew update</code> (a warning when its last check is two days old), and macOS updates for the installed version. A major upgrade is named and never counted. Only macOS itself can be one: Safari and the Command Line Tools count as updates.</li>
+        <li><strong>Upkeep</strong> — <code>~/mrk</code> behind the remote, Go tools older than their source, outdated Homebrew packages as of the morning's <code>brew update</code> (a warning when its last check is two days old), and macOS updates for the installed version. The Homebrew count includes the casks that update themselves (<code>brew outdated --greedy</code>), because <code>make update</code> upgrades them too. A cask whose app has already updated itself to the latest version is not counted; a line of its own names it, because <code>make update</code> would install it again. A major upgrade is named and never counted. Only macOS itself can be one: Safari and the Command Line Tools count as updates.</li>
         <li><strong>Time Machine Backups</strong> — Whether Time Machine has a destination, and how old the last backup is: a warning after one day, an error after seven.</li>
         <li><strong>Installation</strong> — The installation checks, in one panel:
           <ul>
@@ -1123,6 +1125,7 @@ git push</code></pre>
           <tr><td>~/.mrk/install.log</td><td>Rotating log written by the setup, brew, and post-install phases</td></tr>
           <tr><td>~/.mrk/plist-backups/</td><td>Pre-import snapshots of preference domains, used by the rollback script</td></tr>
           <tr><td>~/.mrk/sync-ignore</td><td>Optional list of packages <code>sync</code> should never suggest (Section 2.3)</td></tr>
+          <tr><td>~/.mrk/login-items-ignore</td><td>Optional list of login-item names <code>sync-login-items</code> should never suggest (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#sync-login-items">BIN-1 §2.9</a>)</td></tr>
         </tbody>
       </table>
       </div>
@@ -1131,7 +1134,7 @@ git push</code></pre>
         <span class="callout-label">Note — What the Backups Are, and Why There Is No Fix</span>
         <div class="callout-body">When <code>make setup</code> links a dotfile, it examines the destination first. If anything else is there, setup <strong>moves</strong> it into <code>~/.mrk/backups/&lt;timestamp&gt;/</code> instead of deleting it. That is a <code>.zshrc</code> you wrote before mrk existed, a folder, or a symlink that points elsewhere or at nothing. A symlink moves as a symlink, so the backup records where it pointed. If the destination already reaches the same file, setup relinks or skips it and makes no backup. Until 2026-09-28 a symlink was replaced with no backup (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#mrk-setup">BIN-1 §2.11</a>).
         <br><br>The directory therefore holds the machine's <em>pre-mrk</em> dotfiles. The repository is the source of truth for mrk's own dotfiles; the backup is the only copy of what they replaced.
-        <br><br>On a clean installation the directory does not exist at all. It is created only at the moment setup displaces something, so its absence means setup never found anything in the way. Running <code>make install</code> again does not create it, because setup skips destinations that are already correct symlinks. Nothing restores these files either — <code>make uninstall</code> does not read them, and neither does any other script. They are an inert archive to copy from by hand. This is why the Backups panel offers no fix: nothing is broken.</div>
+        <br><br>On a clean installation the directory does not exist at all. It is created only at the moment setup displaces something, so its absence means setup never found anything in the way. Running <code>make install</code> again does not create it, because setup skips destinations that are already correct symlinks. Nothing restores these files either — <code>make uninstall</code> does not read them, and neither does any other script. They are an inert archive to copy from by hand. This is why the Displaced files line offers no fix: nothing is broken.</div>
       </div>
 
       <p>Run this command to undo the macOS defaults that mrk applied, and nothing else:</p>
@@ -1153,13 +1156,13 @@ git push</code></pre>
         <thead><tr><th>Problem</th><th>Solution</th></tr></thead>
         <tbody>
           <tr><td>make setup fails at Xcode CLT</td><td>Run <code>xcode-select --install</code>, wait for the GUI dialog to complete, then re-run</td></tr>
-          <tr><td>Dotfile conflict ("file exists")</td><td>Backup auto-created in <code>~/.mrk/backups/</code>; resolve manually then re-run</td></tr>
+          <tr><td>Setup says "Created N backup(s)"</td><td>A file was where a dotfile link goes. Setup moved it into <code>~/.mrk/backups/</code> and linked the dotfile. Copy what you need from the backup into the dotfile in <code>~/mrk/dotfiles/</code></td></tr>
           <tr><td>post-install skips plist imports</td><td>SSH key not authenticated; run <code>pull-prefs</code> after adding key to GitHub</td></tr>
           <tr><td>mrk-picker not rendering</td><td>Rebuild the binary: <code>make picker</code></td></tr>
           <tr><td>~/bin not on PATH</td><td>If <code>~/.zshrc</code> already adds it, as mrk's does, open a new terminal or run <code>exec zsh</code>. Otherwise run <code>make doctor ARGS=--fix</code>. The mrk-status PATH check says which</td></tr>
-          <tr><td>Brewfile entry shows ✗ (missing)</td><td>Package name may differ from formula name; check with <code>brew info &lt;pkg&gt;</code></td></tr>
-          <tr><td>sync exits with "nothing to add"</td><td>All installed packages are already in the Brewfile</td></tr>
-          <tr><td>snapshot-prefs skips an app</td><td>Non-fatal — the export failed or hit its 15-second timeout; skipped apps are listed at the end of the run. Re-run <code>snapshot-prefs</code> to retry</td></tr>
+          <tr><td>status: "packages in the Brewfile are not installed"</td><td>Removed on purpose: <code>make sync ARGS=-p</code>. Not installed yet: <code>make brew</code>. The package name may differ from the formula name; check with <code>brew info &lt;pkg&gt;</code></td></tr>
+          <tr><td>sync says "Brewfile is up to date. No new packages found."</td><td>All installed packages are already in the Brewfile</td></tr>
+          <tr><td>snapshot-prefs skips an app</td><td>Non-fatal — the export failed or hit its 15-second timeout, or macOS refused the app's container. Skipped apps are listed at the end of the run, and a refused container keeps its saved copy. For a refusal, give the app that runs <code>snapshot-prefs</code> (Terminal, or Dipstick) permission to access the data of other apps in System Settings → Privacy &amp; Security. Re-run <code>snapshot-prefs</code> to retry</td></tr>
           <tr><td>post-install login item already exists</td><td>Safe to ignore — <code>add_login_item</code> checks before adding</td></tr>
         </tbody>
       </table>
@@ -1225,12 +1228,7 @@ make post-install</code></pre>
         <div class="proc-body">
           <p class="desc">Download the DMG from the GitHub releases page. Drag it to Applications.</p>
           <p>Download: <a href="https://github.com/sevmorris/Barkeep/releases/latest">github.com/sevmorris/Barkeep/releases/latest</a></p>
-          <div class="callout callout-caution">
-            <span class="callout-label">Caution — First Launch</span>
-            <div class="callout-body">The macOS blocks the application because it is not notarized with Apple. Drag Barkeep to Applications, and then run this command in Terminal:
-              <pre style="margin-top: 8px; margin-bottom: 0;">xattr -cr /Applications/Barkeep.app</pre>
-            </div>
-          </div>
+          <p>Barkeep is signed with a Developer ID and notarized, so it opens at first launch with no extra step.</p>
         </div>
       </div>
     </section>
