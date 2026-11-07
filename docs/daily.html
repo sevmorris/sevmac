@@ -585,8 +585,8 @@ update-full --no-reboot  # Do not offer a reboot</code></pre>
 <pre><code>status</code></pre>
         </li>
         <li>
-          <p>Tidy the project repositories. <code>tidy-projects</code> reports what has piled up in <code>~/Projects</code> and <code>~/mrk</code>: merged branches, finished worktrees, stale refs, Pages deployments past ten, and build output. Read the report, then delete the categories you agree to. It deletes only what it can prove is merged or can be rebuilt (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#tidy-projects">BIN-1 §2.39</a>). The Maintenance group of <code>mrk-menu</code> has the report, and the four cleanups that lose no work: <code>--apply ff,refs,worktrees,branches</code>. You need not remember this step: the Upkeep panel of the dashboard, and Dipstick in the menu bar, warn when those four cleanups have something to delete, and offer them as the fix.</p>
-<pre><code>tidy-projects                          # Report only
+          <p>Tidy the project repositories. <code>tidy-projects</code> reports what has piled up in <code>~/Projects</code> and <code>~/mrk</code>: merged branches, finished worktrees, stale refs, Pages deployments past ten, and build output. Read the report, then delete the categories you agree to: on a terminal the report ends by asking which, so it works from Dipstick's console too, where no command can follow it. It deletes only what it can prove is merged or can be rebuilt (<a href="https://sevmorris.github.io/mrk/bin/mrk-usage.html#tidy-projects">BIN-1 §2.39</a>). The Maintenance group of <code>mrk-menu</code> has the report, and the four cleanups that lose no work: <code>--apply ff,refs,worktrees,branches</code>. You need not remember this step: the Upkeep panel of the dashboard, and Dipstick in the menu bar, warn when those four cleanups have something to delete, and offer them as the fix.</p>
+<pre><code>tidy-projects                          # Report, then ask which categories to delete
 tidy-projects --apply branches,refs    # Delete what the report offers, by category</code></pre>
         </li>
       </ol>
